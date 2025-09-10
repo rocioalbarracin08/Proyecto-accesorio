@@ -10,7 +10,7 @@ if __name__ == '__main__':
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL
 def obtener_conexion():
-    try:
+    try: #Código a probar
         conexion = mysql.connector.connect(
             host = "10.9.120.5", 
             port = 3306,    
@@ -27,7 +27,6 @@ def obtener_conexion():
         return None
 #-----------------------------------------------------------
 
-
 # Ruta para obtener datos desde la base de datos
 @app.route('/usuarios') # GET por defecto
 def obtener_usuarios():
@@ -35,7 +34,6 @@ def obtener_usuarios():
     if conexion is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     #si
-
     cursor = conexion.cursor(dictionary=True) #¿?
     cursor.execute("SELECT * FROM clientes")  # Suponiendo que tienes una tabla 'usuarios'
     
