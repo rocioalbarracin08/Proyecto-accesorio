@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 
 function App() {
+
   return (
     <div className="background-image">
       <h1>Bienvenido</h1>
