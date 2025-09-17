@@ -5,7 +5,7 @@ function App() {
 
   return (
     <div className="background-image">
-      <h1>Bienvenido</h1>
+      <h1>Accesorios</h1>
       <input type="text" />
       <input type="text" />
       <button>Login</button>

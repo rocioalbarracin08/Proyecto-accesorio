@@ -1,3 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Estilos del Header */
+.header {
+  display: flex;
+  justify-content: space-between; /* Espacio entre logo, navegación y CTA */
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333333; /* Fondo oscuro para el header */
+  color: white;
+}
+
+.logo a {
+  text-decoration: none;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Estilos del menú de navegación */
+.navigation ul {
+  list-style-type: none;
+  display: flex;
+}
+
+.navigation li {
+  margin: 0 15px;
+}
+
+.navigation a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.navigation a:hover {
+  color: #ff6f61; /* Color al pasar el mouse */
+}
+
+/* Estilos del botón CTA */
+.cta .btn {
+  text-decoration: none;
+  background-color: #ff6f61; /* Color del botón */
+  padding: 10px 20px;
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cta .btn:hover {
+  background-color: #e14f42; /* Cambio de color al pasar el mouse */
+}
+
 body, html {
   margin: 0;
   padding: 0;
@@ -5,8 +69,10 @@ body, html {
 }
 
 .background-image {
+  margin: 0%;
   width: 100%;
   height: 100vh; /*hace que la imagen cubra el 100% de la altura de la pantalla */
+  padding: 0%;
   background-image: url('https://st4.depositphotos.com/12985656/24190/i/450/depositphotos_241907032-stock-photo-top-view-watches-lipstick-earrings.jpg');
   background-size: cover; /*asegura que la imagen cubra todo el espacio sin deformarse */
   background-position: center; /* centra la imagen */
@@ -14,6 +80,19 @@ body, html {
   border: none;     /* Elimina cualquier borde */
 }
 
+button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1); /* Aumenta ligeramente el tamaño */
+}
 
 #root {
   padding: 2rem;
