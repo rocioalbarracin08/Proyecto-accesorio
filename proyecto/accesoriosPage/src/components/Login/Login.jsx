@@ -1,16 +1,32 @@
 import 'login.css'
-
+import  {useState} from "react";
 
 export function Login(){
     const [usuario, setUsuario] = useState("")
-    const [contraseña, setConstraseña] = useState("")
+    const [contraseña, setContraseña] = useState("")
 
-    const handleClick = ()=>{
+    const handleClick = (usuario)=>{
         //Hacemos la comparación
-        if (usuario == "Ro" && contraseña == "Ro8"){
-            
+        if (usuario === "Ro" && contraseña === "Ro8"){
+            console.log("Usuario y contraseña correcta")
+        }else if (usuario === "Ro" && contraseña != "Ro8"){
+            console.log("contraseña incorrecta")
+        }else if (usuario != "Ro" && contraseña === "Ro8"){
+            console.log("usuario incorrecto")
+        }else if (usuario != "Ro" && contraseña != "Ro8"){
+            console.log("contraseña incorrecta")
+        }else if (usuario != "" && contraseña != ""){
+            console.log("contraseña")
         }
     }
+
+    const handleInputUsuario = (event) => {
+        setUsuario(event.target.value); 
+    };
+    const handleInputContraseña = (event) => {
+        setContraseña(event.target.value); 
+    };
+
 
     return(
         <>
@@ -22,7 +38,7 @@ export function Login(){
                 <input 
                 type="text" 
                 placeholder='Usuario' 
-                onChange={handleInputChange}
+                onChange={handleInputUsuario}
                 value={usuario}
                 />
 
@@ -30,7 +46,7 @@ export function Login(){
                 <input 
                 type="password" 
                 placeholder='Contraseña' 
-                onChange={handleInputChange}
+                onChange={handleInputContraseña}
                 value={contraseña}
                 />
 
