@@ -29,8 +29,8 @@ def obtener_conexion():
         return None
 #-----------------------------------------------------------
 # Ruta para obtener datos desde la base de datos
-@app.route('/usuarios') # GET por defecto
-def obtener_usuarios():
+@app.route('/clientes') # GET por defecto
+def obtener_clientes():
     conexion = obtener_conexion() #Abrimos conexión
     if conexion is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -46,19 +46,7 @@ def obtener_usuarios():
     
     return jsonify(usuarios)
 
-@app.route("/api/categorias") #Para el boton de navegacón
-def categorias():
-    conexion =  obtener_conexion()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
-    cursor.execute("SELECT categoria FROM categoria")  # Ajusta según tu tabla
-    
-    categorias = cursor.fetchall()  # Lista de dicts con las categorías
-    
-    cursor.close()
-    conexion.close()
-    return jsonify(categorias)
+
 
 @app.route("/api/carrito/<int:carrito_id>/agregar", methods = ['POST'])
 def carrito(carritoId):
@@ -75,21 +63,7 @@ def carrito(carritoId):
         "cantidad": cantidad
     })
     
-@app.route("/api/accesorio")
-def accesorio():
-    conexion =  obtener_conexion()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    
-    cursor = conexion.cursor(dictonary=True)
-    cursor.execute("SELECT p.id, p.name, p.precio c.nombre from productos p JOIN categoria c ON p.id_categoria = c.id_category")
 
-    accesorio = cursor.fetchall()
-
-    cursor.close()
-    conexion.close()
-
-    return jsonify(accesorio),200
 
 #@app.route("/api/register")
 #def registrarse():
@@ -112,7 +86,7 @@ def agregarProductos():
         conexion.close()
         
         return True
-    except 
-
+    except: 
+        None
 if __name__ == '__main__':
     app.run(debug=True)
