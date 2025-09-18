@@ -4,6 +4,7 @@ import  {useState} from "react";
 export function Login(){
     const [usuario, setUsuario] = useState("")
     const [contraseña, setContraseña] = useState("")
+    const [ mensaje, setMensaje] = useState("")
 
     const handleClick = (usuario)=>{
         //Hacemos la comparación
@@ -27,12 +28,12 @@ export function Login(){
         setContraseña(event.target.value); 
     };
 
-
     return(
         <>
         <div className="contenedor-padre">
             <div >
-                <h1 className="Bienvenido">Bienvenido</h1>
+                <h1>Bienvenido</h1>
+                <h3>{mensaje}</h3>
                 
                 <label htmlFor="title">Usuario</label>
                 <input 
