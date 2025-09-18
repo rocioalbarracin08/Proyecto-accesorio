@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import './App.css';
+import { BarraNavegacion } from './components/navegacion/Navegacion';
 
 function App() {
 
   return (
-    <div className="background-image">
-      <h1>Accesorios</h1>
-      <input type="text" />
-      <input type="text" />
-      <button>Login</button>
-      <a className="link">¿Perdiste tu contraseña?</a>
-      <a>¿No tienes cuenta? Regístrate</a>
-      <a>Volver</a>
-    </div>
+    <BarraNavegacion />
   );
 }
 
