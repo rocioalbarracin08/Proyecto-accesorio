@@ -1,6 +1,18 @@
 #Hacer importaciones necesarias
 
-@app.route("/categorias") #Para el boton de navegacón
+#No se pierda el nombre original de la función decorada
+from flaskr.db import get_db
+
+#Blueprint: agrupar rutas y lógica en módulos (ej: auth, accesorios)
+from flask import (Blueprint, url_for, request, session)
+
+#generate_password_hash : encripta la contraseña antes de guardarla en la base de datos
+#check_password_hash: compara una contraseña ingresada con la contraseña encriptada guardada.
+from werkzeug.security import check_password_hash, generate_password_hash
+
+bp = Blueprint('ro', __name__, url_prefix='/ro')
+
+@bp.route("/categorias") #Para el boton de navegacón
 def categorias():
     conexion =  obtener_conexion()
     if conexion is None:
