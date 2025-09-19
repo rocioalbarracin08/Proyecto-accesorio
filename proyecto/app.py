@@ -46,7 +46,8 @@ def obtener_clientes():
     
     return jsonify(usuarios)
 
-
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route("/api/carrito/<int:carrito_id>/agregar", methods = ['POST'])
 def carrito(carritoId):
