@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import { BarraNavegacion } from './components/navegacion/Navegacion';
 
 function App() {
 
-
-  return 
-  (
-    <Functions/>
-  )
+  return (
+    <BarraNavegacion />
+  );
 }
 
-export default App
+export default App;
