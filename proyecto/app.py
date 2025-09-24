@@ -5,9 +5,13 @@ from mysql.connector import Error
 from dotenv import load_dotenv 
 import os
 
+from flask_cors import CORS
+
+
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__)
+CORS(app) #Permite que el frontend (localhost:3000) hable con el backend (localhost:5000)
 
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL

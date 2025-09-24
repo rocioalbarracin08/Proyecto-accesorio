@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import './producto.css'
 
 export function ProductoInfo() {
     const [accesorios, setAccesorios] = useState([])
@@ -14,17 +15,22 @@ export function ProductoInfo() {
         .catch(err => console.error("Fetch error:", err));
     }, [])
 
+    const agregarAlCarrito = (id) => {
+        console.log(`Producto ${id} agregado al carrito.`);
+    }
+
   return (
     <div>
         <h1>Accesorios</h1>
-        <main>
+        <main className='productos-grilla'>
             { accesorios.map( (producto) => (
 
-                <li>
+                <div className='producto-card' >
                     <h3>{producto.name}</h3>
                     <h2>{producto.categoria}</h2>
                     <h3>$ {producto.precio}</h3>
-                </li>
+                    <button onClick={() => agregarAlCarrito(producto.id)}><img src="/carrito.png" alt="Añadir al carrito" /></button>
+                </div>
 
             )) }
         </main>

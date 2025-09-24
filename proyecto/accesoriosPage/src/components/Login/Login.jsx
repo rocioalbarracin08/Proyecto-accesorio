@@ -12,17 +12,15 @@ export function Login({setUser}){
             return setError(true)
         }
         setError(false)
-
-        setUser([usuario])
     }
-
     //Segunda forma de hace el evento al hacer click  
     const handleInputUsuario = (event) => {
         setUsuario(event.target.value); 
     };
-
+    
     return(
         <>
+        
         <section >
             <h1>Bienvenido</h1>
             {error ? <p>Por favor, complete todos los campos</p> : ""}
@@ -42,13 +40,13 @@ export function Login({setUser}){
                 />
             </form>
 
-            <button onClick={handleClick} >Mostrar</button> 
+            <button onClick={handleClick}>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
-            <a href="#" className="enlaces">¿No tienes cuenta? Registrate</a>
+            <a href="#" className="enlaces">¿No tenés cuenta? Registrate</a>
 
         </section> 
-        <a href="#" target="_blank" className="volver">Volver</a>
+        
         </>
     );
 }
