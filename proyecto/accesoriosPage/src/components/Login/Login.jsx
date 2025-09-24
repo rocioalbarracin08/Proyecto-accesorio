@@ -1,47 +1,31 @@
-import 'login.css'
-import  {useState} from "react";
+import useAuth from '../../hooks/useAuth';
+import './login.css'
 
 export function Login({setUser}){
-    const [usuario, setUsuario] = useState("")
-    const [contraseña, setContraseña] = useState("")
-    const [error, setMensaje] = useState(false)
+    const {usuario, setUsuario, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
 
     const handleClick = (event)=>{
         event.preventDefault()
 
         //Hacemos la comparación
         if (usuario === "" || contraseña === ""){
-            return setMensaje(true)
+            return setError(true)
         }
-        setMensaje(false)
+        setError(false)
 
-        setUser([nombre])
-        /*if (usuario === "Ro" && contraseña === "Ro8"){
-            console.log("Usuario y contraseña correcta")
-        }else if (usuario === "Ro" && contraseña != "Ro8"){
-            console.log("contraseña incorrecta")
-        }else if (usuario != "Ro" && contraseña === "Ro8"){
-            console.log("usuario incorrecto")
-        }else if (usuario != "Ro" && contraseña != "Ro8"){
-            console.log("contraseña incorrecta")
-        }else if (usuario != "" && contraseña != ""){
-            console.log("contraseña")
-        }*/
-
+        setUser([usuario])
     }
 
+    //Segunda forma de hace el evento al hacer click  
     const handleInputUsuario = (event) => {
         setUsuario(event.target.value); 
-    };
-    const handleInputContraseña = (event) => {
-        setContraseña(event.target.value); 
     };
 
     return(
         <>
         <section >
             <h1>Bienvenido</h1>
-            <p>{mensaje}</p>
+            {error ? <p>Por favor, complete todos los campos</p> : ""}
             <form className='formulario'>
                 <input 
                 type="text" 
@@ -50,11 +34,10 @@ export function Login({setUser}){
                 value={usuario}
                 />
 
-                
                 <input 
                 type="password" 
                 placeholder='Contraseña' 
-                onChange={handleInputContraseña}
+                onChange={event => setContraseña(event.target.value)}
                 value={contraseña}
                 />
             </form>
