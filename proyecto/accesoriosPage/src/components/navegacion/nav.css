@@ -1,3 +1,36 @@
+.search-container {
+  display: flex;
+  position: sticky;
+  top: 10px;    /* distancia desde arriba */
+  right: 20px;  /* distancia desde la derecha */
+  align-items: center;
+  width: 300px;        /* ancho del buscador */
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  padding: 5px 10px;
+  background-color: #fff;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 25px;
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px; /* tamaño de la lupa */
+  color:rosybrown;
+}
+
+.search-btn:hover {
+  color: #000;
+}
 
 .background-image {
  margin: 0%;
@@ -66,7 +99,7 @@ body {
 /* Estilos del botón CTA */
 .cta .btn {
   text-decoration: none;
-  background-color: #ff6f61; /* Color del botón */
+  background-color: rosybrown; /* Color del botón */
   padding: 10px 20px;
   color: white;
   border-radius: 5px;

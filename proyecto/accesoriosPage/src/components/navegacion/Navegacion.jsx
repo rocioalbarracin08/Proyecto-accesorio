@@ -10,13 +10,13 @@ export function BarraNavegacion() {
         <nav className="navigation">
           <ul>
             <li><a href="#home">Inicio</a></li>
-            <li><a href="#about">Acerca de</a></li>
-            <li><a href="#services">Servicios</a></li>
+            <li><a href="#about">Info</a></li>
+            <li><a href="#services">Productos</a></li>
             <li><a href="#contact">Contacto</a></li>
           </ul>
         </nav>
         <div className="cta">
-          <a href="#cta" className="btn">¡Contáctanos!</a>
+          <a href="#cta" className="btn">Iniciar sesion</a>
         </div>
       </header>
 
@@ -29,6 +29,13 @@ export function BarraNavegacion() {
         <a href="#">¿No tienes cuenta? Regístrate</a><br />
         <a href="#">Volver</a>
       </main>
+
+      <div class="search-container">
+       <input type="text" placeholder="Buscar..." class="search-input"/>
+       <button class="search-btn">
+       🔍
+       </button>
+      </div>
     </div>
   );
 }
