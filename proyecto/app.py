@@ -110,25 +110,8 @@ def agregar_empleado():
         cursor.close()
         conexion.close()
 
-@app.route("/api/empleados/<int:id>", methods=["DELETE"])
-def borrar_empleado(id):
-    conexion = obtener_conexion()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor()
-    try:
-        cursor.execute("DELETE FROM empleados WHERE id = ?", (id,))
-        conexion.commit() 
-        if cursor.rowcount == 0: #si no se encontro el empleado
-            return jsonify({"mensaje": "Empleado no encontrado"}), 404
-        return jsonify({"mensaje": "Empleado borrado"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        cursor.close()
-        conexion.close()
 
 
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
