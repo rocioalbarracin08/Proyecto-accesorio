@@ -14,11 +14,11 @@ app = Flask(__name__)
 def obtener_conexion():
     try: #Código a probar
         conexion = mysql.connector.connect(
-            host = os.getenv("DB_HOST"), 
-            port = 3306,    
-            user = os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
-            password = os.getenv("DB_PASSWORD"),  
-            database = os.getenv("DB_NAME")           # El nombre de la base de datos que usas en phpMyAdmin
+        host = os.getenv("DB_HOST"), 
+        port = 3306,    
+        user = os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
+        password = os.getenv("DB_PASSWORD"),  
+        database = os.getenv("DB_NAME")           # El nombre de la base de datos que usas en phpMyAdmin
         )
         if conexion.is_connected():
             print("Conexión exitosa a la base de datos")
@@ -29,22 +29,6 @@ def obtener_conexion():
         return None
 #-----------------------------------------------------------
 # Ruta para obtener datos desde la base de datos
-@app.route('/clientes') # GET por defecto
-def obtener_clientes():
-    conexion = obtener_conexion() #Abrimos conexión
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    #si
-    cursor = conexion.cursor(dictionary=True) #¿?
-    cursor.execute("SELECT * FROM clientes")  # Suponiendo que tienes una tabla 'usuarios'
-    
-    usuarios = cursor.fetchall()  # Obtiene todos los registros de la consulta
-    
-    # Cerrar el cursor y la conexión
-    cursor.close()
-    conexion.close()
-    
-    return jsonify(usuarios)
 
 if __name__ == '__main__':
     app.run(debug=True)

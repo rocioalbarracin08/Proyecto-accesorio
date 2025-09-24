@@ -1,0 +1,31 @@
+.iconos{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+li{
+    list-style-type: none;
+    width: 40px;
+}
+
+.iconos img{
+    width: 100%;
+    aspect-ratio: 1/1; /*Mantener proporción cuadrada, lo pensamos como X e Y*/
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+footer{
+    background-color: rosybrown;
+    display: flex;
+    flex-direction: column;
+    height: 40%;
+    justify-content: center;
+    padding: 1rem;    
+}
+ul{
+    padding-top: 10px;
+}
+
