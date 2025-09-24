@@ -8,17 +8,16 @@ export function ProductoInfo() {
         fetch("http://localhost:3000/api/accesorios") //Petición, por defecto GET
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`); //Throw es para lanzar un error
-            return res.json();
+            return res.json(); //Supuestamente este código lo hace mas eficiente
         })
         .then(data => setAccesorios(data))
         .catch(err => console.error("Fetch error:", err));
     }, [])
 
-  return 
-  (
+  return (
     <div>
         <h1>Accesorios</h1>
-        <div>
+        <main>
             { accesorios.map( (producto) => (
 
                 <li>
@@ -28,7 +27,7 @@ export function ProductoInfo() {
                 </li>
 
             )) }
-        </div>
+        </main>
     </div>
   ) 
 }

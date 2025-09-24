@@ -1,10 +1,11 @@
+
 export function Home ({usuario,setUser}){
-    const handleLogout = () =>{
+    const handleCerrarSesion = () =>{
         setUser([])
     }
     return(
     <main>
         <h1>Bienvenido {usuario}</h1>
-        <button onClick={handleLogout}>Cerrar Sesión</button>
+        <button onClick={handleCerrarSesion}>Cerrar Sesión</button>
     </main>)
 }
