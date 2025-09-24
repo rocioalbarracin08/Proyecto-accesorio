@@ -20,7 +20,6 @@ li{
 footer{
     background-color: rosybrown;
     display: flex;
-    flex-direction: column;
     height: 40%;
     justify-content: center;
     padding: 1rem;    
