@@ -1,18 +1,18 @@
 #Hacer importaciones necesarias
 
 #No se pierda el nombre original de la función decorada
-from flaskr.db import get_db
+from proyecto.app import obtener_conexion
 
 #Blueprint: agrupar rutas y lógica en módulos (ej: auth, accesorios)
-from flask import (Blueprint, url_for, request, session)
+from flask import Blueprint, url_for, request, session, jsonify
 
 #generate_password_hash : encripta la contraseña antes de guardarla en la base de datos
 #check_password_hash: compara una contraseña ingresada con la contraseña encriptada guardada.
 from werkzeug.security import check_password_hash, generate_password_hash
 
-bp = Blueprint('ro', __name__, url_prefix='/ro')
+bp = Blueprint('roCategoria', __name__, url_prefix='/roCategoria')
 
-@bp.route("/categorias") #Para el boton de navegacón
+@bp.route("/categorias/mostrar") #Para el boton de navegacón
 def categorias():
     conexion =  obtener_conexion()
     if conexion is None:
@@ -25,3 +25,9 @@ def categorias():
     cursor.close()
     conexion.close()
     return jsonify(categorias)
+
+@bp.route("/crear/categoria", methods=('GET','POST'))
+#@login_required  -> se asegura de que la función no se ejecute a menos que el usuario esté autenticado
+def crearCategoria():
+    if request.method == 'POST':
+        categoria = request.get['title']
