@@ -89,5 +89,62 @@ def agregarProductos():
         return True
     except: 
         None
+
+@app.route("/empleados") #Para el boton de navegacón
+def empleados():
+    conexion =  obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
+    cursor.execute("SELECT categoria FROM empleados")  # Ajusta según tu tabla
+    
+    empleados = cursor.fetchall()  # Lista de dicts con las categorías
+    
+    cursor.close()
+    conexion.close()
+    return jsonify(empleados)
+
+@app.route("/api/empleados", methods=["POST"]) #ruta para agregar empleados
+def agregar_empleado():
+    datos = request.get_json() #obtiene los datos en formato json
+    direccion = datos.get("direccion") #obtiene la direccion del empleado
+
+    conexion = obtener_conexion()
+    if conexion is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute( #inserta la direccion del empleado
+            "INSERT INTO empleados (direccion) VALUES (?)",
+            (direccion,)
+        )
+        conexion.commit()
+        return jsonify({"mensaje": "direccion de empleado agregado"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+@app.route("/api/empleados/<int:id>", methods=["DELETE"])
+def borrar_empleado(id):
+    conexion = obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute("DELETE FROM empleados WHERE id = ?", (id,))
+        conexion.commit() 
+        if cursor.rowcount == 0: #si no se encontro el empleado
+            return jsonify({"mensaje": "Empleado no encontrado"}), 404
+        return jsonify({"mensaje": "Empleado borrado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+
+    
 if __name__ == '__main__':
     app.run(debug=True)
