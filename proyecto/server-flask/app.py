@@ -7,6 +7,7 @@ import os
 
 from flask_cors import CORS
 
+from flask import g
 
 load_dotenv() #Libreria que lee el archivo .env
 
@@ -14,30 +15,40 @@ app = Flask(__name__) #"__name__" variable especial que se reemplaza por el nomb
 
 CORS(app) #Permite que el frontend (localhost:3000) hable con el backend (localhost:5000)
 
+db_config = {
+        "host" : os.getenv("DB_HOST"), 
+        "port" : 3306,    
+        "user" : os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
+        "password" : os.getenv("DB_PASSWORD"),  
+        "database" : os.getenv("DB_NAME") }
+
 #-----------------------------------------------------------
-# Función para OBTENER la conexión a la base de datos MySQL
-def obtener_conexion():
-    try: #Código a probar
-        conexion = mysql.connector.connect(
-        host = os.getenv("DB_HOST"), 
-        port = 3306,    
-        user = os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
-        password = os.getenv("DB_PASSWORD"),  
-        database = os.getenv("DB_NAME")           # El nombre de la base de datos que usas en phpMyAdmin
-        )
-        if conexion.is_connected():
-            print("Conexión exitosa a la base de datos")
-            return conexion
-        
-    except Error as e: # "e" = mysql.connector.Error, y contiene detalles sobre el error
-        print(f"Error al conectar a la base de datos: {e}")
-        return None
+# Función para la conexión a la base de datos MySQL
+@app.conexion_db #Lo uso por ser un decorador util para el contexto de aplicación y contexto de solicitud
+def conexion_db():
+    """Establece la conexión a la base de datos antes de cada solicitud."""
+    try:
+        g.db = mysql.connector.connect(db_config)
+        g.db_cursor = g.db.cursor(dictionary=True)
+    except mysql.connector.Error as err:
+        g.db = None
+        g.db_cursor = None
+        print(f"Error de conexión: {err}")
+
+
+# limpiar y cerrar los recursos que se abrieron al inicio de una solicitud
+@app.teardown_request
+def teardown_request(exception):
+    """Cierra la conexión después de cada solicitud."""
+    if hasattr(g, 'db') and g.db is not None:
+        g.db.close()
 #-----------------------------------------------------------
-# Ruta para obtener datos desde la base de datos
+
 
 if __name__ == '__main__':
     app.run(debug=True) #debug -> Para el reinicio de nuestro automático cuando se detecten cambios en el código
     # Mientras estamos en modo desarrollo usamos el debug
+
 
 @app.route("/api/carrito/<int:carrito_id>/agregar", methods = ['POST'])
 def carrito(carritoId):
@@ -58,7 +69,7 @@ def carrito(carritoId):
 @app.route("/api/Agregar")
 def agregarProductos():
     try:
-        conexion =  obtener_conexion()
+        conexion =  conexion_db()
         if conexion is None:
             return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
@@ -74,11 +85,11 @@ def agregarProductos():
 
 @app.route("/empleados") #Para el boton de navegacón
 def empleados():
-    conexion =  obtener_conexion()
+    conexion =  conexion_db()
     if conexion is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
-    cursor.execute("SELECT categoria FROM empleados")  # Ajusta según tu tabla
+    cursor.execute("SELECT nombre FROM empleados")  # Ajusta según tu tabla
     
     empleados = cursor.fetchall()  # Lista de dicts con las categorías
     
@@ -91,7 +102,7 @@ def agregar_empleado():
     datos = request.get_json() #obtiene los datos en formato json
     direccion = datos.get("direccion") #obtiene la direccion del empleado
 
-    conexion = obtener_conexion()
+    conexion = conexion_db()
     if conexion is None: 
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     cursor = conexion.cursor()
