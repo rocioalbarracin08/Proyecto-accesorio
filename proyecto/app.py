@@ -48,8 +48,6 @@ def carrito(carritoId):
         "cantidad": cantidad
     })
     
-
-
 #@app.route("/api/register")
 #def registrarse():
 
@@ -57,7 +55,23 @@ def carrito(carritoId):
 #@app.route("/api/login", methods=('GET', 'POST'))
 #def login():
     
-@app.route("/api/Agregar")
+@app.route("/empleados") #Para probar con una consulta
+def empleados():
+    conexion =  obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
+    cursor.execute("SELECT nombre FROM empleados")  # Ajusta según tu tabla
+    
+    empleados = cursor.fetchall()  # Lista de dicts con las categorías
+    
+    cursor.close()
+    conexion.close()
+    return jsonify(empleados)
+
+#################  agrega productos  ###################
+
+@app.route("/api/Agregar") 
 def agregarProductos():
     try:
         conexion =  obtener_conexion()
@@ -74,21 +88,9 @@ def agregarProductos():
     except: 
         None
 
-@app.route("/empleados") #Para el boton de navegacón
-def empleados():
-    conexion =  obtener_conexion()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
-    cursor.execute("SELECT nombre FROM empleados")  # Ajusta según tu tabla
-    
-    empleados = cursor.fetchall()  # Lista de dicts con las categorías
-    
-    cursor.close()
-    conexion.close()
-    return jsonify(empleados)
+################# agregar empleados  ########################
 
-@app.route("/api/empleados", methods=["POST"]) #ruta para agregar empleados
+@app.route("/api/empleados", methods=["POST"]) 
 def agregar_empleado():
     datos = request.get_json() #obtiene los datos en formato json
     nombre = datos.get("nombre") #obtiene el nombre del empleado
@@ -103,7 +105,7 @@ def agregar_empleado():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     cursor = conexion.cursor()
     try:
-        cursor.execute( #inserta la direccion del empleado
+        cursor.execute( #inserta datos para la tabla empleados
             "INSERT INTO empleados (nombre, apellido, email, id_tienda, puesto_trabajo, telefono) VALUES (%s, %s, %s, %s, %s, %s)",
             (nombre, apellido,email, id_tienda, puesto_trabajo, telefono)
         )
@@ -115,7 +117,30 @@ def agregar_empleado():
         cursor.close()
         conexion.close()
 
-@app.route("/api/productos", methods=["POST"]) #ruta para agregar empleados
+################## borra empleados  #######################
+
+@app.route("/api/empleados/borrar", methods=["DELETE"])   
+def borrar_empleado():#obtiene el id del empleado a borrar
+    data = request.get_json()
+    id_empleado = data.get("id_empleado")
+
+    conexion = obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute("DELETE FROM empleados WHERE id_empleado = %s", (id_empleado,)) #borra el empleado con el id especificado
+        conexion.commit()
+        return jsonify({"mensaje": "Empleado eliminado correctamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+################  modifica productos  ###################
+
+@app.route("/api/productos", methods=["POST"]) 
 def cambiar_producto():
     name = request.json.get("name")
     id_categoria = request.json.get("id_categoria")
@@ -129,11 +154,60 @@ def cambiar_producto():
     cursor = conexion.cursor()
     try:
         cursor.execute( #inserta nuevos datos para la tabla productos
-            """UPDATE productos SET name = %s , id_categoria = %s, precio = %s WHERE id_producto = %s""",
+            """UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
             (name, id_categoria,precio, id_producto)
         )
         conexion.commit()
         return jsonify({"mensaje": "pudiste modificar las columnas de la tabla productos"}), 201 #201 significa que se creó un recurso
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+#################  inserta una nueva tienda   ########################
+
+@app.route("/api/tiendas", methods=["POST"]) 
+def cambiar_venta():
+     nombre = request.json.get("nombre") #obtiene las columnas de la tabla tiendas
+     ubicacion = request.json.get("ubicacion")
+
+     obtener_conexion
+     conexion = obtener_conexion()
+     if conexion is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+     cursor = conexion.cursor() 
+     try: #atrapa errores
+        cursor.execute( #inserta nuevos datos para la tabla tiendas
+            "INSERT INTO tiendas (nombre, ubicacion) VALUES (%s, %s)",
+            (nombre, ubicacion)
+        )
+        conexion.commit() 
+        return jsonify({"mensaje": "pudiste agregar el nuevo dato de la tabla tiendas"}), 201 #201 significa que se creó un recurso
+     except Exception as e: #si hay un error
+        return jsonify({"error": str(e)}), 400
+     finally: 
+        cursor.close()
+        conexion.close()
+
+#################  actualiza el costo total en tickets  ########################
+
+@app.route("/api/tickets", methods=["PUT"])
+def actualizar_costo_total():
+    costo_total = request.json.get("costo_total")
+    id_ticket = request.json.get("id_ticket")
+
+    conexion = obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(
+            "UPDATE tickets SET costo_total = %s WHERE id_ticket = %s",
+            (costo_total, id_ticket)
+        )
+        conexion.commit()
+        return jsonify({"mensaje": "Costo total actualizado"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     finally:
