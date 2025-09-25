@@ -10,7 +10,8 @@ from flask_cors import CORS
 
 load_dotenv() #Libreria que lee el archivo .env
 
-app = Flask(__name__)
+app = Flask(__name__) #"__name__" variable especial que se reemplaza por el nombre del archivo
+
 CORS(app) #Permite que el frontend (localhost:3000) hable con el backend (localhost:5000)
 
 #-----------------------------------------------------------
@@ -35,7 +36,8 @@ def obtener_conexion():
 # Ruta para obtener datos desde la base de datos
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) #debug -> Para el reinicio de nuestro automático cuando se detecten cambios en el código
+    # Mientras estamos en modo desarrollo usamos el debug
 
 @app.route("/api/carrito/<int:carrito_id>/agregar", methods = ['POST'])
 def carrito(carritoId):
@@ -52,14 +54,6 @@ def carrito(carritoId):
         "cantidad": cantidad
     })
     
-
-
-#@app.route("/api/register")
-#def registrarse():
-
-
-#@app.route("/api/login", methods=('GET', 'POST'))
-#def login():
     
 @app.route("/api/Agregar")
 def agregarProductos():
