@@ -1,3 +1,5 @@
+
+#Instalacion y entorno
 python -m venv .venv
 source .venv/bin/activate
 pip install flask
