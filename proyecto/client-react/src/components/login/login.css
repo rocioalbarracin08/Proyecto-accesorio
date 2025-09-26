@@ -1,0 +1,42 @@
+section{
+    background-color: rgba(250, 134, 134, 0.61);
+
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1rem;
+    height: 70%;
+    width: 40%;
+}
+.formulario{
+    display: flex;
+    flex-direction: column;
+    
+    text-align: center;
+    gap: 1rem;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+button{
+    background-color: rgb(197, 119, 119);
+    border: none;
+    border-radius: 50%;
+}
+input{
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    border: none;
+    padding: 0.5rem;
+    text-align: center;
+    width: 95%;
+    height: 50%;
+}
+button:hover {
+    background-color: rgb(172, 99, 99);
+    cursor: pointer;
+}
