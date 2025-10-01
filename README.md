@@ -4,3 +4,5 @@ INSTALACION Y CORRER EN EL ENTORNO VIRTUAL
 flak run --debug
 
 http://10.9.120.5:8080/ -> Para ver nuestra db desde un servidor externo
+
+npm install react-router-dom

@@ -2,7 +2,7 @@ footer{
     background-color: rosybrown;
     display: flex;
     flex-direction: column;
-    height: 40%;
+    height: 10%;
     justify-content: center;
     gap: 1rem;  
 }

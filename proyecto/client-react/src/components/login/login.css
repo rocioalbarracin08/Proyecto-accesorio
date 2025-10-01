@@ -6,12 +6,14 @@ section{
     flex-direction: column;
     align-items: center;
 
-    height: 80½;
+    height: 80%;
+    width: 50%;
     gap: 1rem;
     
 }
 .formulario{
     display: flex;
+    justify-content: center;
     flex-direction: column;
     
     text-align: center;
@@ -24,7 +26,8 @@ a{
 button{
     background-color: rgb(197, 119, 119);
     border: none;
-    border-radius: 50%;
+    border-radius: 10%;
+    color: aliceblue;
 }
 input{
     background-color: white;

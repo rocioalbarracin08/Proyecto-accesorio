@@ -1,34 +1,32 @@
 import './nav.css';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function BarraNavegacion() {
+  const [busqueda, setBusqueda] = useState('');
   return (
-    <div className="background-image">
-      <header className="header">
-        <div className="logo">
-          <a href="#">MiLogo</a>
-        </div>
-        <nav className="navigation">
-          <ul>
+      <header className="encabezado">
+
+        <a href="#" className="miLogo">MiLogo</a>
+
+        <ul className="listaLinks">
             <li><a href="#home">Inicio</a></li>
-            <li><a href="#about">Acerca de</a></li>
-            <li><a href="#services">Servicios</a></li>
-            <li><a href="#contact">Contacto</a></li>
-          </ul>
-        </nav>
-        <div className="cta">
-          <a href="#cta" className="btn">¡Contáctanos!</a>
+            <li><a href="#tienda">Tienda</a></li>
+            <li><a href="#services">Nosotros</a></li>
+        </ul>
+        <input 
+          className='buscador'
+          type="text"
+          placeholder='Buscar producto'
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          />
+        <div className='iconosUser'>
+          <Link to="/login" className='user'>
+            <img src="/logos/vectorUsuario.png" alt="ìconoUsuario"/>  
+          </Link>
+          <a href="#" className='carrito'><img src="/logos/carrito.png" alt="iconoCarrito"/></a>
         </div>
       </header>
-
-      <main>
-        <h1></h1>
-        <input type="text" placeholder="Usuario" />
-        <input type="password" placeholder="Contraseña" />
-        <button>Login</button>
-        <a className="link" href="#">¿Perdiste tu contraseña?</a><br />
-        <a href="#">¿No tienes cuenta? Regístrate</a><br />
-        <a href="#">Volver</a>
-      </main>
-    </div>
   );
 }

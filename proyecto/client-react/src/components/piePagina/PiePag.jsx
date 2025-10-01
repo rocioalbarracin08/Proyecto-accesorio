@@ -10,12 +10,11 @@ export function PiePagina(){
                 <p>accesorios@gmail.com</p>
                 <p>1132425262</p>
             </div>
-
             <div className="redes">
                 <h4>Redes sociales</h4>
                 <ul className="iconos">
                     <li>
-                        <a href="instangram.com"><img src="/logos/igIcono.jpeg" alt="" /></a>
+                        <a href="instagram.com"><img src="/logos/igIcono.jpeg" alt="" /></a>
                     </li>
                     <li>
                         <a href="tiktok.com"><img src="/logos/tiktokIcono.png" alt="" /></a>

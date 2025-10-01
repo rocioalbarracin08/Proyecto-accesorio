@@ -1,7 +1,7 @@
 import useAuth from '../../hooks/useAuth';
 import './login.css'
 
-export function Login({setUser}){
+export function Login(){
     const {usuario, setUsuario, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
 
     const handleClick = (event)=>{
