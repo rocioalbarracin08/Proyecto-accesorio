@@ -1,0 +1,49 @@
+.agregar-carrito {
+  margin-top: 10px;
+  padding: 10px 15px; 
+  background-color: rosybrown; 
+  color: white; 
+  border: none;
+  border-radius: 20px; 
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 1rem; 
+}
+
+.agregar-carrito:hover { 
+  background-color: rosybrown; 
+}
+
+.producto-grid {
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /*Ajusta el tamaño mínimo de las columnas*/
+  gap: 20px; /* Espacio entre los elementos */
+  padding: 20px; /* Espacio alrededor del grid */
+  
+}
+
+.producto-item {
+  background-color: #ffffff; 
+  border-radius: 8px; 
+  text-align: center; /* Centra el texto */
+  transition: transform 0.3s ease; /* Transición suave para la animación */
+}
+
+.producto-item img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: 50%; /* Ajusta la altura según sea necesario */
+  border-radius: 4px; /* Bordes redondeados para la imagen */
+}
+
+.producto-item h3 {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: black;
+}
+
+.producto-precio {
+  font-size: 1rem; 
+  color: #333; 
+  margin-top: 10px;
+  color: #000000; /* Color rojo para llamar la atención al precio */
+}
+

@@ -3,11 +3,13 @@ from flask import Flask, jsonify, request
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv 
+from flask_cors import CORS
 import os
 
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__)
+CORS(app)  # Esto habilita CORS para todas las rutas y orígenes
 
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL
@@ -54,7 +56,25 @@ def carrito(carritoId):
 
 #@app.route("/api/login", methods=('GET', 'POST'))
 #def login():
+
+
+@app.route("/api/accesorio")
+def accesorio():
+    conexion =  obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     
+    cursor = conexion.cursor(dictonary=True)
+    cursor.execute("SELECT p.id, p.name, p.precio c.nombre from productos p JOIN categoria c ON p.id_categoria = c.id_category")
+
+    accesorio = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return jsonify(accesorio),200
+
+
 @app.route("/empleados") #Para probar con una consulta
 def empleados():
     conexion =  obtener_conexion()
