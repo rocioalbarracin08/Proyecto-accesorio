@@ -4,10 +4,14 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  min-height: 100vh;
+}
+.contenDest{
+  display: flex;
+  justify-content: center;
 }
 
 #root {
-  padding: 2rem;
   text-align: center;
 }
 

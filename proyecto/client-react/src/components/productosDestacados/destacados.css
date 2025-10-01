@@ -1,19 +1,19 @@
-section{
+.seccion-img{
     display: flex;
-    width: 600px;
-    height: 430px;
+    justify-content: center;
+    width: 95%;
   }
-section img{
+.seccion-img img{
     /*Estilo a las imagenes*/
-    width: 0px;
-    flex-grow: 1;
+    width: 100px;
+    flex-grow: 2;
     object-fit: cover; /*Cubre todo el espacio*/
     opacity: .8;/*control de opacidad*/
     transition: .5s ease; /*transicion para la animacion*/
 }
-section img:hover{
+.seccion-img img:hover{
     cursor: crosshair; /*Cambio de cursor por una cruz*/
-    width: 300px;
+    width: 250px;
     opacity: 1; /*Devolvemos su opacidad*/
     filter: contrast(120%); /*Subimos su contraste*/
 }

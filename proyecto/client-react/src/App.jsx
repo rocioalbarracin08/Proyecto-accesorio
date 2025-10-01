@@ -1,17 +1,14 @@
-import { useState } from 'react';
-import './App.css';
-import { BarraNavegacion } from './components/navegacion/Navegacion';
-import { PiePagina } from './components/piePagina/PiePag';
-import { Login } from './components/Login/Login';
+import "./App.css"
+import { Destacados } from './components/productosDestacados/Destacado';
 
 
 function App() {
   
   return (
     <>
-      <div className='recuadro'> 
-        <Login/>
-      </div>
+      <div className='contenDest'> 
+        <Destacados/>
+      </div>      
       
     </>
   );
@@ -19,5 +16,8 @@ function App() {
 /*
 <BarraNavegacion />
 <PiePagina/>
+<div className='recuadro'> 
+        <Login/>
+      </div>
 */
 export default App;

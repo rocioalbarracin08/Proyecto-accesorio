@@ -43,7 +43,7 @@ export function Login({setUser}){
             <button onClick={handleClick}>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
-            <a href="#" className="enlaces">¿No tenés cuenta? Registrate</a>
+            <a href="#" className="ultLink">¿No tenés cuenta? Registrate</a>
 
         </section> 
         
