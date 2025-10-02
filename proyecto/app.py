@@ -9,7 +9,7 @@ import os
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__)
-CORS(app)  # Esto habilita CORS para todas las rutas y orígenes
+CORS(app, origins=["http://localhost:5173"])  # Esto habilita CORS para todas las rutas y orígenes
 
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL
@@ -49,13 +49,6 @@ def carrito(carritoId):
         "producto_id": producto_id,
         "cantidad": cantidad
     })
-    
-#@app.route("/api/register")
-#def registrarse():
-
-
-#@app.route("/api/login", methods=('GET', 'POST'))
-#def login():
 
 
 @app.route("/api/accesorio")
@@ -64,8 +57,8 @@ def accesorio():
     if conexion is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     
-    cursor = conexion.cursor(dictonary=True)
-    cursor.execute("SELECT p.id, p.name, p.precio c.nombre from productos p JOIN categoria c ON p.id_categoria = c.id_category")
+    cursor = conexion.cursor(dictionary=True)
+    cursor.execute("SELECT p.id_producto, p.name, p.precio, c.categoria from productos p JOIN categoria c ON p.id_categoria = c.id_category")
 
     accesorio = cursor.fetchall()
 
@@ -98,7 +91,7 @@ def agregarProductos():
         if conexion is None:
             return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
-        cursor = conexion.cursor(dictonary=True)
+        cursor = conexion.cursor(dictionary=True)
         cursor.execute("INSERT INTO productos (name, id_categoria, precio) VALUES (?, ?, ?)")
 
         cursor.close()
