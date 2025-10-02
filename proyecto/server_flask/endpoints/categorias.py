@@ -9,7 +9,7 @@ from flask import Blueprint, url_for, request, jsonify,g
 bp = Blueprint('categoria', __name__, url_prefix='/categoria')
 
 ########################### M O S T R A R ###########################
-@bp.route("/mostrar") #Para el boton de navegacón
+@bp.route("/") #Para el boton de navegacón
 def categorias():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -23,7 +23,7 @@ def categorias():
 
 
 ########################### B O R R A R ###########################
-@bp.route("/borrar/<int:id_category>", methods=['DELETE'])
+@bp.route("/<int:id_category>", methods=['DELETE'])
 def borrarRegistro(id_category):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -40,7 +40,7 @@ def borrarRegistro(id_category):
 
 
 ########################### C R E A R ###########################
-@bp.route("/crear/categoria", methods=('POST'))
+@bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
 #@login_required  -> se asegura de que la función no se ejecute a menos que el usuario esté autenticado
 def crearCategoria():
     if g.db_cursor is None:
@@ -61,7 +61,7 @@ def crearCategoria():
 
 
 ########################### M O D I F I C A R ###########################
-@bp.route("/modificar/categoria", methods=('GET', 'POST'))
+@bp.route("/categoria", methods=['UPDATE']) #Distinto a PATH()
 def modificarCategoria():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 400 #Es error 500 o 400?

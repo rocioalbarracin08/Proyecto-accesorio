@@ -2,7 +2,7 @@ from flask import Blueprint, url_for, request, session, jsonify,g
 
 bp = Blueprint('roClientes', __name__, url_prefix='/roClientes')
 
-@bp.route('/clientes') # GET por defecto
+@bp.route('/') # GET por defecto
 def obtener_clientes():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -16,7 +16,7 @@ def obtener_clientes():
         return jsonify({"error": "Hubo un problema al consultar las categorías"}), 500 #Response con error
 
 
-@bp.route("/cliente/borrar", methods=('POST', 'DELETE'))
+@bp.route("/cliente/borrar", methods=('DELETE'))
 def borrar():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
