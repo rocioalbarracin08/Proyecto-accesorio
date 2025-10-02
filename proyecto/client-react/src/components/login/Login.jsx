@@ -1,5 +1,6 @@
 import useAuth from '../../hooks/useAuth';
 import './login.css'
+import { Link } from 'react-router-dom';
 
 export function Login(){
     const {usuario, setUsuario, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
@@ -43,7 +44,7 @@ export function Login(){
             <button onClick={handleClick}>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
-            <a href="#" className="ultLink">¿No tenés cuenta? Registrate</a>
+            <Link to="/registro" className="ultLink">¿No tenés cuenta? Registrate</Link>
 
         </section> 
         

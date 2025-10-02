@@ -4,17 +4,22 @@ import { BarraNavegacion } from "./components/navegacion/Navegacion";
 import { PiePagina } from "./components/piePagina/PiePag";
 import { Destacados } from './components/productosDestacados/Destacado';
 import {  Routes, Route } from 'react-router-dom';
+import { Registrarse } from "./components/registro/Registrarse";
 
 function App() {
   
   return (
     <>
+    <body>
       <BarraNavegacion/>
 
         <Routes>
           <Route path="/login" element={<Login/>} />
+          <Route path="/registro" element={<Registrarse/>} />
         </Routes>
+
       <PiePagina/>
+    </body>
     </>
   );
 }

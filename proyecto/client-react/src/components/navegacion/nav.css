@@ -1,18 +1,10 @@
 .encabezado{
   background-color: rosybrown;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
 
   width: 100%;
-}
-.listaLinks li{
-  list-style: none;
-  margin: 0%;
-  padding: 4%;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-evenly;
 }
 .user img{
   width: 45px;
@@ -21,16 +13,19 @@
   width: 55px;
   padding-left: 40px;
 }
-
-.iconosUser{
-  gap: 3rem;
-  width: 20%;
+.direccionamiento{
+  gap: 1rem;
 }
-
-.listaLinks a:hover{
+.direccionamiento:hover{
   color: rgb(238, 204, 204);
-  width:150%;
+  height: 105%;
 }
+
+.miLogo{
+  width: 60px;
+  border-radius: 10px;
+}
+
 .buscador{
   background-color: rgb(250, 219, 219);
   border: none;
@@ -38,5 +33,4 @@
   width: 15%;
   height: 25px;
   text-align: center;
-  margin-right: 0%;
 }

@@ -7,13 +7,14 @@ export function BarraNavegacion() {
   return (
       <header className="encabezado">
 
-        <a href="#" className="miLogo">MiLogo</a>
+        <a href="#" >
+          <img src="/logos/fondo.jpg" className="miLogo" alt="ACA VA EL LOGO" />
+          </a>
 
-        <ul className="listaLinks">
-            <li><a href="#home">Inicio</a></li>
-            <li><a href="#tienda">Tienda</a></li>
-            <li><a href="#services">Nosotros</a></li>
-        </ul>
+        <a href="#home" className='direccionamiento'>Inicio</a>
+        <a href="#tienda" className='direccionamiento'>Tienda</a>
+        <a href="#services" className='direccionamiento'>Nosotros</a>
+        
         <input 
           className='buscador'
           type="text"
