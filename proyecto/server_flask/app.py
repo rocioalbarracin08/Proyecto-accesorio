@@ -55,11 +55,18 @@ def create_app():
 
     # Importa el Blueprint para la categoría
     from proyecto.server_flask.endpoints.categorias import bp as categoria_bp
+    from proyecto.server_flask.endpoints.clientes import bp as clientes_bp
+    from proyecto.server_flask.endpoints.productos import bp as productos_bp
+    from proyecto.server_flask.endpoints.registro_productos import bp as registroProductos_bp
+
     print("Blueprint categoría importado correctamente")
 
 
     # Registra el Blueprint
     app.register_blueprint(categoria_bp)
+    app.register_blueprint(clientes_bp)
+    app.register_blueprint(productos_bp)
+    app.register_blueprint(registroProductos_bp)
 
     return app
 

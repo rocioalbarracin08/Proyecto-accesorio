@@ -17,6 +17,8 @@ export function Login({setUser}){
     const handleInputUsuario = (event) => {
         setUsuario(event.target.value); 
     };
+
+    //FALTA HACER LA CONEXION CON LA API
     
     return(
         <>

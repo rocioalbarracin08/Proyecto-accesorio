@@ -7,27 +7,22 @@ bp = Blueprint('roProductos', __name__, url_prefix='/roProductos')
 
 #-----------------------------------------------------------
 
-#AGREGAR PRODUCTOS -> INSERT
-@bp.route("/api/productos")
+@bp.route("/mostrar")
 def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        if request.method == 'POST':
-            g.db_cursor.execute("SELECT * FROM clientes ")
-
-            categorias = g.db_cursor.fetchall()
-
-            g.db.commit()  # conexión en 'g' para confirmar
-            
-            return jsonify(categorias)
+        g.db_cursor.execute("SELECT p.id, p.name, p.precio, c.categoria FROM productos p JOIN categorias c ON p.id_categoria = c.id_category ")
+        categorias = g.db_cursor.fetchall()
+        g.db.commit()  # conexión en 'g' para confirmar
+        return jsonify(categorias)
 
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
         print(f"Error al eliminar el registro: {err}")
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
 
-@bp.route("/api/xCategoria/<int:id_categoria>", methods=('POST', 'DELETE'))
+@bp.route("/productPorCateg/<int:id_categoria>", methods=('POST'))
 def productos(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -38,7 +33,7 @@ def productos(id_categoria):
 
             productos = g.db_cursor.fetchall()
 
-            g.db.close()  # conexión en 'g' para confirmar
+            g.db.close() 
             
             return jsonify(productos)   
          

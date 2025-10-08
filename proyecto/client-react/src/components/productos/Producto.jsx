@@ -1,41 +1,36 @@
 import { useEffect, useState } from 'react'
 import './producto.css'
 
-export function ProductoInfo() {
+export function Producto() {
     const [accesorios, setAccesorios] = useState([])
     const [carrito, setCarrito] = useState([]);
 
-    //Cuando el componente inicia "se monta"
+    //Cada vez que el componente se renderiza
     useEffect(() => {
-        fetch("http://localhost:3000/api/accesorios") //Petición, por defecto GET
-        .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`); //Throw es para lanzar un error
-            return res.json(); //Supuestamente este código lo hace mas eficiente
-        })
-        .then(data => setAccesorios(data))
-        .catch(error => console.error("Fetch error:", error));
+        fetch("http://localhost:3000/roProductos//mostrar")
+        .then((res) => res.json()) //El pedido en JSON
+        .then( data => setAccesorios(data)) 
+        .catch( err => console.error("Fetch error:", err));
     }, [])
 
     const agregarAlCarrito = (producto) => {
 
-        setCarrito((valorAntCarrito) => { //
+        setCarrito((carritoAnterior) => { 
             //La variable que se crea es prevCarrito.find para buscar coincidencia si ya exite un articulo del identico al seleccionado para solo agregarle cantidad
-            const existe = valorAntCarrito.find((item) => item.id === producto.id);
+            const existe = carritoAnterior.find((item) => item.id === producto.id);
     
             if (existe) { // si ya está en el carrito
-                return valorAntCarrito.map((item) =>
-                    item.id === producto.id 
+                return carritoAnterior.map((item) =>
+                    item.id === producto.id  //Si hay coincidencia BUSCANDO en la lista del carrito
                     ? { ...item, cantidad: item.cantidad + 1 } //aumento la cantidad
-                    : item /*SINO dejo el item como estaba*/
+                    : item //SINO dejo el item como estaba
                 );
             }
-            else {
-                // si no está, lo agrego con cantidad 1
-                return [...valorAntCarrito, { ...producto, cantidad: 1 }]; /*¿No conviene esto en vez de la tabla intermedia de la db?*/
+            else { // si no está, lo agrego con cantidad 1
+                return [...carritoAnterior, { ...producto, cantidad: 1 }]; 
             }
         });
     };
-    
 
   return (
     <div>
@@ -48,10 +43,10 @@ export function ProductoInfo() {
                     <p>{producto.categoria}</p>
                     <h3>$ {producto.precio}</h3>
 
-                    <button onClick={() => agregarAlCarrito(producto.id)}><img src="/logos/carrito.png" alt="Añadir al carrito" /></button>
+                    <button onClick={() => agregarAlCarrito(producto)}><img src="/logos/carrito.png" alt="Añadir al carrito" /></button>
 
                     <ul>
-                        {carrito.map((item) => ( /*El key es obligatorio en listas, para identificar cada producto -> ¿A que elemento de la lista correspone a cada dato?*/
+                        {carrito.map((item) => ( //key es un identificador para cada producto
 
                             <li key={item.id}> 
                                 {item.name} - ${item.precio} x {item.cantidad}

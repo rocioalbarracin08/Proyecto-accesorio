@@ -16,20 +16,18 @@ def obtener_clientes():
         return jsonify({"error": "Hubo un problema al consultar las categorías"}), 500 #Response con error
 
 
-@bp.route("/cliente/borrar", methods=('POST', 'DELETE'))
+@bp.route("/cliente/borrar", methods=('DELETE'))
 def borrar():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Aseguramos que la solicitud sea POST
-        if request.method == 'POST':
-            datos = request.get_json()
-            id = datos.get("id_cliente")
-            
-            g.db_cursor.execute("DELETE FROM clientes WHERE id_cliente =%s", (id,))
-            g.db.commit()  # conexión en 'g' para confirmar
-            print(f"Registro con ID {id} eliminado exitosamente.")
-            return jsonify({"mensaje": "Registro eliminado"}), 200
+        datos = request.get_json()
+        id = datos.get("id_cliente")
+        
+        g.db_cursor.execute("DELETE FROM clientes WHERE id_cliente =%s", (id,))
+        g.db.commit()  # conexión en 'g' para confirmar
+        print(f"Registro con ID {id} eliminado exitosamente.")
+        return jsonify({"mensaje": "Registro eliminado"}), 200
 
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
