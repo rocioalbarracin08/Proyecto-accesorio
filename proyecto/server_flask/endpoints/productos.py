@@ -1,7 +1,7 @@
 # obtener, agregar, modificar y eliminar datos
 # SELECT
 
-from flask import Blueprint, url_for, request, session, jsonify,g
+from flask import Blueprint, request, jsonify,g
 
 bp = Blueprint('roProductos', __name__, url_prefix='/roProductos')
 
@@ -13,14 +13,13 @@ def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        if request.method == 'POST':
-            g.db_cursor.execute("SELECT * FROM clientes ")
+        g.db_cursor.execute("SELECT * FROM clientes ")
 
-            categorias = g.db_cursor.fetchall()
+        categorias = g.db_cursor.fetchall()
 
-            g.db.commit()  # conexión en 'g' para confirmar
-            
-            return jsonify(categorias)
+        g.db.commit()  # conexión en 'g' para confirmar
+        
+        return jsonify(categorias)
 
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()

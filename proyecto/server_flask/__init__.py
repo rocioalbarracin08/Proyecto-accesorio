@@ -9,6 +9,7 @@ import os
 #from proyecto.server_flask.endpoints.categorias import bp as categoria_bp
 
 from server_flask.endpoints.categorias import bp as categoria_bp
+from server_flask.endpoints.login-register import bp as usuarios_bp
 
 #print("Blueprint categoría importado correctamente")
 from flask_cors import CORS
@@ -60,50 +61,8 @@ def create_app(test_config = None):
 
     # Registra el Blueprint
     app.register_blueprint(categoria_bp)
+    app.register_blueprint(usuarios_bp)
 
     return app
 
 app = create_app() 
-
-
-
-'''
-#EVE
-@app.route("/empleados") #Para el boton de navegacón
-def empleados():
-    conexion =  conexion_db()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
-    cursor.execute("SELECT nombre FROM empleados")  # Ajusta según tu tabla
-    
-    empleados = cursor.fetchall()  # Lista de dicts con las categorías
-    
-    cursor.close()
-    conexion.close()
-    return jsonify(empleados)
-
-@app.route("/api/empleados", methods=["POST"]) #ruta para agregar empleados
-def agregar_empleado():
-    datos = request.get_json() #obtiene los datos en formato json
-    direccion = datos.get("direccion") #obtiene la direccion del empleado
-
-    conexion = conexion_db()
-    if conexion is None: 
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor()
-    try:
-        cursor.execute( #inserta la direccion del empleado
-            "INSERT INTO empleados (direccion) VALUES (%s)",
-            (direccion,)
-        )
-        conexion.commit()
-        return jsonify({"mensaje": "direccion de empleado agregado"}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        cursor.close()
-        conexion.close()
-'''
-
-

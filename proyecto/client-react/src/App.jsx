@@ -5,6 +5,7 @@ import { PiePagina } from "./components/piePagina/PiePag";
 import { Destacados } from './components/productosDestacados/Destacado';
 import {  Routes, Route } from 'react-router-dom';
 import { Registrarse } from "./components/registro/Registrarse";
+import { ProductoGrid } from "./components/producto/Producto";
 
 function App() {
   
@@ -17,21 +18,13 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/registro" element={<Registrarse/>} />
         </Routes>
+        <Destacados/>
+        <ProductoGrid/>
 
       <PiePagina/>
     </body>
     </>
   );
 }
-/*
-<div className='contenDest'> 
-        <Destacados/>
-      </div>     
-      <PiePagina/> 
-<BarraNavegacion />
-<PiePagina/>
-<div className='recuadro'> 
-        <Login/>
-      </div>
-*/
+
 export default App;

@@ -1,14 +1,17 @@
 .seccion-img{
     display: flex;
     justify-content: center;
+    flex-direction: row;
+    align-items: center;
     width: 100%;
+    height: 350px;
+    gap: 0rem;
   }
 .seccion-img img{
     /*Estilo a las imagenes*/
     width: 16%;
     height: 80%;
     flex-grow: 2;
-    gap: 1rem;
     object-fit: cover; /*Cubre todo el espacio*/
     opacity: .8;/*control de opacidad*/
     transition: .5s ease; /*transicion para la animacion*/

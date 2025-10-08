@@ -3,34 +3,45 @@ import './register.css'
 import { Link } from 'react-router-dom';
 
 export function Registrarse(){
-    const {usuario, setUsuario,repetirContraseña, setRepetirContraseña, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
+    const {usuarioName, setUsuarioName, repetirContraseña, setRepetirContraseña, contraseña, setContraseña, error, setError, usuarioApellido, setUsuarioApellido} = useAuth()//La lógica del programa va en el hook
+
+    const [genero, setGenero] = useState('');
 
     const handleClick = (event)=>{
         event.preventDefault()
 
         //Hacemos la comparación
-        if (usuario === "" || contraseña === ""){
+        if (usuario === "" || contraseña === "" || repetirContraseña === ""){
             return setError(true)
         }
         setError(false)
     }
     //Segunda forma de hace el evento al hacer click  
     const handleInputUsuario = (event) => {
-        setUsuario(event.target.value); 
+        setUsuarioName(event.target.value); 
     };
+    const handleInputUsuarioApellido = (e) =>{
+        setUsuarioApellido(e.target.value)
+    }
+
     
     return(
         <>
-        
         <section >
             <h1>Registrarse</h1>
-            {error ? <p>Por favor, complete todos los campos</p> : ""}
+            {error ? <h7>Por favor, complete todos los campos</h7> : ""}
             <form className='formulario'>
                 <input 
                 type="text" 
-                placeholder='Nombre y apellido' 
+                placeholder='Nombre' 
                 onChange={handleInputUsuario}
-                value={usuario}
+                value={usuarioName}
+                />
+                <input 
+                type="text" 
+                placeholder='Apellido' 
+                onChange={handleInputUsuarioApellido}
+                value={usuarioApellido}
                 />
                 <input 
                 type="password" 
@@ -41,9 +52,16 @@ export function Registrarse(){
                 <input 
                 type="password" 
                 placeholder='Repita la contraseña' 
-                onChange={event => setContraseña(event.target.value)}
+                onChange={event => setRepetirContraseña(event.target.value)}
                 value={repetirContraseña}
                 />
+                
+                <h5 className='generoH'>Indique su género</h5>
+                <div className='genero'>
+                    <button className='M'onClick={() => setGenero('M')}>Femenino</button>
+                    <button className='F'onClick={() => setGenero('F')}>Masculino</button>
+                </div>
+                
             </form>
 
             <button onClick={handleClick}>Registrarse</button> 
