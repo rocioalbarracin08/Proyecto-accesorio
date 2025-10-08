@@ -9,7 +9,7 @@ import os
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])  # Esto habilita CORS para todas las rutas y orígenes
+CORS(app)  # Esto habilita CORS para todas las rutas y orígenes
 
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL
@@ -17,7 +17,7 @@ def obtener_conexion():
     try: #Código a probar
         conexion = mysql.connector.connect(
         host = os.getenv("DB_HOST"), 
-        port = 3306,    
+        port = "3306",    
         user = os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
         password = os.getenv("DB_PASSWORD"),  
         database = os.getenv("DB_NAME")           # El nombre de la base de datos que usas en phpMyAdmin
@@ -229,5 +229,5 @@ def actualizar_costo_total():
 
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+app.run(debug=True)

@@ -1,0 +1,46 @@
+footer{
+    background-color: rosybrown;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;  
+    text-align: center;
+    height: 230px;
+}
+.iconos{
+    padding-top: 15px; /*Espacio entre las redes y su frase*/
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 1rem;
+}
+.bloqueDividido{
+    display: flex;
+    
+    justify-content:space-around; /*Para que tengan espacio entre ellos*/
+    gap: 1rem; /*Distanciamiento*/ 
+}
+.iconos img{ /*Aspecto de la imagen de los íconos*/
+    width: 50px;
+    aspect-ratio: 1/1; /*Mantener proporción cuadrada, lo pensamos como X e Y*/
+    object-fit: cover;
+    border-radius: 100%;
+}
+.compañia, .contacto{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+a:hover {
+    color: black;
+    font-size: 102%;
+}
+.derechos{
+    margin: 0%;
+}
+

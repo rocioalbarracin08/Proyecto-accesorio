@@ -1,0 +1,36 @@
+.encabezado{
+  background-color: rosybrown;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  width: 100%;
+}
+.user img{
+  width: 45px;
+}
+.carrito img{
+  width: 55px;
+  padding-left: 40px;
+}
+.direccionamiento{
+  gap: 1rem;
+}
+.direccionamiento:hover{
+  color: rgb(238, 204, 204);
+  height: 105%;
+}
+
+.miLogo{
+  width: 60px;
+  border-radius: 10px;
+}
+
+.buscador{
+  background-color: rgb(250, 219, 219);
+  border: none;
+  color: black;
+  width: 15%;
+  height: 25px;
+  text-align: center;
+}

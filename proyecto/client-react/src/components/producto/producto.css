@@ -1,0 +1,117 @@
+
+.agregar-carrito {
+  margin-top: 10px;
+  padding: 10px 15px; 
+  background-color: rosybrown; 
+  color: white; 
+  border: none;
+  border-radius: 20px; 
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 1rem; 
+}
+
+.agregar-carrito:hover { 
+  background-color: rosybrown; 
+}
+
+.producto-grid {
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /*Ajusta el tamaño mínimo de las columnas*/
+  gap: 20px; /* Espacio entre los elementos */
+  padding: 20px; /* Espacio alrededor del grid */
+  
+}
+
+.producto-item {
+  background-color: #fff7f7;  
+  border-radius: 8px; 
+  text-align: center; /* Centra el texto */
+  transition: transform 0.3s ease; /* Transición suave para la animación */
+}
+
+.producto-item img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: 50%; /* Ajusta la altura según sea necesario */
+  border-radius: 4px; /* Bordes redondeados para la imagen */
+}
+
+.producto-item h3 {
+  font-size: 1rem; 
+  margin-top: 10px;
+  color: black;
+}
+
+.producto-precio {
+  font-size: 1rem; 
+  color: #333; 
+  margin-top: 10px;
+  color: #000000; /* Color rojo para llamar la atención al precio */
+}
+
+/* Carrito lateral derecho */
+.carrito-lateral {
+  width: 320px;
+  background: #fff7f7;
+  border-left: 2px solid #e0e0e0;
+  padding: 24px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.carrito-lateral h2 {
+  text-align: center;
+}
+.carrito-lateral ul {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  margin: 0;
+}
+.carrito-lateral li {
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+  display: block;
+}
+.carrito-lateral .nombre-producto {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.carrito-lateral .precio-producto {
+  display: block;
+  color: #c77d7d;
+  margin-bottom: 8px;
+}
+.carrito-lateral .cantidad-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.carrito-lateral .cantidad-controles button {
+  padding: 2px 8px;
+  border-radius: 50%;
+  border: 1px solid #c77d7d;
+  background: #fff;
+  color: #c77d7d;
+  font-weight: bold;
+  cursor: pointer;
+}
+.carrito-lateral .cantidad-controles span {
+  min-width: 24px;
+  text-align: center;
+}
+.carrito-lateral .total-carrito {
+  margin-top: auto;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-top: 2px solid #e0e0e0;
+  padding-top: 16px;
+}
+
