@@ -1,25 +1,41 @@
 import useAuth from '../../hooks/useAuth';
 import './login.css'
+import { Link } from 'react-router-dom';
 
-export function Login({setUser}){
-    const {usuario, setUsuario, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
+export function Login(){
+    const {email, setEmail, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
 
-    const handleClick = (event)=>{
+    const handleClick = async (event)=>{
         event.preventDefault()
 
         //Hacemos la comparación
-        if (usuario === "" || contraseña === ""){
+        if (email === "" || contraseña === ""){
             return setError(true)
         }
         setError(false)
-    }
-    //Segunda forma de hace el evento al hacer click  
-    const handleInputUsuario = (event) => {
-        setUsuario(event.target.value); 
+
+        // Enviar datos al backend
+        try {
+            const response = await fetch("http://localhost:5000/usuarios/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email,
+                password: contraseña,
+            }),
+            });
+            if (response.ok) {
+            navigate("/login");
+            //navigate(-1)
+            } else {
+            setError(true); // Error en el registro
+            }
+        } 
+        catch (err) {
+            setError(true);
+        }
     };
 
-    //FALTA HACER LA CONEXION CON LA API
-    
     return(
         <>
         
@@ -29,9 +45,9 @@ export function Login({setUser}){
             <form className='formulario'>
                 <input 
                 type="text" 
-                placeholder='Usuario' 
-                onChange={handleInputUsuario}
-                value={usuario}
+                placeholder='Email' 
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 />
 
                 <input 
@@ -45,10 +61,10 @@ export function Login({setUser}){
             <button onClick={handleClick}>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
-            <a href="#" className="enlaces">¿No tenés cuenta? Registrate</a>
+            <Link to="/registro" className="ultLink">¿No tenés cuenta? Registrate</Link>
+            <Link to="/">Volver</Link>
 
         </section> 
-        
         </>
     );
 }

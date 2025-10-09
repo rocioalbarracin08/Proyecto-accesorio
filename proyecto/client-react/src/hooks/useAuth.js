@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 
 export default function useAuth() {
 
-    const [usuario, setUsuario] = useState("")
+    const [usuarioName, setUsuarioName] = useState("")
+    const [usuarioApellido, setUsuarioApellido]= useState("")
     const [contraseña, setContraseña] = useState("")
     const [error, setError] = useState(false)
+    const [repetirContraseña, setRepetirContraseña] = useState("")
+    const [email, setEmail] = useState("")
 
     useEffect(() => {
     
@@ -12,7 +15,7 @@ export default function useAuth() {
         // por ejemplo, verificando un token en localStorage o haciendo una petición a un servidor.
     }, [])
 
-    return {usuario, setUsuario, contraseña, setContraseña, error, setError}
+    return {usuarioName, setUsuarioName, usuarioApellido, setUsuarioApellido, contraseña, setContraseña, error, setError, repetirContraseña, setRepetirContraseña,}
  
     //Lógica de autenticación
 }

@@ -1,10 +1,17 @@
+
 # NOTA PARA LAS CLASES CON DB CONEXION: EVE HACE UNA RUTAS y yo otras
 from flask import Flask, jsonify, request
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv 
 import os
+# Importa el Blueprint para la categoría
+#from proyecto.server_flask.endpoints.categorias import bp as categoria_bp
 
+from server_flask.endpoints.categorias import bp as categoria_bp
+from server_flask.endpoints.login_register import bp as usuarios_bp
+
+#print("Blueprint categoría importado correctamente")
 from flask_cors import CORS
 
 from flask import g
@@ -12,15 +19,13 @@ from flask import g
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__) #"__name__" variable especial que se reemplaza por el nombre del archivo
-
-CORS(app) #Permite que el frontend (localhost:3000) hable con el backend (localhost:5000)
-
 db_config = {
-        "host" : os.getenv("DB_HOST"), 
-        "port" : 3306,    
-        "user" : os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
-        "password" : os.getenv("DB_PASSWORD"),  
-        "database" : os.getenv("DB_NAME") }
+            "host" : os.getenv("DB_HOST"), 
+            "port" : os.getenv("DB_PORT"),    
+            "user" : os.getenv("DB_USER"),               # El usuario que usas en phpMyAdmin
+            "password" : os.getenv("DB_PASSWORD"),  
+            "database" : os.getenv("DB_NAME") }
+
 
 #-----------------------------------------------------------
 # Función para la conexión a la base de datos MySQL
@@ -49,71 +54,14 @@ def teardown_request(exception):
         #close() es un método proporcionado por el conector "mysql.connector"
 #-----------------------------------------------------------
 
-#RO
-def create_app():
-    app = Flask(__name__)
+def create_app(test_config = None):
 
-    # Importa el Blueprint para la categoría
-    from proyecto.server_flask.endpoints.categorias import bp as categoria_bp
-    from proyecto.server_flask.endpoints.clientes import bp as clientes_bp
-    from proyecto.server_flask.endpoints.productos import bp as productos_bp
-    from proyecto.server_flask.endpoints.registro_productos import bp as registroProductos_bp
-
-    print("Blueprint categoría importado correctamente")
-
+    CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}) #Permite que el frontend (localhost:3000) hable con el backend (localhost:5000)
 
     # Registra el Blueprint
     app.register_blueprint(categoria_bp)
-    app.register_blueprint(clientes_bp)
-    app.register_blueprint(productos_bp)
-    app.register_blueprint(registroProductos_bp)
+    app.register_blueprint(usuarios_bp)
 
     return app
 
-
-
-
-#EVE
-@app.route("/empleados") #Para el boton de navegacón
-def empleados():
-    conexion =  conexion_db()
-    if conexion is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor(dictionary=True)  # Para devolver como diccionarios
-    cursor.execute("SELECT nombre FROM empleados")  # Ajusta según tu tabla
-    
-    empleados = cursor.fetchall()  # Lista de dicts con las categorías
-    
-    cursor.close()
-    conexion.close()
-    return jsonify(empleados)
-
-@app.route("/api/empleados", methods=["POST"]) #ruta para agregar empleados
-def agregar_empleado():
-    datos = request.get_json() #obtiene los datos en formato json
-    direccion = datos.get("direccion") #obtiene la direccion del empleado
-
-    conexion = conexion_db()
-    if conexion is None: 
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    cursor = conexion.cursor()
-    try:
-        cursor.execute( #inserta la direccion del empleado
-            "INSERT INTO empleados (direccion) VALUES (?)",
-            (direccion,)
-        )
-        conexion.commit()
-        return jsonify({"mensaje": "direccion de empleado agregado"}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    finally:
-        cursor.close()
-        conexion.close()
-
-
-if __name__ == '__main__':
-
-    app = create_app() #lA FUNCIÓN crete_app() devuelve la instancia de la aplicación Flask, en lugar de crearla directamente al importar el archivo.
-
-    app.run(debug=True) #debug -> Para el reinicio de nuestro automático cuando se detecten cambios en el código
-    # Mientras estamos en modo desarrollo usamos el debug
+app = create_app() 

@@ -1,9 +1,9 @@
 # obtener, agregar, modificar y eliminar datos
 # SELECT
 
-from flask import Blueprint, url_for, request, session, jsonify,g
+from flask import Blueprint, request, jsonify,g
 
-bp = Blueprint('roProductos', __name__, url_prefix='/roProductos')
+bp = Blueprint('productos', __name__, url_prefix='/productos')
 
 #-----------------------------------------------------------
 
@@ -12,9 +12,12 @@ def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT p.id, p.name, p.precio, c.categoria FROM productos p JOIN categorias c ON p.id_categoria = c.id_category ")
+        g.db_cursor.execute("SELECT * FROM clientes ")
+
         categorias = g.db_cursor.fetchall()
+
         g.db.commit()  # conexión en 'g' para confirmar
+        
         return jsonify(categorias)
 
     except Exception as err:

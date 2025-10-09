@@ -1,0 +1,24 @@
+.categoria {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .categoria img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .categoria span {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.4);
+  }

@@ -1,0 +1,70 @@
+section{
+    background-color: rgba(250, 134, 134, 0.61);
+
+    display: flex;
+    justify-content: center; /*Estas segura que va solo acá, no va, luego, en el body tambien*/
+    flex-direction: column;
+    align-items: center;
+
+    height: 80%;
+    width: 50%;
+    gap: 1rem;
+    
+}
+.formulario{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    
+    text-align: center;
+    gap: 1rem;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+button{
+    background-color: rgb(197, 119, 119);
+    border: none;
+    border-radius: 10%;
+    color: aliceblue;
+}
+input{
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    border: none;
+
+    padding: 0.5rem;
+    text-align: center;
+    width: 95%;
+    height: 50%;
+}
+button:hover {
+    cursor: pointer;
+    width: 40px;
+    height: 25px;
+}
+.ultLink{
+    margin-bottom: 40px;
+}
+h1{
+    margin-bottom: 5px;
+    margin: 40px 20px 15px;
+}
+.genero{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.genero button{
+    background-color: transparent;
+    border: 2px solid white;
+    color: black;
+}
+.generoH{
+    margin: 0%;
+}
+.registro{
+    width: 30px;
+}

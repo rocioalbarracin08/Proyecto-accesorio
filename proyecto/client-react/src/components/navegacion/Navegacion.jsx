@@ -1,34 +1,57 @@
 import './nav.css';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function BarraNavegacion() {
+  const [busqueda, setBusqueda] = useState('');
+
+  useEffect(() => {
+    fetch("http://localhost:5000/usuarios/perfil", {
+      method: "GET",
+      credentials: "include" // envía la cookie automáticamente
+    })
+    .then(res => {
+      if (res.ok) setIsLogged(true);
+      else setIsLogged(false);
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("http://localhost:5000/usuarios/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+    setIsLogged(false); //Ya no hay logueo
+    navigate("/login"); // redirige al login después de cerrar sesión
+  };
+
   return (
-    <div className="background-image">
-      <header className="header">
-        <div className="logo">
-          <a href="#">MiLogo</a>
-        </div>
-        <nav className="navigation">
-          <ul>
-            <li><a href="#home">Inicio</a></li>
-            <li><a href="#about">Acerca de</a></li>
-            <li><a href="#services">Servicios</a></li>
-            <li><a href="#contact">Contacto</a></li>
-          </ul>
-        </nav>
-        <div className="cta">
-          <a href="#cta" className="btn">¡Contáctanos!</a>
+      <header className="encabezado">
+
+        <a href="#" >
+          <img src="/logos/fondo.jpg" className="miLogo" alt="ACA VA EL LOGO" />
+        </a>
+
+        <a href="#home" className='direccionamiento'>Inicio</a>
+        <a href="#tienda" className='direccionamiento'>Tienda</a>
+        <a href="#services" className='direccionamiento'>Nosotros</a>
+        
+        <input 
+          className='buscador'
+          type="text"
+          placeholder='Buscar producto'
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          />
+        <div className='iconosUser'>
+        {isLogged ? (<button onClick={handleLogout}>Cerrar sesión</button> ) : (
+          <Link to="/login" className='user'>
+            <img src="/logos/vectorUsuario.png" alt="ìconoUsuario"/>  
+          </Link>
+        )}
+        <a href="#" className='carrito'><img src="/logos/carrito.png" alt="iconoCarrito"/></a>
+          
         </div>
       </header>
-
-      <main>
-        <h1></h1>
-        <input type="text" placeholder="Usuario" />
-        <input type="password" placeholder="Contraseña" />
-        <button>Login</button>
-        <a className="link" href="#">¿Perdiste tu contraseña?</a><br />
-        <a href="#">¿No tienes cuenta? Regístrate</a><br />
-        <a href="#">Volver</a>
-      </main>
-    </div>
   );
 }
