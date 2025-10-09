@@ -30,7 +30,7 @@ export function Categorizados() {
             className="categoria"
             onClick={() => navigate(`/productos/${cat.categoria}`)}>
 
-            <img src={cat.img_url} alt={cat.categoria} />
+            <img src={cat.img_url} alt={cat.id_category} />
             <span>{cat.categoria}</span>
 
           </a>

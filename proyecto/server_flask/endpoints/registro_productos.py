@@ -1,9 +1,9 @@
-from flask import Blueprint, url_for, request, session, jsonify,g
+from flask import Blueprint, request, jsonify,g
 
 bp = Blueprint('regisProductos', __name__, url_prefix='/regisProductos')
 
 @bp.route("/api/productoRegistrado/<int:id_categoria>", methods=('POST'))
-def productos(id):
+def productosSegunCat(id):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:

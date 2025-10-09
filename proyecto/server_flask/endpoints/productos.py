@@ -25,8 +25,8 @@ def productos():
 
 
 ### Mostrar los prodyuctos por categoría ###
-@bp.route("/productPorCateg/<int:id_categoria>", methods=('POST'))
-def productos(id_categoria):
+@bp.route("/productPorCateg/<int:id_categoria>", methods=['POST'])
+def productosXcat(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
@@ -41,7 +41,7 @@ def productos(id_categoria):
         return jsonify({"error": "Hubo un problema al consultar el id"}), 500 
 
 
-@bp.route("/borrar", methods=('DELETE'))
+@bp.route("/borrar", methods=['DELETE'])
 def borrar():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -78,8 +78,8 @@ def crearCategoria():
             g.db.rollback()  #Usa la conexión en 'g' para revertir
             return jsonify({"error": f"Error al crear la categoría: {err}"}), 500
 
-
-@bp.route('/productos', methods=['GET'])
+'''
+@bp.route('/productos')
 def get_productos():
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
@@ -99,7 +99,7 @@ def get_productos():
         "per_page": per_page,
         "productos": productos
     })
-
+'''
 
 #####En react
 '''

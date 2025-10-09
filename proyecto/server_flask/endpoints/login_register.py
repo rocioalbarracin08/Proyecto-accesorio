@@ -64,26 +64,43 @@ def login():
 
         g.db_cursor.execute("SELECT id_cliente, password FROM clientes WHERE email = %s", (email,))
         user = g.db_cursor.fetchone()
-
+        print(user)
+        
         #Verificamos si el usuario existe y si la contraseña es correcta
         if not user:
             return jsonify({"error": "El email no está registrado"}), 401
-        if not check_password_hash(user[1], password):
+        if not check_password_hash(user["password"], password): #Rompía por usar el índice de la lista y no la clave del objeto
             return jsonify({"error": "La contraseña es incorrecta"}), 401
+
+        '''
+        if user and check_password_hash(user[1], password):
+            # Usuario autenticado correctamente
+            token = jwt.encode({ 
+            #Datos del usuario
+            "id_cliente": user[0], # el id del usuario esta en el índice 0 de la lista
+            "exp": datetime.now(timezone.utc) + timedelta(hours=4)#vence en 2 horas
+            }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
+
+            if isinstance(token, bytes):
+                token = token.decode('utf-8')
+        '''
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 
             #Datos del usuario
-            "id_cliente": user[0], # el id del usuario esta en el índice 0 de la lista
-            "exp": datetime.now(timezone.utc) + timedelta(hours=4) # vence en 2 horas
+            "id_cliente": user["id_cliente"], # el id del usuario | Rompía por usar un índice y no una clave del objeto
+            "exp": datetime.now(timezone.utc) + timedelta(hours=4)#vence en 2 horas
         }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
         if isinstance(token, bytes):
             token = token.decode('utf-8')
+
+        print(token)
 
         response = make_response(jsonify({"mensaje": "Login exitoso"}))
 
         #guarda el token en una cookie del navegador
         response.set_cookie('token', token, httponly=True, samesite='Lax')
+        print(response)
 
         return response, 200
 
@@ -92,12 +109,11 @@ def login():
         return jsonify({"error": f"Error interno: {str(err)}"}), 500
 
 ################ LECTURA DE LA COOKIE #####################
-@bp.route('/perfil', methods=['GET'])
+@bp.route('/perfil')
 def perfil():
     token = request.cookies.get('token')  # lee la cookie
     if not token:
         return jsonify({"error": "No estás logueado"}), 401
-
     try:
         data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         user_id = data['id_cliente']
