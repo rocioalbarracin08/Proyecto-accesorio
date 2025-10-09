@@ -37,13 +37,11 @@ input{
 
     padding: 0.5rem;
     text-align: center;
-    width: 95%;
-    height: 50%;
 }
 button:hover {
     cursor: pointer;
-    width: 40px;
-    height: 25px;
+    width: 90px;
+    height: 30px;
 }
 .ultLink{
     margin-bottom: 40px;
@@ -67,4 +65,14 @@ h1{
 }
 .registro{
     width: 30px;
+}
+.span-eye {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+    z-index: 2;
 }

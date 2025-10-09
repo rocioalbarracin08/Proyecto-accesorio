@@ -1,8 +1,11 @@
 import './nav.css';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
 
 export function BarraNavegacion() {
+  const [isLogged, setIsLogged] = useState(false);
+  const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {

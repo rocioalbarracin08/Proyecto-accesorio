@@ -23,6 +23,8 @@ def productos():
         print(f"Error al eliminar el registro: {err}")
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
 
+
+### Mostrar los prodyuctos por categoría ###
 @bp.route("/productPorCateg/<int:id_categoria>", methods=('POST'))
 def productos(id_categoria):
     if g.db_cursor is None:
@@ -39,44 +41,74 @@ def productos(id_categoria):
         return jsonify({"error": "Hubo un problema al consultar el id"}), 500 
 
 
-'''
-@bp.route("/api/Agregar", methods=('POST'))
-def agregarProductos():    
+@bp.route("/borrar", methods=('DELETE'))
+def borrar():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        datos = request.get_json()
+        id = datos.get("id_producto")
+        
+        g.db_cursor.execute("DELETE FROM productos WHERE id_producto =%s", (id,))
+        g.db.commit()  # conexión en 'g' para confirmar
+        print(f"Registro con ID {id} eliminado exitosamente.")
+        return jsonify({"mensaje": "Registro eliminado"}), 200
+
+    except Exception as err:
+        g.db.rollback()  #buena práctica
+        print(f"Error al eliminar el registro: {err}")
+        return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500   
+    
+
+@bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
+def crearCategoria():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
-    try:
-        if request.method == 'POST':
-            datos = request.get_json()
-            id_producto = datos.get("id_producto")
-            
-            g.db_cursor.execute("INSERT FROM productos WHERE id_cliente =%s", (id_producto,))
-            g.db.commit()  # conexión en 'g' para confirmar
-            print(f"Registro con ID {id} eliminado exitosamente.")
-            return jsonify({"mensaje": "Registro eliminado"}), 200
+    if request.method == 'POST':
+        datos = request.get_json()
+        nombreCategoria = datos.get("categoria")
 
-    except Exception as err:
-        g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
-        return jsonify({"error": f"Error al agregar el registro: {err}"}), 500
-    
-@bp.route("/modificar/producto", methods=('GET', 'POST'))
-def modificarCategoria():
-    if g.db_cursor is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 400 #Es error 500 o 400?
-    try:
-        if request.method == 'POST':
-            # Obtiene los datos de la solicitud JSON
-            datos = request.get_json()
-            nombreCategoria = datos.get("nombreCategoria") #'nombreCategoria' para mayor claridad
-            id_producto = datos.get("id_producto") #ID para saber qué registro modificar
+        try:
+            g.db_cursor.execute("INSERT INTO categoria (nombre) VALUES (%s)", (nombreCategoria,))
+            g.db.commit() 
+            return jsonify({"mensaje": "Categoría creada exitosamente."}), 200
 
-            g.db_cursor.execute("UPDATE productos SET nombre = %s WHERE id = %s", (nombreCategoria, id_producto))
-            g.db.commit()  # Confirma la transacción en la base de datos
+        except Exception as err:
+            g.db.rollback()  #Usa la conexión en 'g' para revertir
+            return jsonify({"error": f"Error al crear la categoría: {err}"}), 500
 
-            return jsonify({"mensaje": "Registro modificado"}), 200
-        
-    except Exception as err:
-        g.db.rollback()  # Revierte la transacción en caso de error
-        print(f"Error al modificar el registro: {err}")
-        return jsonify({"error": f"Error al modificar el registro: {err}"}), 500
+
+@bp.route('/productos', methods=['GET'])
+def get_productos():
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
+    offset = (page - 1) * per_page
+
+    g.db_cursor.execute("SELECT COUNT(*) FROM productos")
+    total = g.db_cursor.fetchone()[0]
+
+    g.db_cursor.execute(
+        "SELECT * FROM productos LIMIT %s OFFSET %s", (per_page, offset)
+    )
+    productos = g.db_cursor.fetchall()
+
+    return jsonify({
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "productos": productos
+    })
+
+
+#####En react
+'''
+const page = 1;
+const perPage = 10;
+fetch(`http://localhost:5000/usuarios/productos?page=${page}&per_page=${perPage}`)
+  .then(res => res.json())
+  .then(data => {
+    // data.productos contiene los productos de la página actual
+    // data.total es el total de productos
+  });
 '''

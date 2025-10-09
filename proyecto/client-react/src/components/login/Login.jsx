@@ -1,68 +1,88 @@
 import useAuth from '../../hooks/useAuth';
-import './login.css'
-import { Link } from 'react-router-dom';
+import './login.css';
+import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function Login(){
-    const {email, setEmail, contraseña, setContraseña, error, setError} = useAuth()//La lógica del programa va en el hook
+    const {email, setEmail, contraseña, setContraseña, error, setError} = useAuth(); //La lógica del programa va en el hook
+    const [showPassword, setShowPassword] = useState(false);
+    const [loginError, setLoginError] = useState("");
+    const navigate = useNavigate();
 
-    const handleClick = async (event)=>{
-        event.preventDefault()
+    const handleClick = async (event) => {
+        event.preventDefault();
 
-        //Hacemos la comparación
-        if (email === "" || contraseña === ""){
-            return setError(true)
+        if (email === "" || contraseña === "") {
+            setError(true);
+            setLoginError("");
+            return;
         }
-        setError(false)
+        setError(false);
+        setLoginError("");
 
-        // Enviar datos al backend
         try {
-            const response = await fetch("http://localhost:5000/usuarios/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email,
-                password: contraseña,
-            }),
+            const response = await fetch("http://localhost:5000/usuarios/login", { //Datos de login enviados al backend
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password: contraseña,
+                }),
             });
             if (response.ok) {
-            navigate("/login");
-            //navigate(-1)
+                navigate("/");
             } else {
-            setError(true); // Error en el registro
+                const data = await response.json();
+                if (data && data.error === "Credenciales incorrectas") {
+                    setLoginError("La contraseña no coincide con el email ingresado.");
+                } else {
+                    setLoginError("Error al iniciar sesión. Intente nuevamente.");
+                }
+                setError(false);
             }
-        } 
-        catch (err) {
-            setError(true);
+        } catch (err) {
+            setLoginError("Error de conexión con el servidor.");
+            setError(false);
         }
     };
-
     return(
         <>
         
         <section >
             <h1>Bienvenido</h1>
             {error ? <p>Por favor, complete todos los campos</p> : ""}
+            {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
             <form className='formulario'>
                 <input 
                 type="text" 
                 placeholder='Email' 
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
+                className='email-input'
                 />
-
-                <input 
-                type="password" 
-                placeholder='Contraseña' 
-                onChange={event => setContraseña(event.target.value)}
-                value={contraseña}
-                />
+                <div className='password-container'>
+                    <input 
+                        type={showPassword ? 'text' : 'password'} 
+                        placeholder='Contraseña' 
+                        onChange={event => setContraseña(event.target.value)}
+                        value={contraseña}
+                        className='password-input'
+                    />
+                    <span 
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className='password-toggle-icon'
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </span>
+                </div>
             </form>
 
-            <button onClick={handleClick}>Iniciar sesión</button> 
+            <button onClick={handleClick} className='button-log'>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
-            <Link to="/registro" className="ultLink">¿No tenés cuenta? Registrate</Link>
-            <Link to="/">Volver</Link>
+            <Link to="/registro">¿No tenés cuenta? Registrate</Link>
+            <Link to="/" className='ultLink'>Volver</Link>
 
         </section> 
         </>

@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify,g
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import jwt
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from flask import make_response
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
@@ -56,8 +56,8 @@ def login():
 
     try:
         data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get('email') #Esto lo verifica bien
+        password = data.get('password') #Esto no lo verifica bien
 
         if not all([email, password]):
             return jsonify({'error': 'Faltan datos'}), 400
@@ -65,15 +65,20 @@ def login():
         g.db_cursor.execute("SELECT id_cliente, password FROM clientes WHERE email = %s", (email,))
         user = g.db_cursor.fetchone()
 
-        if not user or not check_password_hash(user[1], password): #
-            return jsonify({"error": "Credenciales incorrectas"}), 401
+        #Verificamos si el usuario existe y si la contraseña es correcta
+        if not user:
+            return jsonify({"error": "El email no está registrado"}), 401
+        if not check_password_hash(user[1], password):
+            return jsonify({"error": "La contraseña es incorrecta"}), 401
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 
             #Datos del usuario
             "id_cliente": user[0], # el id del usuario esta en el índice 0 de la lista
-            "exp": datetime.now(timezone.utc) + datetime.timedelta(hours=4) # vence en 2 horas
+            "exp": datetime.now(timezone.utc) + timedelta(hours=4) # vence en 2 horas
         }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
 
         response = make_response(jsonify({"mensaje": "Login exitoso"}))
 
@@ -84,7 +89,7 @@ def login():
 
     except Exception as err:
         print(f"Error en login: {err}")
-        return jsonify({"error": str(err)}), 500
+        return jsonify({"error": f"Error interno: {str(err)}"}), 500
 
 ################ LECTURA DE LA COOKIE #####################
 @bp.route('/perfil', methods=['GET'])

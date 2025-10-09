@@ -1,5 +1,4 @@
 import { use, useEffect, useState } from "react"
-import { use, useEffect, useState } from "react"
 
 export default function useAuth() {
 
@@ -16,7 +15,12 @@ export default function useAuth() {
         // por ejemplo, verificando un token en localStorage o haciendo una petición a un servidor.
     }, [])
 
-    return {usuarioName, setUsuarioName, usuarioApellido, setUsuarioApellido, contraseña, setContraseña, error, setError, repetirContraseña, setRepetirContraseña, email, setEmail}
+    return {usuarioName, setUsuarioName, 
+        usuarioApellido, setUsuarioApellido, 
+        contraseña, setContraseña, 
+        error, setError, 
+        repetirContraseña, setRepetirContraseña, 
+        email, setEmail}
  
     //Lógica de autenticación
 }

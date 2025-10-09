@@ -7,4 +7,4 @@ pip install python-dotenv
 pip install dotenv
 pip install flask-cors
 pip install werkzeug
-
+pip install PyJWT

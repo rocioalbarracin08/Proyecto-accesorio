@@ -1,3 +1,27 @@
+/* Icono mostrar/ocultar contraseña */
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+.email-input,
+.password-input {
+    width: 100%;
+    padding-right: 2.5rem;
+}
+
+/*Estilo para el form*/
 section{
     background-color: rgba(250, 134, 134, 0.61);
 
@@ -10,14 +34,6 @@ section{
     width: 50%;
     gap: 1rem;
     
-}
-.formulario{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    
-    text-align: center;
-    gap: 1rem;
 }
 a{
     text-decoration: none;
@@ -37,17 +53,11 @@ input{
 
     padding: 0.5rem;
     text-align: center;
-    width: 95%;
-    height: 50%;
 }
-button:hover {
+.button-log:hover {
     background-color: rgb(172, 99, 99);
     cursor: pointer;
 }
 .ultLink{
     margin-bottom: 40px;
-}
-h1{
-    margin-bottom: 5px;
-    margin: 40px 20px 15px;
 }
