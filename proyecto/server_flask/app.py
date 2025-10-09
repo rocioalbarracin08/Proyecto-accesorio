@@ -5,13 +5,11 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv 
 import os
-# Importa el Blueprint para la categoría
-#from proyecto.server_flask.endpoints.categorias import bp as categoria_bp
+
 
 from server_flask.endpoints.categorias import bp as categoria_bp
 from server_flask.endpoints.login_register import bp as usuarios_bp
 
-#print("Blueprint categoría importado correctamente")
 from flask_cors import CORS
 
 from flask import g

@@ -3,19 +3,13 @@
 
 //Usar relative y absolut (en css). Para las imagenes (relativa) y texto (absoluto)
 
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./categorizado.css";
 
 export function Categorizados() {
   const [categorias, setCategorias] = useState([]);
   const navigate = useNavigate();
-
-  const imagenes = { //VER LO QUE HAY EN la DB
-    Vinchas: "/img/vinchas.jpg",
-    Pulseras: "/img/pulseras.jpg",
-    Broches: ""
-  };
 
   useEffect(() => {
     fetch("http://localhost:5000/categoria/")
@@ -26,19 +20,20 @@ export function Categorizados() {
 
   return (
     <main>
-      <h2>Categorías</h2>
+      <h2 className="main-category">Categorías</h2>
       <div className="categorias-container">
+        <a href=""></a>
         {categorias.map(cat => (
-          <div
+          <a
 
-            key={cat.id}
+            key={cat.id_category}
             className="categoria"
-            onClick={() => navigate(`/productos/${cat.nombre}`)}>
+            onClick={() => navigate(`/productos/${cat.categoria}`)}>
 
-            <img src={imagenes[cat.nombre]} alt={cat.nombre} />
-            <span>{cat.nombre}</span>
+            <img src={cat.img_url} alt={cat.categoria} />
+            <span>{cat.categoria}</span>
 
-          </div>
+          </a>
         ))}
       </div>
     </main>

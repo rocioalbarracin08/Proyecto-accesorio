@@ -36,7 +36,7 @@ export function BarraNavegacion() {
         </a>
 
         <a href="#home" className='direccionamiento'>Inicio</a>
-        <a href="#tienda" className='direccionamiento'>Tienda</a>
+        <Link to="/productos" className='direccionamiento'>Tienda</Link>
         <a href="#services" className='direccionamiento'>Nosotros</a>
         
         <input 

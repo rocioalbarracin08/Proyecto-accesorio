@@ -8,6 +8,27 @@ from flask import Blueprint, url_for, request, jsonify,g
 
 bp = Blueprint('categoria', __name__, url_prefix='/categoria')
 
+########################### Mostrar segun la solicitud ##################
+@bp.route("/mostrar", methods=['POST'])
+def mostrarSegunSolicitud():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+    if request.method == 'POST':
+        datos = request.get_json()
+        id_category = datos.get("id_category")
+
+        try:
+            g.db_cursor.execute("SELECT * FROM categoria WHERE id_category = %s", (id_category,))
+            categoria = g.db_cursor.fetchone() #Obtenemos un solo resultado de la consulta
+            if categoria:
+                return jsonify(categoria)  # Devuelve el resultado en formato JSON
+            else:
+                return jsonify({"mensaje": "Categoría no encontrada"}), 404
+        
+        except Exception as e:
+            return jsonify({"error": "Hubo un problema al consultar la categoría"}), 500 #Response con error
+
 ########################### M O S T R A R ###########################
 @bp.route("/")
 def categorias():
