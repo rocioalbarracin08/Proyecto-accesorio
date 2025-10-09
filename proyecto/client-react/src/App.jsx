@@ -7,7 +7,6 @@ import { Destacados } from "./components/productosDestacados/Destacado";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
 import { ProductoGrid } from "./components/producto/Producto";
-import { ProductoGrid } from "./components/producto/Producto";
 
 function App() {
   return (
@@ -18,12 +17,14 @@ function App() {
           <>
             <BarraNavegacion />
             <Destacados />
-            <PiePagina />
+            <ProductoGrid /> 
+            <PiePagina/>
+            
           </>
         }
       />
       <Route path="/productos" element={<ProductoGrid />} />
-      <Route path="/productos/:categoria" element={<Productos />} />
+      <Route path="/productos/:categoria" element={<ProductoGrid />} />
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registrarse />} />
     </Routes>

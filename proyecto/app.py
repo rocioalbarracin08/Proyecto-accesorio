@@ -9,7 +9,7 @@ import os
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__)
-CORS(app)  # Esto habilita CORS para todas las rutas y orígenes
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])  # Esto habilita CORS para todas las rutas y orígenes
 
 #-----------------------------------------------------------
 # Función para OBTENER la conexión a la base de datos MySQL
@@ -66,6 +66,8 @@ def accesorio():
     conexion.close()
 
     return jsonify(accesorio),200
+
+@app.route("/api/producto", methods=["GET"])
 
 
 @app.route("/empleados") #Para probar con una consulta

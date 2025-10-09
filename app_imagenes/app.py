@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, url_for
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5174"]) 
+CORS(app, origins=["http://localhost:5174"]) #Para que se permita la conexión desde la pagina web
 
 @app.route ("/api/okey", methods= ["GET"] )
 def mensaje():

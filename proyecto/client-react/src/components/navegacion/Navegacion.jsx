@@ -1,9 +1,10 @@
 import './nav.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 export function BarraNavegacion() {
   const [busqueda, setBusqueda] = useState('');
+  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:5000/usuarios/perfil", {
