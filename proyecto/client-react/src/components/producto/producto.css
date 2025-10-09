@@ -47,3 +47,70 @@
   color: #000000; /* Color rojo para llamar la atención al precio */
 }
 
+/* Carrito lateral derecho */
+.carrito-lateral {
+  width: 320px;
+  background: #fff7f7;
+  border-left: 2px solid #e0e0e0;
+  padding: 24px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.carrito-lateral h2 {
+  text-align: center;
+}
+.carrito-lateral ul {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  margin: 0;
+}
+.carrito-lateral li {
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+  display: block;
+}
+.carrito-lateral .nombre-producto {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.carrito-lateral .precio-producto {
+  display: block;
+  color: #c77d7d;
+  margin-bottom: 8px;
+}
+.carrito-lateral .cantidad-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.carrito-lateral .cantidad-controles button {
+  padding: 2px 8px;
+  border-radius: 50%;
+  border: 1px solid #c77d7d;
+  background: #fff;
+  color: #c77d7d;
+  font-weight: bold;
+  cursor: pointer;
+}
+.carrito-lateral .cantidad-controles span {
+  min-width: 24px;
+  text-align: center;
+}
+.carrito-lateral .total-carrito {
+  margin-top: auto;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-top: 2px solid #e0e0e0;
+  padding-top: 16px;
+}
+

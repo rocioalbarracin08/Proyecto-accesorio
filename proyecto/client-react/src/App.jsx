@@ -7,6 +7,7 @@ import { Destacados } from "./components/productosDestacados/Destacado";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
 import { ProductoGrid } from "./components/producto/Producto";
+import { ProductoGrid } from "./components/producto/Producto";
 
 function App() {
   return (
@@ -29,5 +30,6 @@ function App() {
     </Routes>
   );
 }
+
 
 export default App;
