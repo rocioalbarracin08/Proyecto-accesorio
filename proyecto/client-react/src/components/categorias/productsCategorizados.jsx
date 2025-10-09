@@ -14,6 +14,7 @@ export function Categorizados() {
   const imagenes = { //VER LO QUE HAY EN la DB
     Vinchas: "/img/vinchas.jpg",
     Pulseras: "/img/pulseras.jpg",
+    Broches: ""
   };
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function Categorizados() {
             key={cat.id}
             className="categoria"
             onClick={() => navigate(`/productos/${cat.nombre}`)}>
+
             <img src={imagenes[cat.nombre]} alt={cat.nombre} />
             <span>{cat.nombre}</span>
 

@@ -22,9 +22,8 @@ function App() {
           </>
         }
       />
-      // App.jsx
-      <Route path="/productos/:categoria" element={<Productos />} />
       <Route path="/productos" element={<ProductoGrid />} />
+      <Route path="/productos/:categoria" element={<Productos />} />
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registrarse />} />
     </Routes>

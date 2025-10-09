@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, session, jsonify,g
 
-bp = Blueprint('roRegistroProductos', __name__, url_prefix='/roRegisProductos')
+bp = Blueprint('regisProductos', __name__, url_prefix='/regisProductos')
 
 @bp.route("/api/productoRegistrado/<int:id_categoria>", methods=('POST'))
 def productos(id):

@@ -13,9 +13,7 @@ def productos():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
         g.db_cursor.execute("SELECT * FROM clientes ")
-
         categorias = g.db_cursor.fetchall()
-
         g.db.commit()  # conexión en 'g' para confirmar
         
         return jsonify(categorias)
@@ -31,11 +29,8 @@ def productos(id_categoria):
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
         if request.method == 'POST':
-
             g.db_cursor.execute("SELECT * FROM productos p INNER JOIN categoria c ON c.id_category = p.id_categoria WHERE p.id_categoria = %s ",(id_categoria,))
-
             productos = g.db_cursor.fetchall()
-
             g.db.close() 
             
             return jsonify(productos)   
