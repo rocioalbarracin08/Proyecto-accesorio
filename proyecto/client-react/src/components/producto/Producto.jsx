@@ -10,7 +10,7 @@ export function ProductoGrid() {
     setCarrito([...carrito, producto]);
   };
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/accesorio") // devuelve un json con la lista de productos
+    fetch("http://127.0.0.1:5000/productos/") // devuelve un json con la lista de productos
       .then(res => res.json())
       .then(data => setProductos(data))//actualiza el estado de productos con la respuesta del bakend
       .catch(err => console.error("Error cargando productos:", err));

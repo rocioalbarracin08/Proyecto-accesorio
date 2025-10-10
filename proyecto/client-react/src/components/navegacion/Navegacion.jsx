@@ -13,7 +13,7 @@ export function BarraNavegacion() {
       method: "POST",
       credentials: "include"
     });
-    setIsLogged(false); //Ya no hay logueo
+    logout(); // <-- usa el método global del contexto
     navigate("/login"); // redirige al login después de cerrar sesión
   };
 

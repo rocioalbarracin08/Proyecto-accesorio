@@ -4,7 +4,7 @@ bp = Blueprint('productos', __name__, url_prefix='/productos')
 
 #-----------------------------------------------------------
 
-@bp.route("/mostrar")
+@bp.route("/")
 def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -12,7 +12,6 @@ def productos():
         g.db_cursor.execute("SELECT * FROM clientes ")
         categorias = g.db_cursor.fetchall()
         g.db.commit()  # conexión en 'g' para confirmar
-        
         return jsonify(categorias)
 
     except Exception as err:
@@ -22,16 +21,15 @@ def productos():
 
 
 ### Mostrar los prodyuctos por categoría ###
-@bp.route("/productPorCateg/<int:id_categoria>", methods=['POST'])
-def productosXcat(id_categoria):
+@bp.route("/por_categoria/<int:id_categoria>", methods=['POST'])
+def productosXcategoria(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
         if request.method == 'POST':
             g.db_cursor.execute("SELECT * FROM productos p INNER JOIN categoria c ON c.id_category = p.id_categoria WHERE p.id_categoria = %s ",(id_categoria,))
             productos = g.db_cursor.fetchall()
-            g.db.close() 
-            
+            g.db.commit() 
             return jsonify(productos)   
          
     except Exception as e:
@@ -57,7 +55,7 @@ def borrar():
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500   
     
 
-@bp.route("/api/accesorio")
+@bp.route("/con_categoria")
 def accesoriosConCategoria():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -66,7 +64,7 @@ def accesoriosConCategoria():
     accesorio = g.db_cursor.fetchall()
     return jsonify(accesorio),200
 
-@bp.route("/api/productos", methods=["POST"]) #AGREGAAR
+@bp.route("/cambiar", methods=["POST"]) #AGREGAAR
 def cambiar_producto():
     if g.db_cursor is None: 
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -79,8 +77,7 @@ def cambiar_producto():
         
         g.db_cursor.execute( #inserta nuevos datos para la tabla productos
             """UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
-            (name, id_categoria,precio, id_producto)
-        )
+            (name, id_categoria,precio, id_producto))
         g.db.commit() 
         return jsonify({"mensaje": "Producto creado exitosamente."}), 200
 

@@ -16,8 +16,8 @@ def obtener_clientes():
         return jsonify({"error": "Hubo un problema al consultar las categorías"}), 500 #Response con error
 
 
-@bp.route("/cliente/borrar", methods=['DELETE'])
-def borrar():
+@bp.route("/borrar", methods=['DELETE'])
+def borrar_cliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
@@ -36,18 +36,23 @@ def borrar():
     
 ########################### C R E A R ###########################
 @bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
-def crearCategoria():
+def crearCliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     if request.method == 'POST':
         datos = request.get_json()
-        nombreCategoria = datos.get("categoria")
+
+        name = datos.get("nombre")
+        apellido = datos.get("apellido")
+        genero = datos.get("genero")
+        email = datos.get("email")
+        password = datos.get("password")
 
         try:
-            g.db_cursor.execute("INSERT INTO categoria (nombre) VALUES (%s)", (nombreCategoria,))
+            g.db_cursor.execute("INSERT INTO categoria (name, apellido, genero, email, password)VALUES (%s, %s, %s, %s, %s)", (name, apellido, genero, email, password))
             g.db.commit() 
-            return jsonify({"mensaje": "Categoría creada exitosamente."}), 200
+            return jsonify({"mensaje": "Cliente creado exitosamente."}), 200
 
         except Exception as err:
             g.db.rollback()  #Usa la conexión en 'g' para revertir
@@ -55,7 +60,7 @@ def crearCategoria():
 
 
 ########################### M O D I F I C A R ###########################
-@bp.route("/clientes", methods=['UPDATE']) 
+@bp.route("/modificar", methods=['PUT']) 
 def modificarCliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}),500
@@ -73,7 +78,6 @@ def modificarCliente():
 
         g.db_cursor.execute("UPDATE categoria SET name = %s apellido = %s WHERE id_cliente = %s", (name, apellido, idCliente))
         g.db.commit() 
-        g.db.close()
 
         return jsonify({"mensaje": "Registro modificado"}), 200
         
