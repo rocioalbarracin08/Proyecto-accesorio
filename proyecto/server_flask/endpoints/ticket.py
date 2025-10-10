@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, g
 bp = Blueprint('ticket', __name__, url_prefix='/ticket')
 
 ########################### M O D I F I C A R ###########################
-@bp.route("/", methods=["PUT"]) #No POST?
+@bp.route("/", methods=["PUT"]) 
 def actualizar_costo_ticket():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500

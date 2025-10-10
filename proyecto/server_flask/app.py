@@ -1,5 +1,4 @@
 
-# NOTA PARA LAS CLASES CON DB CONEXION: EVE HACE UNA RUTAS y yo otras
 from flask import Flask, jsonify, request
 import mysql.connector
 from mysql.connector import Error
@@ -52,7 +51,7 @@ from server_flask.endpoints.tiendas import bp as tiendas_bp
 
 def create_app(test_config = None):
 
-    CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}) #Permite que el frontend (localhost:5173, de React) hable con el backend (localhost:5000, Flask)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_credentials": True}}) #Permite que el frontend (localhost:5173, de React) hable con el backend (localhost:5000, Flask)
     #CORS es global
 
     # Registra el Blueprint
