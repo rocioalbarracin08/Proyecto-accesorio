@@ -64,26 +64,14 @@ def login():
 
         g.db_cursor.execute("SELECT id_cliente, password FROM clientes WHERE email = %s", (email,))
         user = g.db_cursor.fetchone()
-        print(user)
+        
+        print(user) #Diccionario
         
         #Verificamos si el usuario existe y si la contraseña es correcta
         if not user:
             return jsonify({"error": "El email no está registrado"}), 401
         if not check_password_hash(user["password"], password): #Rompía por usar el índice de la lista y no la clave del objeto
             return jsonify({"error": "La contraseña es incorrecta"}), 401
-
-        '''
-        if user and check_password_hash(user[1], password):
-            # Usuario autenticado correctamente
-            token = jwt.encode({ 
-            #Datos del usuario
-            "id_cliente": user[0], # el id del usuario esta en el índice 0 de la lista
-            "exp": datetime.now(timezone.utc) + timedelta(hours=4)#vence en 2 horas
-            }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
-
-            if isinstance(token, bytes):
-                token = token.decode('utf-8')
-        '''
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 
@@ -94,7 +82,7 @@ def login():
         if isinstance(token, bytes):
             token = token.decode('utf-8')
 
-        print(token)
+        #print(token)->Ya no respondía
 
         response = make_response(jsonify({"mensaje": "Login exitoso"}))
 

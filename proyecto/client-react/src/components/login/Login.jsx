@@ -1,4 +1,5 @@
 import useAuth from '../../hooks/useAuth';
+import { useAuthContext } from '../../context/AuthContext'; //hook global
 import './login.css';
 import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -9,6 +10,7 @@ export function Login(){
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuthContext(); //hook global
 
     const handleClick = async (event) => {
         event.preventDefault();
@@ -32,6 +34,7 @@ export function Login(){
             });
             if (response.ok) {
                 navigate("/");
+                login(); //marca logueado instantáneamente
             } else {
                 const data = await response.json();
                 if (data && data.error === "Credenciales incorrectas") {

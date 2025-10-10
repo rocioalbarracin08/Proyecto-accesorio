@@ -1,23 +1,12 @@
 import './nav.css';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext'; // 👈 usa el hook del contexto
+import { useState } from "react";
 
 export function BarraNavegacion() {
-  const [isLogged, setIsLogged] = useState(false);
+  const { isLogged, logout } = useAuthContext(); 
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
-
-  useEffect(() => {
-    fetch("http://localhost:5000/usuarios/perfil", {
-      method: "GET",
-      credentials: "include" // envía la cookie automáticamente
-    })
-    .then(res => {
-      if (res.ok) setIsLogged(true);
-      else setIsLogged(false);
-    });
-  }, []);
 
   const handleLogout = async () => {
     await fetch("http://localhost:5000/usuarios/logout", {

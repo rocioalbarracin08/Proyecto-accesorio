@@ -1,6 +1,3 @@
-# obtener, agregar, modificar y eliminar datos
-# SELECT
-
 from flask import Blueprint, request, jsonify,g
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
@@ -60,23 +57,36 @@ def borrar():
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500   
     
 
-@bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
-def crearCategoria():
+@bp.route("/api/accesorio")
+def accesoriosConCategoria():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    g.db_cursor.execute("SELECT p.id_producto, p.name, p.precio, c.categoria from productos p JOIN categoria c ON p.id_categoria = c.id_category")
+    accesorio = g.db_cursor.fetchall()
+    return jsonify(accesorio),200
 
-    if request.method == 'POST':
-        datos = request.get_json()
-        nombreCategoria = datos.get("categoria")
+@bp.route("/api/productos", methods=["POST"]) #AGREGAAR
+def cambiar_producto():
+    if g.db_cursor is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
-        try:
-            g.db_cursor.execute("INSERT INTO categoria (nombre) VALUES (%s)", (nombreCategoria,))
-            g.db.commit() 
-            return jsonify({"mensaje": "Categoría creada exitosamente."}), 200
+    try:
+        name = request.json.get("name")
+        id_categoria = request.json.get("id_categoria")
+        precio = request.json.get("precio")
+        id_producto = request.json.get("id")
+        
+        g.db_cursor.execute( #inserta nuevos datos para la tabla productos
+            """UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
+            (name, id_categoria,precio, id_producto)
+        )
+        g.db.commit() 
+        return jsonify({"mensaje": "Producto creado exitosamente."}), 200
 
-        except Exception as err:
-            g.db.rollback()  #Usa la conexión en 'g' para revertir
-            return jsonify({"error": f"Error al crear la categoría: {err}"}), 500
+    except Exception as err:
+        g.db.rollback()  #Usa la conexión en 'g' para revertir
+        return jsonify({"error": f"Error al crear: {err}"}), 500
 
 '''
 @bp.route('/productos')
