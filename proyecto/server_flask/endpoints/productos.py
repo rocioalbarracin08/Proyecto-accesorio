@@ -14,6 +14,7 @@ def productos():
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 10))
         offset = (page - 1) * per_page
+
         # Query para total de productos (sin paginación)
         g.db_cursor.execute("SELECT COUNT(*) as total FROM productos")  # Ajusta tabla si es diferente
         total_result = g.db_cursor.fetchone()
@@ -27,11 +28,6 @@ def productos():
         g.db_cursor.execute(query_productos, (per_page, offset))
         productos_list = g.db_cursor.fetchall()
         
-        # Calcular metadata
-        total_pages = (total_productos + per_page - 1) // per_page  # Redondeo hacia arriba
-        has_next = page < total_pages
-        has_prev = page > 1
-
         # Calcular metadata
         total_pages = (total_productos + per_page - 1) // per_page  # Redondeo hacia arriba
         has_next = page < total_pages
@@ -56,22 +52,27 @@ def productos():
         '''
 
     except Exception as err:
-        print(f"Error al eliminar el registro: {err}")
-        return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
+        print(f"Error paginado: {err}")
+        return jsonify({"error": f"Error interno: {err}"}), 500
 
 
-### Mostrar los prodyuctos por categoría ###
+### Mostrar productos por categoría ###
 @bp.route("/por_categoria/<int:id_categoria>", methods=['GET'])
 def productosXcategoria(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT * FROM productos p INNER JOIN categoria c ON c.id_category = p.id_categoria WHERE p.id_categoria = %s ",(id_categoria,))
+        # Query con JOIN para incluir info de categoría si necesitas
+        g.db_cursor.execute("""
+            SELECT p.*, c.categoria 
+            FROM productos p 
+            INNER JOIN categoria c ON c.id_category = p.id_categoria 
+            WHERE p.id_categoria = %s
+        """, (id_categoria,))
         productos = g.db_cursor.fetchall()
-        return jsonify(productos)   
-         
+        return jsonify(productos)
     except Exception as e:
-        return jsonify({"error": "Hubo un problema al consultar el id"}), 500 
+        return jsonify({"error": f"Hubo un problema al consultar productos por categoría: {e}"}), 500
 
 
 @bp.route("/borrar", methods=['DELETE'])
@@ -102,23 +103,28 @@ def accesoriosConCategoria():
     accesorio = g.db_cursor.fetchall()
     return jsonify(accesorio),200
 
-@bp.route("/cambiar", methods=["UPDATE"]) #AGREGAAR
+@bp.route("/cambiar", methods=["PUT"]) #AGREGAAR
 def cambiar_producto():
     if g.db_cursor is None: 
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     try:
-        data = request.json  # Mejor que get() para evitar None
+        data = request.get_json()  # Usa get_json() para consistencia
         name = data.get("name")
         id_categoria = data.get("id_categoria")
         precio = data.get("precio")
-        id_producto = data.get("id")
+        id_producto = data.get("id")  # Corregi segun la base de datos
         
-        g.db_cursor.execute( #inserta nuevos datos para la tabla productos
-            """UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
-            (name, id_categoria,precio, id_producto))
-        g.db.commit() 
-        return jsonify({"mensaje": "Producto creado exitosamente."}), 200
+        if not all([name, id_categoria, precio, id_producto]):
+            return jsonify({"error": "Datos incompletos"}), 400
+        
+        g.db_cursor.execute("""
+            UPDATE productos 
+            SET name = %s, id_categoria = %s, precio = %s 
+            WHERE id_producto = %s
+        """, (name, id_categoria, precio, id_producto))
+        g.db.commit()
+        return jsonify({"mensaje": "Producto actualizado exitosamente."}), 200
 
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()

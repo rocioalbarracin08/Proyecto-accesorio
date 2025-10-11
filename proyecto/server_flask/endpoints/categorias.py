@@ -1,47 +1,34 @@
-#Hacer importaciones necesarias
-
-#Blueprint: agrupar rutas y lógica en módulos (ej: auth, accesorios)
-from flask import Blueprint, url_for, request, jsonify,g
-
-#generate_password_hash : encripta la contraseña antes de guardarla en la base de datos
-#check_password_hash: compara una contraseña ingresada con la contraseña encriptada guardada.
+from flask import Blueprint, request, jsonify, g
 
 bp = Blueprint('categoria', __name__, url_prefix='/categoria')
 
-########################### Mostrar segun la solicitud ##################
-@bp.route("/mostrar", methods=['POST'])
-def mostrarSegunSolicitud():
-    if g.db_cursor is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-
-    if request.method == 'POST':
-        datos = request.get_json()
-        id_category = datos.get("id_category")
-
-        try:
-            g.db_cursor.execute("SELECT * FROM categoria WHERE id_category = %s", (id_category,))
-            categoria = g.db_cursor.fetchone() #Obtenemos un solo resultado de la consulta
-            if categoria:
-                return jsonify(categoria)  # Devuelve el resultado en formato JSON
-            else:
-                return jsonify({"mensaje": "Categoría no encontrada"}), 404
-        
-        except Exception as e:
-            return jsonify({"error": "Hubo un problema al consultar la categoría"}), 500 #Response con error
-
-########################### M O S T R A R ###########################
+########################### M O S T R A R TODAS ###########################
 @bp.route("/")
 def categorias():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT categoria FROM categoria") # Ejecuta la consulta
-        categorias = g.db_cursor.fetchall()#Obtenemos todos los resultados de la consulta
-        return jsonify(categorias)  # Devuelve los resultados en formato JSON
-        
+        # Corrección: Selecciona TODAS las columnas necesarias para el frontend
+        g.db_cursor.execute("SELECT id_category, categoria, img_url FROM categoria")
+        categorias = g.db_cursor.fetchall()
+        return jsonify(categorias)  # Devuelve array de dicts: [{"id_category":1, "categoria":"Electrónicos", "img_url":"url.jpg"}, ...]
     except Exception as e:
-        return jsonify({"error": "Hubo un problema al consultar las categorías"}), 500 #Response con error
+        return jsonify({"error": f"Hubo un problema al consultar las categorías: {e}"}), 500
 
+########################### Mostrar por ID ###########################
+@bp.route("/<int:id_category>", methods=['GET'])
+def mostrarSegunId(id_category):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        g.db_cursor.execute("SELECT id_category, categoria, img_url FROM categoria WHERE id_category = %s", (id_category,))
+        categoria = g.db_cursor.fetchone()
+        if categoria:
+            return jsonify(categoria)
+        else:
+            return jsonify({"mensaje": "Categoría no encontrada"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Hubo un problema al consultar la categoría: {e}"}), 500
 
 ########################### B O R R A R ###########################
 @bp.route("/<int:id_category>", methods=['DELETE'])
@@ -49,59 +36,55 @@ def borrarRegistro(id_category):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Obtener el id_category de la solicitud DELETE
         g.db_cursor.execute("DELETE FROM categoria WHERE id_category = %s", (id_category,))
-        g.db.commit()  # Confirmar la eliminación
-        return jsonify({"mensaje": "Registro eliminado"}), 200
-    
+        g.db.commit()
+        return jsonify({"mensaje": "Categoría eliminada"}), 200
     except Exception as err:
-        g.db.rollback()  # Revertir la transacción si ocurre un error
-        return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
-
+        g.db.rollback()
+        return jsonify({"error": f"Error al eliminar la categoría: {err}"}), 500
 
 ########################### C R E A R ###########################
-@bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
-#@login_required  -> se asegura de que la función no se ejecute a menos que el usuario esté autenticado
+@bp.route("/", methods=['POST'])
 def crearCategoria():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-
     if request.method == 'POST':
         datos = request.get_json()
-        nombreCategoria = datos.get("categoria")
+        categoria_nombre = datos.get("categoria")  # Usa "categoria" consistente
+        img_url = datos.get("img_url", "")  # Opcional: permite enviar URL de imagen
 
         try:
-            g.db_cursor.execute("INSERT INTO categoria (nombre) VALUES (%s)", (nombreCategoria,))
-            g.db.commit() 
-            return jsonify({"mensaje": "Categoría creada exitosamente."}), 200
-
+            # Corrección: Inserta en columna 'categoria' y 'img_url'
+            g.db_cursor.execute(
+                "INSERT INTO categoria (categoria, img_url) VALUES (%s, %s)", 
+                (categoria_nombre, img_url)
+            )
+            g.db.commit()
+            return jsonify({"mensaje": "Categoría creada exitosamente."}), 201  # 201 para creación
         except Exception as err:
-            g.db.rollback()  #Usa la conexión en 'g' para revertir
+            g.db.rollback()
             return jsonify({"error": f"Error al crear la categoría: {err}"}), 500
 
 
 ########################### M O D I F I C A R ###########################
-@bp.route("/categoria", methods=['UPDATE']) #Distinto a PATH()
-def modificarCategoria():
+@bp.route("/<int:id_category>", methods=['PUT'])  # Usa PUT para update completo, ruta con ID
+def modificarCategoria(id_category):
     if g.db_cursor is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}),500
-
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Obtiene los datos de la solicitud JSON
         datos = request.get_json()
-        nombreCategoria = datos.get("nombreCategoria") #'nombreCategoria' para mayor claridad
-        idCategoria = datos.get("idCategoria") #ID para saber qué registro modificar
-        if not nombreCategoria or not idCategoria: #Los datos si o si tienen que ser enviados para el cambio
-            return jsonify({"error": "Datos incompletos"}), 400
+        categoria_nombre = datos.get("categoria")
+        img_url = datos.get("img_url", "")  # Opcional
+        if not categoria_nombre:
+            return jsonify({"error": "Nombre de categoría requerido"}), 400
 
-        g.db_cursor.execute("UPDATE categoria SET nombre = %s WHERE id = %s", (nombreCategoria, idCategoria))
-        g.db.commit()  # Confirma la transacción en la base de datos
-
-        return jsonify({"mensaje": "Registro modificado"}), 200
-        
+        # Corrección: Usa 'categoria' e 'id_category'
+        g.db_cursor.execute(
+            "UPDATE categoria SET categoria = %s, img_url = %s WHERE id_category = %s", 
+            (categoria_nombre, img_url, id_category)
+        )
+        g.db.commit()
+        return jsonify({"mensaje": "Categoría modificada"}), 200
     except Exception as err:
-        g.db.rollback()  # Revierte la transacción en caso de error
-        print(f"Error al modificar el registro: {err}")
-        return jsonify({"error": f"Error al modificar el registro: {err}"}), 500
-
-
+        g.db.rollback()
+        return jsonify({"error": f"Error al modificar la categoría: {err}"}), 500

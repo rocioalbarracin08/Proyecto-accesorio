@@ -3,32 +3,52 @@
 }
 .categorias-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Ajusta el número de columnas */
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  padding: 20px;
 }
 .categoria {
-  position: relative;
+  position: relative;  /* Relativo para contenedor (img relativa) */
   text-align: center;
   cursor: pointer;
+  border: none;  /* Para button */
+  background: none;
+  overflow: hidden;  /* Evita desborde en hover */
+  border-radius: 10px;
 }
-  
 .categoria img {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 10px;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;  /* Relativa implícita */
 }
-  
 .categoria span {
-    position: absolute; /*lo posiciona relativo a su contenedor más cercano */
-    width: 100%;
-    transform: translateX(-50%);
-    color: white;
-    font-weight: bold; /*poner el texto en negrita*/
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 5px 10px;
+  position: absolute;  /* Absoluto relativo al .categoria */
+  bottom: 10px;  /* FIX: En la parte inferior */
+  left: 50%;
+  transform: translateX(-50%);  /* Centra horizontal */
+  width: auto;
+  color: white;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.6);  /* Más opaco */
+  padding: 8px 15px;
+  border-radius: 20px;
+  white-space: nowrap;
+  z-index: 1;
+}
+.categoria:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
 }
 .categoria:hover img {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .categorias-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
