@@ -2,8 +2,7 @@ import './nav.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 import { useState } from "react";
-import { useCarrito } from '../../contexts/CarritoContext';  // Importa context (verifica ruta)
-import { Carrito } from '../Carrito';  // Importa componente Carrito (verifica ruta, ej. './Carrito' si misma carpeta)
+import { useCarrito } from '../../context/CarritoContext';  // Importa context (verifica ruta)
 
 export function BarraNavegacion() {
   const { isLogged, logout } = useAuthContext(); 
@@ -65,7 +64,13 @@ export function BarraNavegacion() {
       </header>
 
       {/* Modal del carrito (siempre accesible, público) */}
-      <Carrito isOpen={state.showCarrito} onClose={closeCarrito} />  {/* Corregido: closeCarrito para cerrar correctamente */}
+      {state.showCarrito && (
+        <div className="modal-carrito">
+          <h2>Carrito</h2>
+          <p>Total: ${state.totalPrice}</p>
+        </div>
+      )}
+
     </>
   );
 }

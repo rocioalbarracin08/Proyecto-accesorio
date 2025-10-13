@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";  // Para navegar al click
-import "./categorizados.css"; 
+import "./categorizado.css"; 
 
 export function Categorizados() {
   const [categorias, setCategorias] = useState([]);

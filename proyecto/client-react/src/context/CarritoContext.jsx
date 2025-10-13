@@ -119,7 +119,6 @@ const carritoReducer = (state, action) => {
 
 //#########################################################################
 
-
 // Parte que crea, guarda y comparte el ESTADO DEL CARRITO 
 const CarritoContext = createContext(); //crea un “contexto” global de React. | Util para no usar props
 
@@ -155,6 +154,7 @@ export const CarritoProvider = ({ children }) => {
     }
   }, []);//se ejecuta una sola vez
 
+  console.log("error")
   //Cada vez que cambia algo (items, cantidad o total), lo actualiza en el localStorage para tener el carrito reciente, con actualizaciones.
   useEffect(() => {
 
@@ -200,6 +200,7 @@ export const CarritoProvider = ({ children }) => {
 //####################################################################
 export const useCarrito = () => { //custom hook que facilita acceder al contexto.
   const context = useContext(CarritoContext);
+  console.log("error",context)
   if (!context) {
     throw new Error('useCarrito debe usarse dentro de CarritoProvider');
   }

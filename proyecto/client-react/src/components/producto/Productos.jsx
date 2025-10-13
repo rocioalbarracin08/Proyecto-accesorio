@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCarrito } from "../../contexts/CarritoContext";  // Ajusta path si es necesario
+import { useCarrito } from "../../context/CarritoContext";  // Ajusta path si es necesario
 import "./producto.css";  // Tu CSS para grid y botones
 
 export function Productos() {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useCarrito } from '../contexts/CarritoContext';
+import { useCarrito } from '../../context/CarritoContext';
 import './producto.css';
 
 export function ProductoGrid() {

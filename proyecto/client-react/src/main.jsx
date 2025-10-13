@@ -10,9 +10,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-      <CarritoProvider> {/* Nuevo: Wrappea todo para que el carrito sea accesible en toda la app */}
-        <App />
-      </CarritoProvider>
+        <CarritoProvider> {/* Nuevo: Wrappea todo para que el carrito sea accesible en toda la app */}
+          <App />
+        </CarritoProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

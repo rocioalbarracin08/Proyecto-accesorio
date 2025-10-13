@@ -12,46 +12,44 @@ import { Productos } from "./components/producto/Productos";  //Importa Producto
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <BarraNavegacion />
-              <Destacados />
-              <Categorizados />  {/* Muestra categorías en home */}
-              <Perfil />
-              <PiePagina />
-            </>
-          }
-        />
-        <Route
-          path="/productos"
-          element={
-            <>
-              <BarraNavegacion />
-              <ProductoGrid />  {/* Productos generales */}
-              <Perfil />
-              <PiePagina />
-            </>
-          }
-        />
-        <Route
-          path="/productos/:idCategoria"
-          element={
-            <>
-              <BarraNavegacion />
-              <Productos />  {/* Componente para productos FILTRADOS */}
-              <Perfil />
-              <PiePagina />
-            </>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={<Registrarse />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <>
+            <BarraNavegacion />
+            <Destacados />
+            <Categorizados />  {/* Muestra categorías en home */}
+            <Perfil />
+            <PiePagina />
+          </>
+        }
+      />
+      <Route
+        path="/productos"
+        element={
+          <>
+            <BarraNavegacion />
+            <ProductoGrid />  {/* Productos generales */}
+            <Perfil />
+            <PiePagina />
+          </>
+        }
+      />
+      <Route
+        path="/productos/:idCategoria"
+        element={
+          <>
+            <BarraNavegacion />
+            <Productos />  {/* Componente para productos FILTRADOS */}
+            <Perfil />
+            <PiePagina />
+          </>
+        }
+      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/registro" element={<Registrarse />} />
+    </Routes>
   );
 }
 

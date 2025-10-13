@@ -8,7 +8,6 @@ bp = Blueprint('productos', __name__, url_prefix='/productos')
 def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    
     try:
         # Parámetros de paginación (defaults: página 1, 10 items por página)
         page = int(request.args.get('page', 1))

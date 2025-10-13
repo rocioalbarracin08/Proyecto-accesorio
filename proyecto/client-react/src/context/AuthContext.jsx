@@ -26,6 +26,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuthContext() {
   return useContext(AuthContext);
 }
