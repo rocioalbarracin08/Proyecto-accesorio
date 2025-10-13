@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // Estado inicial (agregué showCarrito para modal)
 const initialState = {
-  items: {},  // { [productoId]: { producto, cantidad } }
+  items: [],  // { [productoId]: { producto, cantidad } }
   totalItems: 0,
   totalPrice: 0,
   showCarrito: false  // Para toggle del modal
