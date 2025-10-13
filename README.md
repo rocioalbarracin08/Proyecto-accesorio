@@ -6,3 +6,5 @@ flak run --debug
 http://10.9.120.5:8080/ -> Para ver nuestra db desde un servidor externo
 
 npm install react-router-dom
+
+Ver si se puede borrar el css de main

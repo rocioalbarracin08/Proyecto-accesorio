@@ -1,6 +1,3 @@
-# obtener, agregar, modificar y eliminar datos
-# SELECT
-
 from flask import Blueprint, request, jsonify,g
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
@@ -12,11 +9,46 @@ def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT * FROM clientes ")
-        categorias = g.db_cursor.fetchall()
-        g.db.commit()  # conexión en 'g' para confirmar
+        # Parámetros de paginación (defaults: página 1, 10 items por página)
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        offset = (page - 1) * per_page
+
+        # Query para total de productos (sin paginación)
+        g.db_cursor.execute("SELECT COUNT(*) as total FROM productos")  # Ajusta tabla si es diferente
+        total_result = g.db_cursor.fetchone()
+        total_productos = total_result['total'] if total_result else 0
         
-        return jsonify(categorias)
+        # Query para productos paginados
+        query_productos = """
+            SELECT * FROM productos  -- Ajusta columnas si quieres específicas (ej. id_producto, name, precio, id_categoria)
+            LIMIT %s OFFSET %s
+        """
+        g.db_cursor.execute(query_productos, (per_page, offset))
+        productos_list = g.db_cursor.fetchall()
+        
+        # Calcular metadata
+        total_pages = (total_productos + per_page - 1) // per_page  # Redondeo hacia arriba
+        has_next = page < total_pages
+        has_prev = page > 1
+        
+        # No necesitas commit() para SELECT
+        return jsonify({
+            'productos': productos_list,  # Lista de dicts (por dictionary=True en cursor)
+            'page': page,
+            'per_page': per_page,
+            'total_pages': total_pages,
+            'total_productos': total_productos,
+            'has_next': has_next, #indica si existe una página siguiente.
+            'has_prev': has_prev, #indica si existe una página anterior.
+            'message': f'Productos cargados exitosamente (página {page} de {total_pages})'
+        }), 200
+        '''
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "productos": productos
+        '''
 
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
@@ -25,20 +57,24 @@ def productos():
     
 #-------------------------PRODUCTOS POR CATEGORIA-------------------------------
 
-@bp.route("/productPorCateg/<int:id_categoria>", methods=('POST'))
-def productos(id_categoria):
+
+### Mostrar productos por categoría ###
+@bp.route("/por_categoria/<int:id_categoria>", methods=['GET'])
+def productosXcategoria(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        if request.method == 'POST':
-            g.db_cursor.execute("SELECT * FROM productos p INNER JOIN categoria c ON c.id_category = p.id_categoria WHERE p.id_categoria = %s ",(id_categoria,))
-            productos = g.db_cursor.fetchall()
-            g.db.close() 
-            
-            return jsonify(productos)   
-         
+        # Query con JOIN para incluir info de categoría si necesitas
+        g.db_cursor.execute("""
+            SELECT p.*, c.categoria 
+            FROM productos p 
+            INNER JOIN categoria c ON c.id_category = p.id_categoria 
+            WHERE p.id_categoria = %s
+        """, (id_categoria,))
+        productos = g.db_cursor.fetchall()
+        return jsonify(productos)
     except Exception as e:
-        return jsonify({"error": "Hubo un problema al consultar el id"}), 500 
+        return jsonify({"error": f"Hubo un problema al consultar productos por categoría: {e}"}), 500
 
 
 #--------------------------------------AGREGAR-------------------------------------------

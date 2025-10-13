@@ -1,23 +1,23 @@
-from flask import Blueprint, url_for, request, session, jsonify,g
+from flask import Blueprint, request, jsonify,g
 
 bp = Blueprint('clientes', __name__, url_prefix='/clientes')
 
-@bp.route('/') # GET por defecto
+@bp.route('/')
 def obtener_clientes():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT * FROM clientes") # Ejecuta la consulta
+        g.db_cursor.execute("SELECT * FROM clientes")
         clientes = g.db_cursor.fetchall()#Obtenemos todos los resultados de la consulta
-        return jsonify(clientes)  # Devuelve los resultados en formato JSON
+        return jsonify(clientes)  # En formato JSON
         
     except Exception as e:
-        print(f"Error al obtener categorías: {e}") #Muestra el error en la cnsola del servidor
+        print(f"Error al obtener categorías: {e}") #Muestra el error en la consola del servidor
         return jsonify({"error": "Hubo un problema al consultar las categorías"}), 500 #Response con error
 
 
-@bp.route("/cliente/borrar", methods=('DELETE'))
-def borrar():
+@bp.route("/borrar", methods=['DELETE'])
+def borrar_cliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
@@ -34,9 +34,11 @@ def borrar():
         print(f"Error al eliminar el registro: {err}")
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500   
     
+    
+    
 ########################### C R E A R ###########################
 @bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
-def crearCategoria():
+def crearCliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
@@ -45,9 +47,9 @@ def crearCategoria():
         nombreCategoria = datos.get("categoria")
 
         try:
-            g.db_cursor.execute("INSERT INTO categoria (nombre) VALUES (%s)", (nombreCategoria,))
+            g.db_cursor.execute("INSERT INTO categoria (name, apellido, genero, email, password)VALUES (%s, %s, %s, %s, %s)", (name, apellido, genero, email, password))
             g.db.commit() 
-            return jsonify({"mensaje": "Categoría creada exitosamente."}), 200
+            return jsonify({"mensaje": "Cliente creado exitosamente."}), 200
 
         except Exception as err:
             g.db.rollback()  #Usa la conexión en 'g' para revertir
@@ -55,7 +57,7 @@ def crearCategoria():
 
 
 ########################### M O D I F I C A R ###########################
-@bp.route("/clientes", methods=['UPDATE']) 
+@bp.route("/modificar", methods=['PUT']) 
 def modificarCliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}),500
@@ -66,15 +68,13 @@ def modificarCliente():
 
         name = data.get('nombre')
         apellido = data.get('apellido')
-        genero = data.get('genero')
-        email = data.get('email')
-        password = data.get('password')
+        idCliente = data.get('id_cliente')
 
-        if not name or not apellido or not genero or not email or not password: #Los datos si o si tienen que ser enviados para el cambio
+        if not name or not apellido or not idCliente: 
             return jsonify({"error": "Datos incompletos"}), 400
 
-        g.db_cursor.execute("UPDATE categoria SET nombre = %s WHERE id = %s", (nombreCategoria, idCategoria))
-        g.db.commit()  # Confirma la transacción en la base de datos
+        g.db_cursor.execute("UPDATE categoria SET name = %s apellido = %s WHERE id_cliente = %s", (name, apellido, idCliente))
+        g.db.commit() 
 
         return jsonify({"mensaje": "Registro modificado"}), 200
         

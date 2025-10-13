@@ -1,6 +1,7 @@
 import useAuth from "../../hooks/useAuth";
 import "./register.css";
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +25,8 @@ export function Registrarse() {
 
   const [genero, setGenero] = useState("F");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
 
   const handleClick = async (event) => {
     event.preventDefault();
@@ -99,18 +102,52 @@ export function Registrarse() {
             onChange={(event) => setEmail(event.target.value)}
             value={email}
           />
-          <input
-            type="password"
-            placeholder="Cree una contraseña"
-            onChange={(event) => setContraseña(event.target.value)}
-            value={contraseña}
-          />
-          <input
-            type="password"
-            placeholder="Repita la contraseña"
-            onChange={(event) => setRepetirContraseña(event.target.value)}
-            value={repetirContraseña}
-          />
+          <div style={{ position: 'relative', width: '100%' }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Cree una contraseña"
+              onChange={(event) => setContraseña(event.target.value)}
+              value={contraseña}
+              style={{ width: '100%', paddingRight: '2.5rem' }}
+            />
+            <span
+              onClick={() => setShowPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: '0.7rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#888',
+                fontSize: '1.2rem'
+              }}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
+          <div style={{ position: 'relative', width: '100%' }}>
+            <input
+              type={showRepeatPassword ? "text" : "password"}
+              placeholder="Repita la contraseña"
+              onChange={(event) => setRepetirContraseña(event.target.value)}
+              value={repetirContraseña}
+              style={{ width: '100%', paddingRight: '2.5rem' }}
+            />
+            <span
+              onClick={() => setShowRepeatPassword((prev) => !prev)}
+              style={{
+                position: 'absolute',
+                right: '0.7rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#888',
+                fontSize: '1.2rem'
+              }}
+            >
+              {showRepeatPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
           
           <h5 className="generoH">Indique su género</h5>
           <div className="genero">

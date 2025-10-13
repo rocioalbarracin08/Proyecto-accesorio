@@ -35,6 +35,7 @@ def obtener_conexion():
 if __name__ == '__main__':
     app.run(debug=True)
 
+######################## C A R R I T O ########################
 @app.route("/api/carrito/<int:carrito_id>/agregar", methods = ['POST'])
 def carrito(carritoId):
     
@@ -50,8 +51,25 @@ def carrito(carritoId):
         "cantidad": cantidad
     })
 
+#################  agrega productos  ###################
 
-#---------------------------PRODUCTOS------------------------------------
+@app.route("/api/Agregar") 
+def agregarProductos():
+    try:
+        conexion =  obtener_conexion()
+        if conexion is None:
+            return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
+        cursor = conexion.cursor(dictionary=True)
+        cursor.execute("INSERT INTO productos (name, id_categoria, precio) VALUES (?, ?, ?)")
+
+        cursor.close()
+        conexion.close()
+        
+        return True
+    except: 
+        None
+
 @app.route("/api/accesorio")
 def accesorio():
     conexion =  obtener_conexion()
@@ -68,6 +86,61 @@ def accesorio():
 
     return jsonify(accesorio),200
 
+@app.route("/api/productos", methods=["POST"]) 
+def cambiar_producto():
+    name = request.json.get("name")
+    id_categoria = request.json.get("id_categoria")
+    precio = request.json.get("precio")
+    id_producto = request.json.get("id")
+
+    obtener_conexion
+    conexion = obtener_conexion()
+    if conexion is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute( #inserta nuevos datos para la tabla productos
+            """UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
+            (name, id_categoria,precio, id_producto)
+        )
+        conexion.commit()
+        return jsonify({"mensaje": "pudiste modificar las columnas de la tabla productos"}), 201 #201 significa que se creó un recurso
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+
+################# agregar empleados  ########################
+
+@app.route("/api/empleados", methods=["POST"]) 
+def agregar_empleado():
+    datos = request.get_json() #obtiene los datos en formato json
+    nombre = datos.get("nombre") #obtiene el nombre del empleado
+    apellido = datos.get("apellido") #obtiene el apellido del empleado
+    email = datos.get("email") #obtiene el email del empleado
+    id_tienda = datos.get("id_tienda") #obtiene el id de la
+    puesto_trabajo = datos.get("puesto_trabajo") #obtiene el puesto de trabajo del empleado
+    telefono = datos.get("telefono") #obtiene el telefono del empleado
+
+    conexion = obtener_conexion()
+    if conexion is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute( #inserta datos para la tabla empleados
+            "INSERT INTO empleados (nombre, apellido, email, id_tienda, puesto_trabajo, telefono) VALUES (%s, %s, %s, %s, %s, %s)",
+            (nombre, apellido,email, id_tienda, puesto_trabajo, telefono)
+        )
+        conexion.commit()
+        return jsonify({"mensaje": "email de empleado agregado"}), 201 #201 significa que se creó un recurso
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
 
 @app.route("/empleados") #Para probar con una consulta
 def empleados():
@@ -82,6 +155,78 @@ def empleados():
     cursor.close()
     conexion.close()
     return jsonify(empleados)
+
+################## borra empleados  #######################
+
+@app.route("/api/empleados/borrar", methods=["DELETE"])   
+def borrar_empleado():#obtiene el id del empleado a borrar
+    data = request.get_json()
+    id_empleado = data.get("id_empleado")
+
+    conexion = obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute("DELETE FROM empleados WHERE id_empleado = %s", (id_empleado,)) #borra el empleado con el id especificado
+        conexion.commit()
+        return jsonify({"mensaje": "Empleado eliminado correctamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+#################  inserta una nueva tienda   ########################
+
+@app.route("/api/tiendas", methods=["POST"]) 
+def cambiar_venta():
+     nombre = request.json.get("nombre") #obtiene las columnas de la tabla tiendas
+     ubicacion = request.json.get("ubicacion")
+
+     obtener_conexion
+     conexion = obtener_conexion()
+     if conexion is None: 
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+     cursor = conexion.cursor() 
+     try: #atrapa errores
+        cursor.execute( #inserta nuevos datos para la tabla tiendas
+            "INSERT INTO tiendas (nombre, ubicacion) VALUES (%s, %s)",
+            (nombre, ubicacion)
+        )
+        conexion.commit() 
+        return jsonify({"mensaje": "pudiste agregar el nuevo dato de la tabla tiendas"}), 201 #201 significa que se creó un recurso
+     except Exception as e: #si hay un error
+        return jsonify({"error": str(e)}), 400
+     finally: 
+        cursor.close()
+        conexion.close()
+
+#################  actualiza el costo total en tickets  ########################
+
+@app.route("/api/tickets", methods=["PUT"])
+def actualizar_costo_total():
+    costo_total = request.json.get("costo_total")
+    id_ticket = request.json.get("id_ticket")
+
+    conexion = obtener_conexion()
+    if conexion is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(
+            "UPDATE tickets SET costo_total = %s WHERE id_ticket = %s",
+            (costo_total, id_ticket)
+        )
+        conexion.commit()
+        return jsonify({"mensaje": "Costo total actualizado"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conexion.close()
+
+
 
 
 app.run(debug=True)
