@@ -41,7 +41,7 @@ def crearCategoria():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     if request.method == 'POST':
-        datos = request.get_json()
+        datos = request.get_json() 
         nombreCategoria = datos.get("categoria")
 
         try:
