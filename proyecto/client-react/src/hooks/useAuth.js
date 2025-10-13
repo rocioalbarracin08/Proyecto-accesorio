@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function useAuth() {
 
@@ -14,7 +14,7 @@ export default function useAuth() {
         // Aquí podrías agregar lógica para verificar si el usuario ya está autenticado
         // por ejemplo, verificando un token en localStorage o haciendo una petición a un servidor.
     }, [])
-
+    
     return {usuarioName, setUsuarioName, 
         usuarioApellido, setUsuarioApellido, 
         contraseña, setContraseña, 
