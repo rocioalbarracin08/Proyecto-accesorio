@@ -80,7 +80,7 @@ export function Registrarse() {
 
   return (
     <>
-      <section>
+      <section className="section-register">
         <h1>Registrarse</h1>
         {error ? <h5>Por favor, complete todos los campos</h5> : ""}
         <form className="formulario">
@@ -102,53 +102,35 @@ export function Registrarse() {
             onChange={(event) => setEmail(event.target.value)}
             value={email}
           />
-          <div style={{ position: 'relative', width: '100%' }}>
+          <div className="input-password">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Cree una contraseña"
               onChange={(event) => setContraseña(event.target.value)}
               value={contraseña}
-              style={{ width: '100%', paddingRight: '2.5rem' }}
             />
             <span
               onClick={() => setShowPassword((prev) => !prev)}
-              style={{
-                position: 'absolute',
-                right: '0.7rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                cursor: 'pointer',
-                color: '#888',
-                fontSize: '1.2rem'
-              }}
+              className="span-eye"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-          <div style={{ position: 'relative', width: '100%' }}>
+
+          <div className="input-password">
             <input
               type={showRepeatPassword ? "text" : "password"}
               placeholder="Repita la contraseña"
               onChange={(event) => setRepetirContraseña(event.target.value)}
               value={repetirContraseña}
-              style={{ width: '100%', paddingRight: '2.5rem' }}
             />
             <span
               onClick={() => setShowRepeatPassword((prev) => !prev)}
-              style={{
-                position: 'absolute',
-                right: '0.7rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                cursor: 'pointer',
-                color: '#888',
-                fontSize: '1.2rem'
-              }}
+              className="span-eye"
             >
               {showRepeatPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-          
           <h5 className="generoH">Indique su género</h5>
           <div className="genero">
             <button type="button" className="M" onClick={() => setGenero("M")}>
@@ -162,10 +144,10 @@ export function Registrarse() {
 
         <button onClick={handleClick} className="registro">Registrarse</button>
 
-        <Link to="/login" className="ultLink">
+        <Link to="/login">
           ¿Ya tenés una cuenta?{" "}
         </Link>
-        <Link to="/">Volver</Link>
+        <Link to="/" className="ultLink">Volver</Link>
       </section>
     </>
   );

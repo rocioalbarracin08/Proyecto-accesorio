@@ -20,7 +20,7 @@ export function Categorizados() {
       });
   }, []);
 
-  if (loading) return <main><h2 className="main-category">Cargando categorías...</h2></main>;
+  if (loading) return <main><h2 className="main-category">cargando categorías...</h2></main>;
 
   return (
     <main>
