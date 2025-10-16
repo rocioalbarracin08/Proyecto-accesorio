@@ -13,11 +13,12 @@ export function ProductoGrid() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/productos/?page=${currentPage}&per_page=10`
+        `http://127.0.0.1:5000/productos/mostrar/productos?page=${currentPage}&per_page=10`
         // Sin credentials: público, no envía cookies
       );
       if (!response.ok) throw new Error('Error en servidor');
       const data = await response.json();
+      console.log(data);
       setProductos(data.productos || []);
       setPage(data.page || 1);
       setTotalPages(data.total_pages || 1);
@@ -48,7 +49,7 @@ export function ProductoGrid() {
     <div className="producto-grid">
       {productos.map((producto) => (
         <div className="producto-item" key={getId(producto)}>
-          <img src={producto.imagen} alt={producto.nombre || producto.name} />
+          <img src={producto.imagen_url} alt={producto.nombre || producto.name} />
           <h3>{producto.name || producto.nombre}</h3>
           <p className="producto-precio">{producto.precio}</p>
           <button 

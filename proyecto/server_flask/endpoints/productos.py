@@ -9,51 +9,43 @@ def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Parámetros de paginación (defaults: página 1, 10 items por página)
+        # Parámetros de paginación
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 10))
         offset = (page - 1) * per_page
 
-        # Query para total de productos (sin paginación)
-        g.db_cursor.execute("SELECT COUNT(*) as total FROM productos")  # Ajusta tabla si es diferente
+        g.db_cursor.execute("SELECT COUNT(*) AS total FROM productos")
         total_result = g.db_cursor.fetchone()
         total_productos = total_result['total'] if total_result else 0
-        
-        # Query para productos paginados
-        query_productos = """
-            SELECT * FROM productos  -- Ajusta columnas si quieres específicas (ej. id_producto, name, precio, id_categoria)
+
+        g.db_cursor.execute("""
+            SELECT id_producto, `name` as name, precio, imagen_url
+            FROM productos
             LIMIT %s OFFSET %s
-        """
-        g.db_cursor.execute(query_productos, (per_page, offset))
+        """, (per_page, offset))
         productos_list = g.db_cursor.fetchall()
-        
+
         # Calcular metadata
-        total_pages = (total_productos + per_page - 1) // per_page  # Redondeo hacia arriba
+        total_pages = (total_productos + per_page - 1) // per_page
         has_next = page < total_pages
         has_prev = page > 1
-        
-        # No necesitas commit() para SELECT
+
         return jsonify({
-            'productos': productos_list,  # Lista de dicts (por dictionary=True en cursor)
+            'productos': productos_list,
             'page': page,
             'per_page': per_page,
             'total_pages': total_pages,
             'total_productos': total_productos,
-            'has_next': has_next, #indica si existe una página siguiente.
-            'has_prev': has_prev, #indica si existe una página anterior.
+            'has_next': has_next,
+            'has_prev': has_prev,
             'message': f'Productos cargados exitosamente (página {page} de {total_pages})'
         }), 200
-        '''
-        "total": total,
-        "page": page,
-        "per_page": per_page,
-        "productos": productos
-        '''
 
     except Exception as err:
-        g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
-        print(f"Error al eliminar el registro: {err}")
-        return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
+        g.db.rollback()
+        print(f"Error al obtener productos: {err}")
+        return jsonify({"error": f"Error al obtener productos: {err}"}), 500
+
     
 #-------------------------PRODUCTOS POR CATEGORIA-------------------------------
 
