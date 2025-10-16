@@ -40,7 +40,8 @@ def conexion_db():
 def teardown_request(exception):
     """Cierra la conexión después de cada solicitud."""
     if hasattr(g, 'db') and g.db is not None: #hasattr es una función de python y permite comprobar si un objeto tiene un atributo sin causar un error si no lo tiene
-        g.db.close() #close(): método proporcionado por el conector "mysql.connector"
+        g.db.close() #Flask cierra el cursor | Para no generar fallas en la ejecución de los endpoints 
+        #close(): método proporcionado por el conector "mysql.connector"
 #-----------------------------------------------------------
 
 from server_flask.endpoints.categorias import bp as categoria_bp

@@ -6,11 +6,18 @@
   width: 100%;
 }
 .user img{
-  width: 45px;
+  width: 50px;
+}
+.user :hover{
+  width: 55px;
 }
 .carrito img{
   width: 55px;
 }
+.carrito img:hover{
+  width: 60px;
+}
+
 .direccionamiento{
   gap: 1rem;
 }

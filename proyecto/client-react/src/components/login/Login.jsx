@@ -52,7 +52,7 @@ export function Login(){
     return(
         <>
         
-        <section >
+        <section className='section-log'>
             <h1>Bienvenido</h1>
             {error ? <p>Por favor, complete todos los campos</p> : ""}
             {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
@@ -81,7 +81,7 @@ export function Login(){
                 </div>
             </form>
 
-            <button onClick={handleClick} className='button-log'>Iniciar sesión</button> 
+            <button onClick={handleClick} className='btn-log'>Iniciar sesión</button> 
             
             <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
             <Link to="/registro">¿No tenés cuenta? Registrate</Link>

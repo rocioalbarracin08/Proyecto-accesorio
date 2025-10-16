@@ -32,11 +32,11 @@ footer{
     gap: 0.5rem;
     
 }
-a{
+.a-company{
     text-decoration: none;
     color: white;
 }
-a:hover {
+.a-company:hover {
     color: black;
     font-size: 102%;
 }

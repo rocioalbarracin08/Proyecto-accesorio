@@ -6,7 +6,9 @@ export function ProductoGrid() {
   const [productos, setProductos] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const [loading, setLoading] = useState(true);
+
   const { addItem } = useCarrito();
 
   const fetchProductos = async (currentPage = page) => {
@@ -22,6 +24,7 @@ export function ProductoGrid() {
       setProductos(data.productos || []);
       setPage(data.page || 1);
       setTotalPages(data.total_pages || 1);
+
     } catch (err) {
       console.error("Error cargando productos:", err);
       setProductos([]);
@@ -46,6 +49,7 @@ export function ProductoGrid() {
   if (loading) return <div className="producto-grid">Cargando productos...</div>;
 
   return (
+    <>
     <div className="producto-grid">
       {productos.map((producto) => (
         <div className="producto-item" key={getId(producto)}>
@@ -60,32 +64,31 @@ export function ProductoGrid() {
           </button>
         </div>
       ))}
-
-      {/* Paginación (siempre visible si totalPages > 1) */}
-      {totalPages > 1 && (
-        <div className="paginacion" style={{ marginTop: '40px', textAlign: 'center' }}>
-          <h3>Página {page} de {totalPages}</h3>
-          <button onClick={handlePrev} disabled={page === 1} className="btn-paginacion" style={{ margin: '0 10px' }}>
-            Anterior
-          </button>
-          {[...Array(Math.min(5, totalPages))].map((_, i) => {
-            const pageNum = Math.max(1, Math.min(totalPages, page - 2 + i));
-            return (
-              <button
-                key={pageNum}
-                onClick={() => goToPage(pageNum)}
-                className={`btn-paginacion ${pageNum === page ? 'active' : ''}`}
-                style={{ margin: '0 5px' }}
-              >
-                {pageNum}
-              </button>
-            );
-          })}
-          <button onClick={handleNext} disabled={page === totalPages} className="btn-paginacion" style={{ margin: '0 10px' }}>
-            Siguiente
-          </button>
-        </div>
-      )}
     </div>
+
+    {/* Paginación (siempre visible si totalPages > 1) */}
+    {totalPages > 1 && (
+      <div className="paginacion" style={{ marginTop: '40px', textAlign: 'center' }}>
+        <button onClick={handlePrev} disabled={page === 1} className="btn-paginacion" style={{ margin: '0 10px' }}>
+          Anterior
+        </button>
+        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => goToPage(i + 1)}
+            className={`btn-paginacion ${page === i + 1 ? 'active' : ''}`}
+            style={{ margin: '0 5px' }}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        {/*disable: */}
+        <button onClick={handleNext} disabled={page === totalPages} className="btn-paginacion" style={{ margin: '0 10px' }}>
+          Siguiente
+        </button>
+      </div>
+    )}
+    </>
   );
 }
