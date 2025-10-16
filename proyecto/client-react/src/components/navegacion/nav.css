@@ -5,17 +5,37 @@
   align-items: center;
   width: 100%;
 }
+
+.perfil{
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+.perfil:hover {
+  transform: scale(1.1);
+}
 .user img{
   width: 50px;
+  height: 50px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s;
 }
-.user :hover{
-  width: 55px;
+.user img:hover {
+  transform: scale(1.1);
 }
 .carrito img{
   width: 55px;
+  height: 55px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.2s;
 }
-.carrito img:hover{
-  width: 60px;
+.carrito img:hover {
+  transform: scale(1.1);
 }
 
 .direccionamiento{
@@ -58,4 +78,24 @@
 .btn-cerrarSesion{
   background-color: white;
   color: rosybrown;
+  border: 1px solid rosybrown;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: bold;
+  margin-left: 18px;
+  margin-right: 8px;
+  transition: background 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.btn-cerrarSesion:hover {
+  background-color: rgb(238, 204, 204);
+  color: #a05252;
+  border: 1.5px solid #a05252;
+}
+
+.iconosUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 55px;
 }

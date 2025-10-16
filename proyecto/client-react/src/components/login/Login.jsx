@@ -24,13 +24,14 @@ export function Login(){
         setLoginError("");
 
         try {
-            const response = await fetch("http://localhost:5000/usuarios/login", { //Datos de login enviados al backend
+            const response = await fetch("http://localhost:5000/usuarios/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
                     password: contraseña,
                 }),
+                credentials: "include" // Importante para manejar cookies (tokens) en el navegador
             });
             if (response.ok) {
                 navigate("/");

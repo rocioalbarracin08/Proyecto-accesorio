@@ -11,3 +11,4 @@ pip install dotenv
 pip install flask-cors
 pip install werkzeug
 pip install PyJWT
+npm install react-leaflet leaflet

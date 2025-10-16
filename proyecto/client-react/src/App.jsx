@@ -8,8 +8,9 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
 import { ProductoGrid } from "./components/producto/ProductoGrid";
 import { Categorizados } from "./components/categorias/Categorizados"; 
-import { Productos } from "./components/producto/Productos";  //Importa Productos
+import { Productos } from "./components/producto/Productos"; 
 import Nosotros from "./components/infoCompany/Nosotros";
+import DatosCliente from "./components/perfilCliente/DatosCliente";
 
 function App() {
   return (
@@ -56,6 +57,13 @@ function App() {
         </>
         }></Route>
       <Route path="/login" element={<Login />} />
+      <Route path="/perfil" element={
+        <>
+        <BarraNavegacion />
+        <DatosCliente />
+        <PiePagina />
+        </>
+      } />
       <Route path="/registro" element={<Registrarse />} />
     </Routes>
   );

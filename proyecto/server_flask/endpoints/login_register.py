@@ -105,7 +105,12 @@ def perfil():
     try:
         data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         user_id = data['id_cliente']
-        return jsonify({"mensaje": f"Usuario logueado con id {user_id}"})
+        # Buscar datos completos del usuario
+        g.db_cursor.execute("SELECT name, apellido, genero, email FROM clientes WHERE id_cliente = %s", (user_id,))
+        user = g.db_cursor.fetchone()
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify(user)
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
