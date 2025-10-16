@@ -51,15 +51,7 @@ export function BarraNavegacion() {
 
         <div className="iconosUser">
           {isLogged ? (
-            <button
-              onClick={handleLogout}
-              style={{
-                background: "none",
-                border: "none",
-                color: "white",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={handleLogout} className="btn-cerrarSesion">
               Cerrar sesión
             </button>
           ) : (

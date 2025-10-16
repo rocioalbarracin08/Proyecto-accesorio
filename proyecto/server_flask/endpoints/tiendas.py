@@ -11,10 +11,8 @@ def crear_tienda():
     datos = request.get_json()
     nombre = datos.get("nombre")
     ubicacion = datos.get("ubicacion")
-
     if not nombre or not ubicacion:
         return jsonify({"error": "Faltan campos obligatorios"}), 400
-
     try:
         g.db_cursor.execute(
             "INSERT INTO tiendas (nombre, ubicacion) VALUES (%s, %s)",

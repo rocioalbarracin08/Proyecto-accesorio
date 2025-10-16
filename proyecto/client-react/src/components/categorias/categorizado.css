@@ -8,34 +8,41 @@
   padding: 20px;
 }
 .categoria {
-  position: relative;  /* Relativo para contenedor (img relativa) */
+  position: relative;
   text-align: center;
   cursor: pointer;
-  border: none;  /* Para button */
-  background: none;
-  overflow: hidden;  /* Evita desborde en hover */
+  border: none;        /* Quita el borde */
+  background: none;    /* Quita el fondo */
+  overflow: hidden;
   border-radius: 10px;
+  display: flex;       /* Para centrar contenido */
+  align-items: center; /* Centra vertical */
+  justify-content: center; /* Centra horizontal */
+  font-weight: bold;   /* Letras gruesas */
+  color: white;        /* Color de texto si no tiene background */
 }
+
+.categoria span {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;   /* Letras más gruesas */
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 8px 15px;
+  border-radius: 20px;
+  white-space: nowrap;
+  z-index: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+}
+
 .categoria img {
   width: 200px;
   height: 200px;
   object-fit: cover;
   border-radius: 10px;
   display: block;  /* Relativa implícita */
-}
-.categoria span {
-  position: absolute;  /* Absoluto relativo al .categoria */
-  bottom: 10px;  /* FIX: En la parte inferior */
-  left: 50%;
-  transform: translateX(-50%);  /* Centra horizontal */
-  width: auto;
-  color: white;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.6);  /* Más opaco */
-  padding: 8px 15px;
-  border-radius: 20px;
-  white-space: nowrap;
-  z-index: 1;
 }
 .categoria:hover {
   transform: scale(1.02);

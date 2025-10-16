@@ -16,6 +16,8 @@ db_config = {
             "user" : os.getenv("DB_USER"),  
             "password" : os.getenv("DB_PASSWORD"),  
             "database" : os.getenv("DB_NAME") }
+
+print(db_config)
 #-----------------------------------------------------------
 # Función para la conexión a la base de datos MySQL
 @app.before_request #Lo uso por ser un decorador util para el contexto de aplicación y contexto de solicitud
