@@ -6,6 +6,8 @@
     width: 100%;
     height: 350px;
     gap: 0rem;
+    background-color: rgb(230, 176, 176);
+    
   }
 .seccion-img img{
     /*Estilo a las imagenes*/

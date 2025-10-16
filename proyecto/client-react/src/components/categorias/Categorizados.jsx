@@ -23,7 +23,7 @@ export function Categorizados() {
   if (loading) return <main><h2 className="main-category">cargando categorías...</h2></main>;
 
   return (
-    <main>
+    <main className="category-section">
       <h2 className="main-category">Categorías</h2>
       <div className="categorias-container">
         {categorias.length === 0 ? (

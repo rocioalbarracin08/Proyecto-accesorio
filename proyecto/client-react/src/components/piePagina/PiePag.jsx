@@ -26,8 +26,8 @@ export function PiePagina(){
             
             <div className="compañia">
                 <h4>Compañia</h4>
-                <a href="#">¿Quiénes somos?</a>
-                <a href="#">¿Qué hacemos?</a>
+                <a className="a-company" href="#">¿Quiénes somos?</a>
+                <a className="a-company" href="#">¿Qué hacemos?</a>
             </div>
 
         </div>

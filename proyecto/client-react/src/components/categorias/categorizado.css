@@ -1,56 +1,71 @@
-.main-category {
-  text-align: center;
-}
 .categorias-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   padding: 20px;
 }
+
 .categoria {
   position: relative;
-  text-align: center;
   cursor: pointer;
-  border: none;        /* Quita el borde */
-  background: none;    /* Quita el fondo */
+  border: none;
+  background: none;
   overflow: hidden;
-  border-radius: 10px;
-  display: flex;       /* Para centrar contenido */
-  align-items: center; /* Centra vertical */
-  justify-content: center; /* Centra horizontal */
-  font-weight: bold;   /* Letras gruesas */
-  color: white;        /* Color de texto si no tiene background */
+  border-radius: 12px;
+  aspect-ratio: 1 / 1;  /* Cuadrado adaptable */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.categoria img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* Rellena sin deformar */
+  transition: transform 0.3s ease;
+  image-rendering: auto; /* Suaviza el escalado */
+  filter: brightness(0.75); /* Oscurece un poco para que el texto resalte */
+}
+.categoria:hover {
+  transform: scale(1.02);
+}
+.categoria:hover img {
+  transform: scale(1.05);
+}
+
+.category-section{
+  text-align: center;
+  background-color: rgb(230, 176, 176);
+}
+.main-category{
+  padding-top: 0%;
+  margin-top: 0%;
+  color: white;
+  font-weight: bold;
 }
 
 .categoria span {
   position: absolute;
-  bottom: 10px;
+  inset: 0; /* ocupa todo el contenedor */
+  bottom: 12px;
   left: 50%;
+  top: 50%;
   transform: translateX(-50%);
-  font-weight: bold;   /* Letras más gruesas */
-  color: white;
-  background-color: rgba(0, 0, 0, 0.4);
-  padding: 8px 15px;
-  border-radius: 20px;
-  white-space: nowrap;
-  z-index: 1;
-  text-align: center;  /* Asegura que el texto esté centrado */
+  text-transform: uppercase;  /* Mayúsculas */
+  font-size: 1.4rem;        /* Texto grande */
+  font-weight: 700;         /* Negrita */
+  color: #fff;              /* Blanco puro */
+  background: none;         /* Sin fondo de botón */
+  pointer-events: none; /* deja clickeable el botón completo */
+  border: none;
 }
 
-.categoria img {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;  /* Relativa implícita */
-}
-.categoria:hover {
-  transform: scale(1.02);
-  transition: transform 0.3s ease;
-}
-.categoria:hover img {
-  transform: scale(1.05);
-  transition: transform 0.3s ease;
+/* Sin aspecto de botón */
+.categoria:focus,
+.categoria:active {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Responsive */

@@ -22,7 +22,7 @@
 }
 
 /*Estilo para el form*/
-section{
+.section-log{
     background-color: rgba(250, 134, 134, 0.61);
 
     display: flex;
@@ -54,7 +54,7 @@ input{
     padding: 0.5rem;
     text-align: center;
 }
-.button-log:hover {
+.btn-log:hover {
     background-color: rgb(172, 99, 99);
     cursor: pointer;
 }

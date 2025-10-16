@@ -11,7 +11,7 @@ def productos():
     try:
         # Parámetros de paginación (defaults: página 1, 10 items por página)
         page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('per_page', 10))
+        per_page = int(request.args.get('per_page', 10)) #Se solicita la cantidad de productos a mostrar por página
         offset = (page - 1) * per_page
 
         # Query para total de productos (sin paginación)
@@ -36,7 +36,7 @@ def productos():
         return jsonify({
             'productos': productos_list,  # Lista de dicts (por dictionary=True en cursor)
             'page': page,
-            'per_page': per_page,
+            'per_page': per_page, #por defecto se mostrarán 10 productos por página
             'total_pages': total_pages,
             'total_productos': total_productos,
             'has_next': has_next, #indica si existe una página siguiente.
@@ -61,15 +61,40 @@ def productosXcategoria(id_categoria):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Query con JOIN para incluir info de categoría si necesitas
+        # Parámetros de paginación
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        offset = (page - 1) * per_page
+
+        # Total de productos en la categoría
+        g.db_cursor.execute("SELECT COUNT(*) as total FROM productos WHERE id_categoria = %s", (id_categoria,))
+        total_result = g.db_cursor.fetchone()
+        total_productos = total_result['total'] if total_result else 0
+
+        # Productos paginados
         g.db_cursor.execute("""
             SELECT p.*, c.categoria 
             FROM productos p 
             INNER JOIN categoria c ON c.id_category = p.id_categoria 
             WHERE p.id_categoria = %s
-        """, (id_categoria,))
-        productos = g.db_cursor.fetchall()
-        return jsonify(productos)
+            LIMIT %s OFFSET %s
+        """, (id_categoria, per_page, offset))
+        productos_list = g.db_cursor.fetchall()
+
+        total_pages = (total_productos + per_page - 1) // per_page
+        has_next = page < total_pages
+        has_prev = page > 1
+
+        return jsonify({
+            'productos': productos_list,
+            'page': page,
+            'per_page': per_page,
+            'total_pages': total_pages,
+            'total_productos': total_productos,
+            'has_next': has_next,
+            'has_prev': has_prev,
+            'message': f'Productos de la categoría {id_categoria} cargados exitosamente (página {page} de {total_pages})'
+        }), 200
     except Exception as e:
         return jsonify({"error": f"Hubo un problema al consultar productos por categoría: {e}"}), 500
 

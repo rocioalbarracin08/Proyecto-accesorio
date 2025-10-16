@@ -141,6 +141,14 @@
   padding: 2px 6px;
 }
 
+.productos-page{
+  text-align: center;
+}
+.tituloProducts{
+  margin-top: 20px;
+  color: #333;
+}
+
 /* NUEVOS ESTILOS: Para el modal del carrito (agrega esto al final) */
 .modal-overlay {
   position: fixed;
