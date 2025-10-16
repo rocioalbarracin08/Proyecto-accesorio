@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 export function Perfil() {
   useEffect(() => {
-    fetch("http://localhost:5000/usuarios/perfil", {
+    fetch("http://localhost:5000/usuarios/perfil2", {
       method: "GET",
       credentials: "include",
     })

@@ -6,7 +6,7 @@ export default function DatosCliente() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/usuarios/perfil", {
+    fetch("http://localhost:5000/usuarios/perfil2", {
       method: "GET",
       credentials: "include",
     })

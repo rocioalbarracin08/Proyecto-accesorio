@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
 
   // Revalida el token cada vez que cambia la ruta
   useEffect(() => {
-    fetch("http://localhost:5000/usuarios/perfil", {
+    fetch("http://localhost:5000/usuarios/perfil2", {
       method: "GET",
       credentials: "include",
     })
