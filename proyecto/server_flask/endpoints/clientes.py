@@ -34,6 +34,8 @@ def borrar_cliente():
         print(f"Error al eliminar el registro: {err}")
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500   
     
+    
+    
 ########################### C R E A R ###########################
 @bp.route("/", methods=['POST']) #Distinto a PUT (no crea repetidos)
 def crearCliente():
@@ -41,13 +43,8 @@ def crearCliente():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     if request.method == 'POST':
-        datos = request.get_json()
-
-        name = datos.get("nombre")
-        apellido = datos.get("apellido")
-        genero = datos.get("genero")
-        email = datos.get("email")
-        password = datos.get("password")
+        datos = request.get_json() 
+        nombreCategoria = datos.get("categoria")
 
         try:
             g.db_cursor.execute("INSERT INTO categoria (name, apellido, genero, email, password)VALUES (%s, %s, %s, %s, %s)", (name, apellido, genero, email, password))
