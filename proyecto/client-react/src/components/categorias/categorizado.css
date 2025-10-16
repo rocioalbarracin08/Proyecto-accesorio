@@ -36,13 +36,7 @@
 
 .category-section{
   text-align: center;
-  background-color: rgb(230, 176, 176);
-}
-.main-category{
-  padding-top: 0%;
-  margin-top: 0%;
-  color: white;
-  font-weight: bold;
+  background-color: white;
 }
 
 .categoria span {

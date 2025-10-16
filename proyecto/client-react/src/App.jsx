@@ -9,6 +9,7 @@ import { Registrarse } from "./components/registro/Registrarse";
 import { ProductoGrid } from "./components/producto/ProductoGrid";
 import { Categorizados } from "./components/categorias/Categorizados"; 
 import { Productos } from "./components/producto/Productos";  //Importa Productos
+import Nosotros from "./components/infoCompany/Nosotros";
 
 function App() {
   return (
@@ -47,6 +48,13 @@ function App() {
           </>
         }
       />
+      <Route path="/nosotros" element={
+        <>
+        <BarraNavegacion/>
+        <Nosotros/>
+        <PiePagina/>
+        </>
+        }></Route>
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registrarse />} />
     </Routes>

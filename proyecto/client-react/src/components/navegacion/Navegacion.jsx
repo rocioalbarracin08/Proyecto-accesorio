@@ -28,7 +28,7 @@ export function BarraNavegacion() {
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 
         <Link to="/productos" className='direccionamiento'>Tienda</Link>
-        <Link to="/" className='direccionamiento'>Nosotros</Link>  
+        <Link to="/nosotros" className='direccionamiento'>Nosotros</Link>  
 
         <input 
           className='buscador'
