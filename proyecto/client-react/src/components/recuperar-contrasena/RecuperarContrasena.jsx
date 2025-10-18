@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import "./recuperarContrasena.css";  // Importa el CSS
 
 export default function RecuperarContrasena() {
   const [email, setEmail] = useState("");
@@ -33,25 +34,25 @@ export default function RecuperarContrasena() {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Recuperar Contraseña</h1>
+    <div className="recuperar-container">  {/* Clase CSS en lugar de style */}
+      <h1 className="recuperar-title">Recuperar Contraseña</h1>
       <p>Ingresa tu email para recibir un enlace de recuperación</p>
-      {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit} style={{ maxWidth: "300px", margin: "0 auto" }}>
+      {mensaje && <p className="recuperar-message">{mensaje}</p>}
+      {error && <p className="recuperar-error">{error}</p>}
+      <form onSubmit={handleSubmit} className="recuperar-form">
         <input
           type="email"
           placeholder="Tu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          className="recuperar-input"
         />
-        <button type="submit" disabled={loading} style={{ padding: "10px 20px" }}>
+        <button type="submit" disabled={loading} className="recuperar-btn">
           {loading ? "Enviando..." : "Enviar Email"}
         </button>
       </form>
-      <Link to="/login" style={{ display: "block", marginTop: "20px" }}>Volver a Login</Link>
+      <Link to="/login" className="recuperar-link">Volver a Login</Link>
     </div>
   );
 }

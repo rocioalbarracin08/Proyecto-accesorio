@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import "./resetearContrasena.css";  // Importa el CSS
 
 export default function ResetearContrasena() {
   const [password, setPassword] = useState("");
@@ -43,19 +44,19 @@ export default function ResetearContrasena() {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Resetear Contraseña</h1>
+    <div className="resetear-container">  {/* Clase CSS en lugar de style */}
+      <h1 className="resetear-title">Resetear Contraseña</h1>
       <p>Ingresa tu nueva contraseña.</p>
-      {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit} style={{ maxWidth: "300px", margin: "0 auto" }}>
+      {mensaje && <p className="resetear-message">{mensaje}</p>}
+      {error && <p className="resetear-error">{error}</p>}
+      <form onSubmit={handleSubmit} className="resetear-form">
         <input
           type="password"
           placeholder="Nueva Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          className="resetear-input"
         />
         <input
           type="password"
@@ -63,13 +64,13 @@ export default function ResetearContrasena() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
-          style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          className="resetear-input"
         />
-        <button type="submit" disabled={loading} style={{ padding: "10px 20px" }}>
+        <button type="submit" disabled={loading} className="resetear-btn">
           {loading ? "Reseteando..." : "Resetear Contraseña"}
         </button>
       </form>
-      <Link to="/login" style={{ display: "block", marginTop: "20px" }}>Volver a Login</Link>
+      <Link to="/login" className="resetear-link">Volver a Login</Link>
     </div>
   );
 }
