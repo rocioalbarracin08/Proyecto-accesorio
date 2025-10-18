@@ -7,10 +7,11 @@ from datetime import datetime, timezone, timedelta
 from flask import make_response
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
+
 SECRET_KEY = "clave_super_secreta"
 
-@bp.route('/register2', methods=['POST'])
-def register2(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
+@bp.route('/register', methods=['POST'])
+def register(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
@@ -55,8 +56,8 @@ def register2(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
         return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
 
 
-@bp.route('/login2', methods=['POST'])
-def login2():
+@bp.route('/login', methods=['POST'])
+def login():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
@@ -71,69 +72,24 @@ def login2():
         g.db_cursor.execute("SELECT id_usuario, password FROM usuarios WHERE email = %s", (email,))
         user = g.db_cursor.fetchone()
         
-        print(user)
-        if not user:
-            return jsonify({"error": "El email no está registrado"}), 401
-        if not check_password_hash(user["password"], password): 
-            return jsonify({"error": "La contraseña es incorrecta"}), 401
-
-        token = jwt.encode({ 
-            #Datos del usuario
-            "id_usuario": user["id_usuario"], 
-            "exp": datetime.now(timezone.utc) + timedelta(hours=4)
-
-        }, SECRET_KEY, algorithm="HS256") 
-        if isinstance(token, bytes):
-            token = token.decode('utf-8')
-
-        response = make_response(jsonify({"mensaje": "Login exitoso"}))
-        response.set_cookie('token', token, httponly=True, samesite='Lax')
-        print(response)
-
-        return response, 200
-
-    except Exception as err:
-        print(f"Error en login: {err}")
-        return jsonify({"error": f"Error interno: {str(err)}"}), 500
-            
-
-@bp.route('/login', methods=['POST'])
-def login():
-    if g.db_cursor is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-
-    try:
-        data = request.get_json()
-        email = data.get('email') #Esto lo verifica bien
-        password = data.get('password') #Esto no lo verifica bien
-
-        if not all([email, password]):
-            return jsonify({'error': 'Faltan datos'}), 400
-
-        g.db_cursor.execute("SELECT id_cliente, password FROM clientes WHERE email = %s", (email,))
-        user = g.db_cursor.fetchone()
-        
         print(user) #Diccionario
-        
         #Verificamos si el usuario existe y si la contraseña es correcta
         if not user:
             return jsonify({"error": "El email no está registrado"}), 401
-        if not check_password_hash(user["password"], password): #Rompía por usar el índice de la lista y no la clave del objeto
+        if not check_password_hash(user["password"], password):  #Rompía por usar el índice de la lista y no la clave del objeto
             return jsonify({"error": "La contraseña es incorrecta"}), 401
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 
             #Datos del usuario
-            "id_cliente": user["id_cliente"], # el id del usuario | Rompía por usar un índice y no una clave del objeto
-            "exp": datetime.now(timezone.utc) + timedelta(hours=4)#vence en 2 horas
+            "id_usuario": user["id_usuario"], #Rompía por usar un índice y no una clave del objeto
+            "exp": datetime.now(timezone.utc) + timedelta(hours=4)
+
         }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
         if isinstance(token, bytes):
             token = token.decode('utf-8')
 
-        #print(token)->Ya no respondía
-
         response = make_response(jsonify({"mensaje": "Login exitoso"}))
-
         #guarda el token en una cookie del navegador
         response.set_cookie('token', token, httponly=True, samesite='Lax')
         print(response)
@@ -143,10 +99,10 @@ def login():
     except Exception as err:
         print(f"Error en login: {err}")
         return jsonify({"error": f"Error interno: {str(err)}"}), 500
-
+            
 ################ LECTURA DE LA COOKIE #####################
-@bp.route('/perfil2')
-def perfil2():
+@bp.route('/perfil')
+def perfil():
     token = request.cookies.get('token')  # lee la cookie
     if not token:
         return jsonify({"error": "No estás logueado"}), 401
@@ -163,27 +119,25 @@ def perfil2():
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"error": "Token inválido"}), 401
+    
 
-
-@bp.route('/perfil')
-def perfil():
-    token = request.cookies.get('token')  # lee la cookie
+# NUEVO: Verificar si es dueño 
+@bp.route('/es_dueno')
+def es_dueno():
+    token = request.cookies.get('token')
     if not token:
-        return jsonify({"error": "No estás logueado"}), 401
+        return jsonify({"es_dueno": False}), 401
     try:
         data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        user_id = data['id_cliente']
-        # Buscar datos completos del usuario
-        g.db_cursor.execute("SELECT name, apellido, genero, email FROM clientes WHERE id_cliente = %s", (user_id,))
+        user_id = data['id_usuario']
+        g.db_cursor.execute("SELECT id_cliente, id_empleado FROM usuarios WHERE id_usuario = %s", (user_id,))
         user = g.db_cursor.fetchone()
-        if not user:
-            return jsonify({"error": "Usuario no encontrado"}), 404
-        return jsonify(user)
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expirado"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
-
+        #(solo si id_cliente e id_empleado son NULL)
+        if user and user['id_cliente'] is None and user['id_empleado'] is None:
+            return jsonify({"es_dueno": True})
+        return jsonify({"es_dueno": False})
+    except:
+        return jsonify({"es_dueno": False}), 401
 
 ############## CERRAR SESIÓN Y borrar logueo ##############
 @bp.route('/logout', methods=['POST'])

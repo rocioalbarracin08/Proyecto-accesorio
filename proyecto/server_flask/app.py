@@ -42,19 +42,22 @@ def teardown_request(exception):
     if hasattr(g, 'db') and g.db is not None: #hasattr es una función de python y permite comprobar si un objeto tiene un atributo sin causar un error si no lo tiene
         g.db.close() #Flask cierra el cursor | Para no generar fallas en la ejecución de los endpoints 
         #close(): método proporcionado por el conector "mysql.connector"
+    if hasattr(g, 'db_cursor') and g.db_cursor is not None: 
+        g.db_cursor.close()
 #-----------------------------------------------------------
 
 from server_flask.endpoints.categorias import bp as categoria_bp
-from server_flask.endpoints.login_register import bp as usuarios_bp
-from server_flask.endpoints.productos import bp as productos_bp
 from server_flask.endpoints.clientes import bp as clientes_bp
 from server_flask.endpoints.empleados import bp as empleados_bp
-from server_flask.endpoints.ticket import bp as ticket_bp
+from server_flask.endpoints.login_register import bp as usuarios_bp
+from server_flask.endpoints.productos import bp as productos_bp
+from server_flask.endpoints.registro_productos import bp as registro_productos_bp
+from server_flask.endpoints.tickets import bp as ticket_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 
 def create_app(test_config = None):
 
-    CORS(app, resources={r"/*": {"origins": "http://localhost:5174", "supports_credentials": True}}) #Permite que el frontend (localhost:5173, de React) hable con el backend (localhost:5000, Flask)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_credentials": True}}) #Permite que el frontend (localhost:5173, de React) hable con el backend (localhost:5000, Flask)
     #CORS es global
 
     # Registra el Blueprint
@@ -65,7 +68,7 @@ def create_app(test_config = None):
     app.register_blueprint(empleados_bp)
     app.register_blueprint(ticket_bp)
     app.register_blueprint(tiendas_bp)
-    #Falta registro de productos
+    app.register_blueprint(registro_productos_bp)
 
     return app
 

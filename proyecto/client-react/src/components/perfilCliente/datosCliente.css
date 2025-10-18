@@ -9,6 +9,20 @@
   box-sizing: border-box;
   font-family: Arial, sans-serif;
   color: #333;
+  gap: 10px;
+}
+
+.perfilIG{
+  width: 40;
+  height: 40;
+  border-radius: 50%; 
+  object-fit: cover;
+}
+
+.info-cliente{
+  text-align: left;
+  font-size: 0.95rem;
+  color: #a05252;
 }
 
 /* Estilo para la imagen del perfil */
