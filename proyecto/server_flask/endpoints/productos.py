@@ -95,7 +95,7 @@ def productosXcategoria(id_categoria):
 
 
 #--------------------------------------AGREGAR-------------------------------------------
-@bp.route("/inserta/productos") 
+@bp.route("/inserta/productos", methods=["POST"]) 
 def agregarProductos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -111,7 +111,7 @@ def agregarProductos():
         return jsonify({"error": "No se pudo agregar el producto que deseeas"}), 500 
 
 #--------------------------------------MODIFICA-------------------------------------------
-@bp.route("/modifica/productos", methods=["POST"]) 
+@bp.route("/modifica/productos", methods=["PUT"]) 
 def cambiar_producto() :
 
     if g.db.cursor is None: 
@@ -129,3 +129,29 @@ def cambiar_producto() :
     
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+#--------------------------------------BUSCAR-------------------------------------------
+#Buscar productos por nombre o categoría
+@bp.route("/buscar", methods=['GET'])
+def buscar_productos():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    query = request.args.get('q', '').strip()  # Parámetro 'q' del frontend (e.g., ?q=electronico)
+    if not query or len(query) < 2:  # Evita búsquedas vacías o muy cortas
+        return jsonify({"resultados": []}), 200
+    
+    try:
+        # Busca en productos por nombre, y une con categoría
+        g.db_cursor.execute("""
+            SELECT p.id_producto, p.name, p.precio, p.imagen_url, c.categoria
+            FROM productos p
+            INNER JOIN categoria c ON p.id_categoria = c.id_category
+            WHERE p.name LIKE %s OR c.categoria LIKE %s
+            LIMIT 10 
+        """, (f'%{query}%', f'%{query}%'))  # LIKE con % para coincidencias parciales
+        
+        resultados = g.db_cursor.fetchall()
+        return jsonify({"resultados": resultados}), 200
+    except Exception as err:
+        return jsonify({"error": f"Error en búsqueda: {err}"}), 500

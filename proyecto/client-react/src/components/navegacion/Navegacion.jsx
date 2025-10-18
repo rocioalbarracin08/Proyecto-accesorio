@@ -1,15 +1,17 @@
 import "./nav.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import { useState } from "react";
-import { useCarrito } from "../../context/CarritoContext"; // Importa context (verifica ruta)
+import { useState, useEffect } from "react";
+import { useCarrito } from "../../context/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
 
 export function BarraNavegacion() {
   const { isLogged, logout } = useAuthContext();
   const navigate = useNavigate();
-  const [busqueda, setBusqueda] = useState(""); // Estado para búsqueda (sin funcionalidad por ahora)
-  const { state, toggleCarrito, closeCarrito } = useCarrito(); // Agregué closeCarrito para cerrar modal correctamente
+  const [busqueda, setBusqueda] = useState("");
+  const [resultados, setResultados] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { state, toggleCarrito, closeCarrito } = useCarrito();
 
   const handleLogout = async () => {
     await fetch("http://localhost:5000/usuarios/logout", {
@@ -20,33 +22,87 @@ export function BarraNavegacion() {
     navigate("/login");
   };
 
+  const handleBuscar = async (query) => {
+    if (!query.trim() || query.length < 2) {
+      setResultados([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/productos/buscar?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      setResultados(data.resultados || []);
+    } catch (err) {
+      console.error("Error en búsqueda:", err);
+      setResultados([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => handleBuscar(busqueda), 300);
+    return () => clearTimeout(timeout);
+  }, [busqueda]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleBuscar(busqueda);
+  };
+
   return (
     <>
       <header className="encabezado">
         <Link to="/">
-          <img
-            src="/logos/fondo.jpg"
-            className="miLogo"
-            alt="Logo de la tienda"
-          />
+          <img src="/logos/fondo.jpg" className="miLogo" alt="Logo de la tienda" />
         </Link>
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 
         <Link to="/productos" className='direccionamiento'>Tienda</Link>
         <Link to="/nosotros" className='direccionamiento'>Nosotros</Link>  
 
-        <input
-          className="buscador"
-          type="text"
-          placeholder="Buscar producto"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-        />
+        <form onSubmit={handleSubmit} className="buscador-form">  {/* Agregué clase para el form */}
+          <input
+            className="buscador"
+            type="text"
+            placeholder="Buscar producto o categoría"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+          
+          {resultados.length > 0 && (
+            <ul className="buscador-dropdown">  {/* Clase CSS en lugar de style */}
+              {resultados.map((prod) => (
+                <li key={prod.id_producto} className="buscador-item">  {/* Clase CSS */}
+                  <Link
+                    to={`/productos/${prod.id_categoria}`}
+                    onClick={() => {
+                      setBusqueda("");
+                      setResultados([]);
+                    }}
+                    className="buscador-link" >
+                    <img 
+                      src={prod.imagen_url || "/default.jpg"} 
+                      alt={prod.name} 
+                      className="buscador-img"
+                    />
+                    <div>
+                      <strong>{prod.categoria}</strong>: {prod.name} - ${prod.precio}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {loading && <p className="buscador-loading">Buscando...</p>}  {/* Clase CSS */}
+        </form>
 
         <div className="iconosUser">
           {isLogged ? (
             <>
-              <Link to= "/perfil"><img src="/logos/vectorUsuario.png" alt="Perfil" className="perfil" /></Link>
+              <Link to="/perfil">
+                <img src="/logos/vectorUsuario.png" alt="Perfil" className="perfil" />
+              </Link>
               <button onClick={handleLogout} className="btn-cerrarSesion">
                 Cerrar sesión
               </button>
@@ -56,16 +112,9 @@ export function BarraNavegacion() {
               <img src="/logos/vectorUsuario.png" alt="Iniciar sesión" />
             </Link>
           )}
-          {/* Botón carrito: toggle para abrir, con badge y aria-label para accesibilidad */}
           <button
             onClick={toggleCarrito}
             className="carrito"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              position: "relative",
-            }}
             aria-label={`Ver carrito (${state.totalItems} items)`}
           >
             <img src="/logos/carrito.png" alt="Ícono de carrito de compras" />
@@ -78,7 +127,6 @@ export function BarraNavegacion() {
         </div>
       </header>
 
-      {/* Modal del carrito (siempre accesible, público) */}
       {state.showCarrito && <ComprasCarrito />}
     </>
   );
