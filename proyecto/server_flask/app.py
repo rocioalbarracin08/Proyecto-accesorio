@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 from flask_cors import CORS
 from flask import g
+from flask_mail import Mail
 
 load_dotenv() #Libreria que lee el archivo .env
 
@@ -15,7 +16,7 @@ db_config = {
             "port" : os.getenv("DB_PORT"),    
             "user" : os.getenv("DB_USER"),  
             "password" : os.getenv("DB_PASSWORD"),  
-            "database" : os.getenv("DB_NAME") }
+            "database" : os.getenv("DB_NAME")}
 
 print(db_config)
 #-----------------------------------------------------------
@@ -72,4 +73,5 @@ def create_app(test_config = None):
 
     return app
 
-app = create_app() 
+app = create_app()
+mail = Mail(app)

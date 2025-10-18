@@ -84,7 +84,7 @@ export function Login(){
 
             <button onClick={handleClick} className='btn-log'>Iniciar sesión</button> 
             
-            <a href="#" className="enlaces">¿Perdiste tu contraseña?</a>
+            <Link to="/recuperar-contrasena" className='enlaces'>¿Olvidaste tu contraseña?</Link>
             <Link to="/registro">¿No tenés cuenta? Registrate</Link>
             <Link to="/" className='ultLink'>Volver</Link>
 

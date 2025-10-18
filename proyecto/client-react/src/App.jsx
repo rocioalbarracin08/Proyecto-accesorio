@@ -10,12 +10,16 @@ import { ProductoGrid } from "./components/producto/ProductoGrid";
 import { Categorizados } from "./components/categorias/Categorizados"; 
 import { Productos } from "./components/producto/Productos"; 
 import Nosotros from "./components/infoCompany/Nosotros";
-import DatosCliente from "./components/perfilCliente/DatosCliente";
-import RegistrarEmpleado from "./components/empleados/RegistrarEmpleado";  // NUEVO
+import PerfilUser from "./components/perfilUsuario/PerfilUser";
+import RegistrarEmpleado from "./components/empleados/RegistrarEmpleado";  
+import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
+import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasena";
 
 function App() {
   return (
     <Routes>
+      <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+      <Route path="/resetear-contrasena" element={<ResetearContrasena />} />
       <Route
         path="/"
         element={
@@ -61,7 +65,7 @@ function App() {
       <Route path="/perfil" element={
         <>
         <BarraNavegacion />
-        <DatosCliente />
+        <PerfilUser />
         <PiePagina />
         </>
       } />

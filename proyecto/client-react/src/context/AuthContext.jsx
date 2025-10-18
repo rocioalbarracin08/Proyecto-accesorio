@@ -5,56 +5,59 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLogged, setIsLogged] = useState(false);  // Estado: ¿Usuario logueado?
-  const [isOwner, setIsOwner] = useState(false);    // NUEVO: Estado: ¿Es el dueño único?
+  const [isOwner, setIsOwner] = useState(false);    // Estado: ¿Es dueño?
+  const [userRole, setUserRole] = useState(null);   // Estado: Rol ('cliente', 'empleado', 'dueño')
 
-  const location = useLocation();  // Hook para detectar cambios de ruta
+  const location = useLocation();  // Detecta cambios de página
 
   useEffect(() => {
-    // Se ejecuta cada vez que cambia la ruta (e.g., al navegar)
-    // Paso 1: Verificar si está logueado llamando a /perfil
+    // Se ejecuta al cambiar de página para mantener estados actualizados
     fetch("http://localhost:5000/usuarios/perfil", {
       method: "GET",
-      credentials: "include",  // Envía cookies (token) para autenticación
+      credentials: "include",  // Envía cookies con token
     })
       .then((res) => {
-        setIsLogged(res.ok);  // Si la respuesta es OK (200), está logueado
+        setIsLogged(res.ok);  // Actualiza si está logueado
         if (res.ok) {
-          // Paso 2: Si está logueado, verificar si es dueño llamando a /es_dueno
-          return fetch("http://localhost:5000/usuarios/es_dueno", {
-            method: "GET",
-            credentials: "include",
-          });
+          // Si logueado, verifica si es dueño
+          return fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" });
         }
       })
-      .then((res) => res ? res.json() : null)  // Convierte respuesta a JSON si existe
+      .then((res) => res ? res.json() : null)
       .then((data) => {
-        setIsOwner(data?.es_dueno || false);  // Actualiza isOwner basado en la respuesta (true si es dueño)
+        setIsOwner(data?.es_dueno || false);
+        // Obtiene rol del perfil
+        return fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" });
+      })
+      .then((res) => res ? res.json() : null)
+      .then((data) => {
+        // Deduce rol basado en IDs
+        if (data?.id_cliente) setUserRole('cliente');
+        else if (data?.id_empleado) setUserRole('empleado');
+        else setUserRole('dueño');
       })
       .catch(() => {
-        // Si hay error (e.g., token expirado), resetea estados
+        // Resetea si hay error (e.g., token expirado)
         setIsLogged(false);
         setIsOwner(false);
+        setUserRole(null);
       });
-  }, [location]);  // Dependencia: se ejecuta al cambiar ruta
+  }, [location]);  // Dependencia: se ejecuta al cambiar location
 
-  // Función para marcar logueado (llamada desde Login.jsx)
-  const login = () => setIsLogged(true);
-
-  // Función para marcar no logueado y resetear dueño (llamada desde BarraNavegacion.jsx)
-  const logout = () => {
+  const login = () => setIsLogged(true);  // Función para marcar logueado
+  const logout = () => {                   // Función para marcar no logueado y resetear
     setIsLogged(false);
     setIsOwner(false);
+    setUserRole(null);
   };
 
-  // Proporciona los valores a todos los componentes hijos
   return (
-    <AuthContext.Provider value={{ isLogged, isOwner, login, logout }}>
+    <AuthContext.Provider value={{ isLogged, isOwner, userRole, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook para usar el contexto en cualquier componente
 export function useAuthContext() {
   return useContext(AuthContext);
 }
