@@ -241,3 +241,54 @@
     padding: 10px;
   }
 }
+/* Banner de promoción en productos (cartelito) */
+.promocion-banner {
+  width: 100%;  /* Ocupa todo el ancho */
+  background: linear-gradient(45deg, #ff6b6b, #ffa500);  /* Gradiente rojo-naranja para "lindo" y destacar */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;  /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Sombra para profundidad */
+  animation: fadeIn 0.5s ease-in-out;  /* Animación de entrada suave */
+}
+
+/* Animación fadeIn para banner (compleja: usa keyframes para transición) */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }  /* Desde opaco y arriba */
+  to { opacity: 1; transform: translateY(0); }  /* A visible y posición normal */
+}
+
+/* Etiqueta de descuento en producto (pequeño cartelito sobre imagen) */
+.descuento-etiqueta {
+  position: absolute;  /* Posición absoluta para superponer */
+  top: 10px;
+  right: 10px;
+  background: #ff6b6b;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  z-index: 10;  /* z-index: Asegura que esté encima de la imagen (mayor número = más arriba) */
+}
+
+/* Carrusel (repite de antes, pero integrado) */
+.carrusel-promociones {
+  width: 100vw;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+/* Responsive para banners */
+@media (max-width: 768px) {
+  .promocion-banner {
+    padding: 15px;  /* Menos padding en móviles */
+    font-size: 14px;  /* Texto más pequeño */
+  }
+  .descuento-etiqueta {
+    font-size: 12px;  /* Etiqueta más pequeña */
+  }
+}
