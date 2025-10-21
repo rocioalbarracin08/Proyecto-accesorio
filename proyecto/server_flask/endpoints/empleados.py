@@ -49,7 +49,11 @@ def registro_por_dueno():
         g.db_cursor.execute("SELECT id_usuario FROM usuarios WHERE email = %s", (email,))
         if g.db_cursor.fetchone():
             return jsonify({"error": "El email ya está registrado"}), 409
-        
+        #Verificar si existe la tienda ingresada
+        g.db_cursor.execute("SELECT id_tienda FROM tiendas WHERE id_tienda = %s", (id_tienda,))
+        if not g.db_cursor.fetchone():
+            return jsonify({"error": "Tienda no existe"}), 400
+            
         hashed_password = generate_password_hash(password)
         
         #Insertar en empleados primero

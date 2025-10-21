@@ -1,0 +1,135 @@
+/* Overlay del modal (fondo oscuro) */
+.modal-overlay {
+    position: fixed;  /* Fijo en pantalla */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente */
+    display: flex;  /* Centra modal */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;  /* Alto z-index para estar encima */
+    animation: 0.3s ease;  /* Animación de entrada */
+  }
+  
+  /* Animación para overlay (complejo: keyframes para transición suave) */
+  @keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Contenido del modal */
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 500px;  /* Ancho máximo */
+    width: 90%;  /* Responsive */
+    animation: slideIn 0.3s ease;  /* Animación de deslizamiento */
+  }
+  
+  /* Animación para modal (complejo: combina translateY y opacity) */
+  @keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Título del modal */
+  .modal-content h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  /* Formulario */
+  .promocion-form {
+    display: flex;
+    flex-direction: column;  /* Elementos en columna */
+    gap: 15px;  /* Espacio entre inputs */
+  }
+  
+  /* Inputs y selects */
+  .promocion-form input,
+  .promocion-form select {
+    padding: 12px;
+    border: 2px solid #ecf0f1;  /* Borde gris claro */
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.3s ease;  /* Transición en focus */
+  }
+  
+  .promocion-form input:focus,
+  .promocion-form select:focus {
+    border-color: #3498db;  /* Azul en focus */
+    outline: none;  /* Sin outline por defecto */
+  }
+  
+  /* Checkbox */
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Botones del formulario */
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;  /* Espacia botones */
+    margin-top: 20px;
+  }
+  
+  .btn-submit {
+    padding: 12px 24px;
+    background: linear-gradient(45deg, #27ae60, #2ecc71);  /* Gradiente verde */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;  /* Ocupa espacio */
+    margin-right: 10px;
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+  }
+  
+  .btn-cancel {
+    padding: 12px 24px;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition:  0.3s ease;
+    flex: 1;
+  }
+  
+  .btn-cancel:hover {
+    background: #7f8c8d;
+  }
+  
+  /* Responsive: En móviles, ajusta modal */
+  @media (max-width: 768px) {
+    .modal-content {
+      padding: 20px;
+      width: 95%;
+    }
+    .form-buttons {
+      flex-direction: column;  /* Apila botones */
+      gap: 10px;
+    }
+    .btn-submit, .btn-cancel {
+      flex: none;  /* Sin flex para móviles */
+    }
+  }

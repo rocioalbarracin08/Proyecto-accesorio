@@ -15,7 +15,7 @@ export function ProductoGrid() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/productos/mostrar/productos?page=${currentPage}&per_page=10`
+        `http://127.0.0.1:5000/productos/mostrar?page=${currentPage}&per_page=10`
         // Sin credentials: público, no envía cookies
       );
       if (!response.ok) throw new Error('Error en servidor');

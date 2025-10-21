@@ -14,6 +14,8 @@ import PerfilUser from "./components/perfilUsuario/PerfilUser";
 import RegistrarEmpleado from "./components/empleados/RegistrarEmpleado";  
 import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
 import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasena";
+import CarruselPromociones from './components/CarruselPromociones';  // Importa el carrusel
+
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
         element={
           <>
             <BarraNavegacion />
+            <CarruselPromociones /> 
             <Destacados />
             <Categorizados />  {/* Muestra categorías en home */}
             <Perfil />

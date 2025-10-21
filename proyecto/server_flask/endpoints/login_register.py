@@ -168,7 +168,6 @@ def cambiar_contrasena():
         g.db.rollback()
         return jsonify({"error": f"Error cambiando contraseña: {err}"}), 500
 
-# NUEVO: Verificar si es dueño 
 @bp.route('/es_dueno')
 def es_dueno():
     token = request.cookies.get('token')

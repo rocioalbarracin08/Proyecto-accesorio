@@ -4,7 +4,7 @@ bp = Blueprint('productos', __name__, url_prefix='/productos')
 
 #---------------------------MOSTRAR--------------------------------
 
-@bp.route("/mostrar/productos")
+@bp.route("/mostrar")
 def productos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -95,39 +95,44 @@ def productosXcategoria(id_categoria):
 
 
 #--------------------------------------AGREGAR-------------------------------------------
-@bp.route("/inserta/productos", methods=["POST"]) 
+@bp.route("/insertar", methods=["POST"]) 
 def agregarProductos():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        if  request.method == 'POST':
-         g.db_cursor.execute("INSERT INTO productos (name, id_categoria, precio) VALUES (%s, %s, %s)")
-         productos = g.db_cursor.fetchall()
-         g.db.close()
-        
-        return jsonify({"mensaje":"pudiste agregar un nuevo producto"})
-    
+        if request.method == 'POST':
+            datos = request.get_json()
+            name = datos.get("name")
+            id_categoria = datos.get("id_categoria")
+            precio = datos.get("precio") 
+            imagen_url = datos.get("imagen_url", "")
+            if not all([name, id_categoria, precio]):
+                return jsonify({"error": "Faltan campos obligatorios"}), 400
+            g.db_cursor.execute("INSERT INTO productos (name, id_categoria, precio, imagen_url) VALUES (%s, %s, %s, %s)",(name, id_categoria, precio, imagen_url))
+            g.db.commit()
+            return jsonify({"mensaje": "Producto agregado exitosamente"}), 201
     except Exception as e:
-        return jsonify({"error": "No se pudo agregar el producto que deseeas"}), 500 
+        g.db.rollback()
+        return jsonify({"error": "No se pudo agregar el producto"}), 500
 
 #--------------------------------------MODIFICA-------------------------------------------
-@bp.route("/modifica/productos", methods=["PUT"]) 
-def cambiar_producto() :
-
-    if g.db.cursor is None: 
+@bp.route("/modificar", methods=["PUT"]) 
+def cambiar_producto():
+    if g.db_cursor is None: 
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-       name = request.json.get("name")
-       id_categoria = request.json.get("id_categoria")
-       precio = request.json.get("precio")
-       id_producto = request.json.get("id")
-       g.db_cursor.execute("""UPDATE productos SET name = %s , id_categoria = %s, precio= %s WHERE id_producto = %s""",
-            (name, id_categoria,precio, id_producto)
-        )
-       
-       return jsonify({"mensaje": "pudiste modificar las columnas de la tabla productos"}), 201 #201 significa que se creó un recurso
-    
+        name = request.json.get("name")
+        id_categoria = request.json.get("id_categoria")
+        precio = request.json.get("precio")
+        id_producto = request.json.get("id")
+        if not all([name, id_categoria, precio, id_producto]):
+            return jsonify({"error": "Faltan campos obligatorios"}), 400
+        g.db_cursor.execute("""UPDATE productos SET name = %s, id_categoria = %s, precio = %s WHERE id_producto = %s""",
+                            (name, id_categoria, precio, id_producto))
+        g.db.commit()
+        return jsonify({"mensaje": "Producto modificado"}), 201
     except Exception as e:
+        g.db.rollback()
         return jsonify({"error": str(e)}), 400
     
 #--------------------------------------BUSCAR-------------------------------------------
