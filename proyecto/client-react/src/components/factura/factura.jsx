@@ -8,9 +8,16 @@ export function Factura() {
   const { state } = useCarrito();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthContext(); // variable que indica si el usuario está logueado
-
   const [email, setEmail] = useState(user?.email || "");
   const [entrega, setEntrega] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [provincia, setProvincia] = useState("");
+  const [codigoPostal, setCodigoPostal] = useState("");
+  const [telefono, setTelefono] = useState("");
+
 
  useEffect(() => {
     if (user?.email) setEmail(user.email);
@@ -32,6 +39,19 @@ export function Factura() {
       alert("Por favor seleccione un método de entrega.");
       return;
     }
+        if (!nombre || !apellido) {
+      alert("Por favor complete nombre y apellido.");
+      return;
+    }
+    if (entrega === "envio" && (!direccion || !ciudad || !provincia || !codigoPostal)) {
+      alert("Por favor complete todos los campos de dirección para envío a domicilio.");
+      return;
+    }
+    if (!telefono) {
+      alert("Por favor ingrese su teléfono.");
+      return;
+    }
+    
     alert(`Pedido enviado a ${email} con entrega: ${entrega}`);
   };
 

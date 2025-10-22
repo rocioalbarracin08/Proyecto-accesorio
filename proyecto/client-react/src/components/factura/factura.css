@@ -1,4 +1,50 @@
-/* factura.css */
+/* Estilos para el formulario de información del usuario */
+.factura-formulario {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.factura-formulario h4 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.factura-formulario label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.factura-formulario input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.factura-formulario input:focus {
+  border-color: #f0b6c1;
+  outline: none;
+}
+
+/* Ajustes opcionales para los botones de entrega si quieres mantener consistencia */
+.factura-entrega-buttons button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.factura-entrega-buttons button:hover {
+  background-color: #f0b6c1;
+}
 
 /* Estilo general de la página */
 .factura-page {
