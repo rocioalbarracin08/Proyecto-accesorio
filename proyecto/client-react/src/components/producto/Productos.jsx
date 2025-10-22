@@ -8,7 +8,7 @@ export function Productos() {
   const [productos, setProductos] = useState([]);
   const [categoriaNombre, setCategoriaNombre] = useState("Cargando...");
   const [loading, setLoading] = useState(true);
-  const { addItem } = useCarrito();  // Para carrito
+  const { addItem , openCarrito} = useCarrito();  // Para carrito
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -63,7 +63,7 @@ export function Productos() {
               <p className="producto-precio">${producto.precio}</p>
               <button 
                 className="agregar-carrito" 
-                onClick={() => addItem(producto)}
+                onClick={() => {addItem(producto), openCarrito();}}
               >
                 Agregar al Carrito
               </button>

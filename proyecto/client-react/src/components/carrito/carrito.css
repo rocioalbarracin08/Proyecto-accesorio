@@ -1,3 +1,153 @@
+.btn-eliminar-producto {
+  background: transparent; 
+  border: 1px solid rgb(255, 255, 255);
+  color: #ffffff;
+  padding: 0;
+  font-size: 0.9rem;
+  border-radius: 0; 
+  width: 80px;      /* Ancho fijo para que sea cuadrado */
+  height: 30px;
+}
+
+.btn-eliminar-producto:hover {
+  color: rgb(255, 255, 255);
+}
+
+
+.carrito-lateral {
+  width: 320px;
+  background: #fff7f7;
+  border-left: 2px solid #e0e0e0;
+  padding: 24px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.carrito-lateral h2 {
+  text-align: center;
+}
+.carrito-lateral ul {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  margin: 0;
+}
+.carrito-lateral li {
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+  display: block;
+}
+.carrito-lateral .nombre-producto {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.carrito-lateral .precio-producto {
+  display: block;
+  color: #c77d7d;
+  margin-bottom: 8px;
+}
+.carrito-lateral .cantidad-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.carrito-lateral .cantidad-controles button {
+  padding: 2px 8px;
+  border-radius: 30%;
+  border: 1px solid #c77d7d;
+  background: #fff;
+  color: #c77d7d;
+  font-weight: bold;
+  cursor: pointer;
+}
+.carrito-lateral .cantidad-controles span {
+  min-width: 24px;
+  text-align: center;
+}
+.carrito-lateral .total-carrito {
+  margin-top: auto;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-top: 2px solid #e0e0e0;
+  padding-top: 16px;
+}
+
+.btn-vaciar-carrito{
+  margin-top: 10px; 
+  width: 100%; 
+  padding: 10px; 
+  background: #c77d7d; 
+  color: white; 
+  border: none;
+  border-radius: 5px;
+}
+.btn-cerrar-carrito{
+  margin-top: 5px ;
+  width: 100%;
+  padding: 10px;
+  background-color: #ccc; 
+  border: none;
+  border-radius: 5px;
+}
+.btn-borrar-prodct{
+  margin-left: 10px ;
+  background: red ;
+  color: white; 
+  border: none;
+  border-radius: 4px; 
+  padding: 2px 6px;
+}
+
+.productos-page{
+  text-align: center;
+}
+.tituloProducts{
+  margin-top: 20px;
+  color: #333;
+}
+
+/* NUEVOS ESTILOS: Para el modal del carrito (agrega esto al final) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;  /* Sobre todo lo demás */
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 500px;  /* Ancho máximo del modal */
+  width: 90%;  /* Responsive */
+  max-height: 80vh;  /* Altura máxima con scroll */
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);  /* Sombra para resaltar */
+  padding: 0;  /* Sin padding extra, usa el de .carrito-lateral */
+}
+
+/* Ajustes para .carrito-lateral dentro del modal (agrega esto para adaptarlo) */
+.modal-content .carrito-lateral {
+  width: 100%;  /* Full width en modal */
+  height: auto;  /* No fijo */
+  position: relative;  /* No sticky en modal */
+  border-left: none;  /* Quita borde izquierdo en modal */
+  border-radius: 8px;  /* Bordes redondeados en el modal */
+}
+
 .carrito-overlay {
   position: fixed;
   top: 0;

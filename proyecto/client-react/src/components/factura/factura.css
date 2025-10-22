@@ -1,0 +1,121 @@
+/* factura.css */
+
+/* Estilo general de la página */
+.factura-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff7f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+}
+
+/* Título de la factura */
+.factura-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Tabla de productos */
+.factura-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.factura-page th, .factura-page td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.factura-page th {
+  background-color: #f0b6c1;
+  color: #fff;
+}
+
+/* Total de la factura */
+.factura-page h3 {
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Sección de correo y método de entrega */
+.factura-entrega-section {
+  margin-top: 20px;
+}
+
+.factura-entrega-section label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.factura-entrega-section input[type="email"] {
+  margin-left: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Botones de selección de entrega */
+.factura-entrega-buttons button {
+  border: 1px solid #c77d7d;
+  background-color: #fff;
+  color: #c77d7d;
+  font-weight: bold;
+  padding: 8px 12px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.factura-entrega-buttons button:hover {
+  background-color: #f0b6c1;
+  color: #fff;
+}
+
+/* Botón de finalizar compra */
+.btn-finalizar {
+  display: block;
+  margin: 20px auto 0 auto;
+  padding: 10px 20px;
+  background-color: #c77d7d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-finalizar:hover {
+  background-color: #a76c70;
+}
+
+/* Mensaje de usuario no logueado */
+.factura-page p {
+  text-align: center;
+  color: red;
+  margin-top: 10px;
+}
+
+
+.btn-finalizar-compra {
+  margin-top: 5px;
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50; /* Verde para acción principal */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-finalizar-compra:hover {
+  background-color: #3e8e41;
+}
