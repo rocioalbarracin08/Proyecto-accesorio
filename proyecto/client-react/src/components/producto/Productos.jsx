@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { usePromociones } from "../contexts/PromocionesContext";
-import { useCarrito } from "../contexts/CarritoContext";
+import { usePromociones } from "../../contexts/PromocionesContext";
+import { useCarrito } from "../../contexts/CarritoContext"; 
 import axios from "axios";
 import "./producto.css";
 

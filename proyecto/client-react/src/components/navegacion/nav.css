@@ -12,7 +12,7 @@
   object-fit: cover;
   display: block;
   object-fit: contain;
-  transition: transform 0.2s;
+  transition: 0.2s;
 }
 .perfil:hover {
   transform: scale(1.1);
@@ -27,15 +27,20 @@
 .user img:hover {
   transform: scale(1.1);
 }
-.carrito img{
-  width: 55px;
-  height: 55px;
+.carrito {
+  position: relative;
+  border: none;  /* Elimina el borde del botón */
+  outline: none; /* Elimina cualquier contorno al hacer foco */
+  padding: 0%;
+}
+
+.carrito img {
+  width: 40px;
+  height: 50px;
   object-fit: contain;
   display: block;
-  transition: transform 0.2s;
-}
-.carrito img:hover {
-  transform: scale(1.1);
+  border: none;  /* Elimina cualquier borde */
+  outline: none;  /* Elimina cualquier contorno por defecto */
 }
 
 .direccionamiento{
@@ -57,18 +62,15 @@
   height: 25px;
   text-align: center;
 }
-.carrito {
-  position: relative;  /* Para posicionar el badge */
-}
 .carrito-count {
   position: absolute;
-  top: -2px;
-  right: -8px;
-  background-color: red;
+  top: -6px;
+  right: -10px;
+  background-color: red;  /* Fondo rojo */
   color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 25px;  /* Tamaño fijo */
+  height: 20px;  /* Tamaño fijo */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,7 +86,7 @@
   font-weight: bold;
   margin-left: 18px;
   margin-right: 8px;
-  transition: background 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
+  transition: 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
 .btn-cerrarSesion:hover {

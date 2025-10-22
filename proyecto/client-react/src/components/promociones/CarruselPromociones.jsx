@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { usePromociones } from '../../contexts/PromocionesContext';  // Importa el contexto
 import './carruselPromociones.css';  // Importa el CSS específico
 
@@ -48,5 +48,6 @@ const CarruselPromociones = () => {
     </div>
   );
 };
+
 
 export default CarruselPromociones;

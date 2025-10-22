@@ -8,6 +8,9 @@ from flask_cors import CORS
 from flask import g
 from flask_mail import Mail
 
+from server_flask.config import SECRET_KEY
+
+
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__) #"__name__" variable especial que se reemplaza por el nombre del archivo
@@ -57,6 +60,8 @@ from server_flask.endpoints.registro_productos import bp as registro_productos_b
 from server_flask.endpoints.tickets import bp as ticket_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 
+from server_flask.extensions import mail
+
 def create_app(test_config = None):
 
     CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_credentials": True}}) #Permite que el frontend (localhost:5173, de React) hable con el backend (localhost:5000, Flask)
@@ -73,7 +78,8 @@ def create_app(test_config = None):
     app.register_blueprint(registro_productos_bp)
     app.register_blueprint(promociones_bp)
 
+
+    mail.init_app(app)
     return app
 
 app = create_app()
-mail = Mail(app)

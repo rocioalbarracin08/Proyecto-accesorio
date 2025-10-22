@@ -130,3 +130,11 @@
 .cerrar-carrito:hover {
   background-color: #a76c70;  /* Color más oscuro al pasar el mouse */
 }
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

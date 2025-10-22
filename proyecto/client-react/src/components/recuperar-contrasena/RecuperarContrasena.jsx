@@ -1,6 +1,5 @@
-// src/components/recuperarContrasena.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";  // Agrega useNavigate para redirección
 import "./recuperarContrasena.css";  // Importa el CSS
 
 export default function RecuperarContrasena() {
@@ -8,6 +7,7 @@ export default function RecuperarContrasena() {
   const [mensaje, setMensaje] = useState("");  // Estado para mensajes de éxito
   const [error, setError] = useState("");  // Estado para mensajes de error
   const [loading, setLoading] = useState(false);  // Estado para controlar la carga
+  const navigate = useNavigate();  // Hook para redirigir programáticamente
 
   const handleSubmit = async (e) => {
     e.preventDefault();  // Evita la recarga de la página
@@ -19,13 +19,15 @@ export default function RecuperarContrasena() {
       const res = await fetch("http://localhost:5000/usuarios/recuperar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),  // Envía el email como JSON
+        body: JSON.stringify({ email }),  // Envía el email como JSON al backend
       });
       const data = await res.json();  // Convierte la respuesta a JSON
       if (res.ok) {
-        setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Mensaje de éxito
+        setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Muestra mensaje de éxito
+        // Redirige a login después de 2 segundos para que el usuario vea el mensaje
+        setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
       } else {
-        setError(data.error);  // Muestra el error si ocurre
+        setError(data.error);  // Muestra el error si ocurre (e.g., email no registrado)
       }
     } catch (err) {
       setError("Error de conexión con el servidor.");  // Maneja errores de conexión
@@ -53,7 +55,7 @@ export default function RecuperarContrasena() {
           {loading ? "Enviando..." : "Enviar Email"} 
         </button>
       </form>
-      <Link to="/login" className="recuperar-link">Volver a Login</Link> 
+      <Link to="/login" className="recuperar-link">Volver a Login</Link>  {/* Enlace manual a login (opcional, ya que ahora hay redirección automática) */}
     </div>
   );
 }

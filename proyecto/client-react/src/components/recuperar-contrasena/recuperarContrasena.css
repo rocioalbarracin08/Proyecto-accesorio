@@ -16,6 +16,7 @@
 .recuperar-form {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;  /* Elementos en columna */
   width: 60%;  /* Ancho del formulario */
   text-align: center;  /* Centra el texto */

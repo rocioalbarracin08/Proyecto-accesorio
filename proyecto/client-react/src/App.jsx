@@ -11,16 +11,20 @@ import { Categorizados } from "./components/categorias/Categorizados";
 import { Productos } from "./components/producto/Productos"; 
 import Nosotros from "./components/infoCompany/Nosotros";
 import PerfilUser from "./components/perfilUsuario/PerfilUser";
-import RegistrarEmpleado from "./components/empleados/RegistrarEmpleado";  
+import RegistrarEmpleado from "./components/empleados/RegistrarEmpleados"; 
 import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
 import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasena";
-import CarruselPromociones from './components/CarruselPromociones';  // Importa el carrusel
+import CarruselPromociones from './components/promociones/CarruselPromociones';
+import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena";
+
 
 
 function App() {
   return (
     <Routes>
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+      <Route path="/resetear-contrasena" element={<ResetearContrasena/>}/>
+      <Route path="/cambiar-contrasena" element={<CambiarContrasena/>}/>
       <Route
         path="/"
         element={
@@ -29,7 +33,6 @@ function App() {
             <CarruselPromociones /> 
             <Destacados />
             <Categorizados />  {/* Muestra categorías en home */}
-            <Perfil />
             <PiePagina />
           </>
         }
@@ -68,7 +71,6 @@ function App() {
         <>
         <BarraNavegacion />
         <PerfilUser />
-        <ResetearContrasena />
         <PiePagina />
         </>
       } />

@@ -1,8 +1,8 @@
 import "./nav.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
-import { useCarrito } from "../../context/CarritoContext";
+import { useCarrito } from "../../contexts/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
 
 export function BarraNavegacion() {
@@ -54,7 +54,7 @@ export function BarraNavegacion() {
     <>
       <header className="encabezado">
         <Link to="/">
-          <img src="/logos/fondo.jpg" className="miLogo" alt="Logo de la tienda" />
+          <img src="/logo.jpg" className="miLogo" alt="Logo de la tienda" />
         </Link>
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 

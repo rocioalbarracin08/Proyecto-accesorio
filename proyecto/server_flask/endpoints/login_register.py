@@ -2,8 +2,8 @@ from flask import Blueprint, request, jsonify,g
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from server_flask.extensions import mail  
 from flask_mail import Mail, Message  # Para enviar emails
-from server_flask.app import mail  # mail configurado en app.py
 
 import jwt
 from datetime import datetime, timezone, timedelta
@@ -245,7 +245,8 @@ def resetear_contrasena():
     
     data = request.get_json()
     token = data.get('token')
-    nueva_password = data.get('password')
+    nueva_password = data.get('password')  
+
     if not token or not nueva_password:
         return jsonify({"error": "Token y nueva contraseña requeridos"}), 400
     

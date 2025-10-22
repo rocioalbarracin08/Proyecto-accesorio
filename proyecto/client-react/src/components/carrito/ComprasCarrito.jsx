@@ -1,7 +1,5 @@
-// src/components/carrito/ComprasCarrito.jsx
-import React from 'react';
-import { useCarrito } from '../../contexts/CarritoContext';  // Importa el contexto
-import './carrito.css';  // Importa el CSS específico
+import { useCarrito } from '../../contexts/CarritoContext';  
+import './carrito.css'; 
 
 export function ComprasCarrito() {
   const { state, updateQuantity, removeItem, clearCart, toggleCarrito } = useCarrito();  // Accede a funciones del contexto

@@ -41,7 +41,7 @@ input {
   border-radius: 5px;
 }
 
-button {
+.btnPerfil {
   padding: 10px;
   background-color: #007bff;
   color: white;
@@ -50,11 +50,11 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.btnPerfil:hover {
   background-color: #0056b3;
 }
 
-button:disabled {
+.btnPerfil:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }

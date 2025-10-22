@@ -30,11 +30,7 @@ font-weight: bold;
 transition: color 0.3s ease; /* Animación suave */
 }
 
-a:hover {
-color: #ff69b4; /* Rosa más brillante al hover */
-}
-
-button {
+.btnRegist {
 background-color: rgb(197, 119, 119);
 border: none;
 border-radius: 25px; /* Bordes más redondeados */
@@ -44,7 +40,7 @@ font-size: 1rem;
 transition: background-color 0.3s ease, transform 0.2s ease; /* Animaciones */
 }
 
-button:hover {
+.btnRegist:hover {
 background-color: #d2691e; /* Marrón rojizo */
 transform: scale(1.05); /* Efecto de agrandamiento */
 cursor: pointer;

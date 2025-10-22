@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import useAuth from "../../hooks/useAuth"; 
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import "./registrarEmpleado.css";
+import { Link, useNavigate } from "react-router-dom";
+import "./registrarEmpleados.css";
 
 export default function RegistrarEmpleado() {
   // Reutiliza estados del hook useAuth (para campos comunes)
@@ -131,7 +129,7 @@ export default function RegistrarEmpleado() {
         </button>
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="btnRegist">
           {loading ? "Registrando..." : "Registrar Empleado"}
         </button>
         <Link to="/">Volver a inicio</Link>

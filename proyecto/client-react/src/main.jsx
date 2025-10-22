@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import App from './App'
-import { CarritoProvider } from './context/CarritoContext';
-import { PromocionesProvider } from './context/PromocionesContext';
+import { CarritoProvider } from './contexts/CarritoContext';
+import { PromocionesProvider } from './contexts/PromocionesContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   //Cuando lo rodeo con CarritoProvider estoy dicinedo que todo dentro de <App /> puede acceder al carrito
