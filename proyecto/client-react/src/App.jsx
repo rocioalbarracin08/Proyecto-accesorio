@@ -21,7 +21,6 @@ function App() {
   return (
     <Routes>
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
-      <Route path="/resetear-contrasena" element={<ResetearContrasena />} />
       <Route
         path="/"
         element={
@@ -69,6 +68,7 @@ function App() {
         <>
         <BarraNavegacion />
         <PerfilUser />
+        <ResetearContrasena />
         <PiePagina />
         </>
       } />
@@ -79,7 +79,7 @@ function App() {
         <BarraNavegacion /> 
         <RegistrarEmpleado /> 
         <PiePagina /> 
-        </>} />
+      </>} />
     
     </Routes>
   );

@@ -35,25 +35,25 @@ export default function RecuperarContrasena() {
   };
 
   return (
-    <div className="recuperar-container">  {/* Contenedor principal */}
+    <div className="recuperar-container"> 
       <h1 className="recuperar-title">Recuperar Contraseña</h1>
       <p>Ingresa tu email para recibir un enlace de recuperación</p>
       {mensaje && <p className="recuperar-message">{mensaje}</p>}  {/* Mensaje de éxito */}
       {error && <p className="recuperar-error">{error}</p>}  {/* Mensaje de error */}
-      <form onSubmit={handleSubmit} className="recuperar-form">  {/* Formulario */}
+      <form onSubmit={handleSubmit} className="recuperar-form"> 
         <input
           type="email"
           placeholder="Tu email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}  // Actualiza el estado del email
+          onChange={(e) => setEmail(e.target.value)} 
           required
-          className="recuperar-input"  // Clase CSS para el input
+          className="recuperar-input"
         />
-        <button type="submit" disabled={loading} className="recuperar-btn">  {/* Botón de enviar */}
-          {loading ? "Enviando..." : "Enviar Email"}  {/* Cambia el texto según el estado de carga */}
+        <button type="submit" disabled={loading} className="recuperar-btn"> 
+          {loading ? "Enviando..." : "Enviar Email"} 
         </button>
       </form>
-      <Link to="/login" className="recuperar-link">Volver a Login</Link>  {/* Enlace para volver a login */}
+      <Link to="/login" className="recuperar-link">Volver a Login</Link> 
     </div>
   );
 }
