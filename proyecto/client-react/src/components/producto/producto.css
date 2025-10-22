@@ -1,4 +1,41 @@
-/* Tus estilos existentes (no cambies nada aquí) */
+/* Estilos para el contenedor de productos */
+.producto-grid {
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajusta el tamaño mínimo de las columnas */
+  gap: 20px; /* Espacio entre los elementos */
+  padding: 20px; /* Espacio alrededor del grid */
+}
+
+/* Estilos para cada item de producto */
+.producto-item {
+  background-color: #fff7f7;  
+  border-radius: 8px; 
+  text-align: center; /* Centra el texto */
+  transition: transform 0.3s ease; /* Transición suave para la animación */
+}
+
+/* Estilos para la imagen del producto */
+.producto-item img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: auto; /* Ajusta la altura automáticamente */
+  border-radius: 4px; /* Bordes redondeados para la imagen */
+}
+
+/* Estilos para el título del producto */
+.producto-item h3 {
+  font-size: 1rem; 
+  margin-top: 10px;
+  color: black;
+}
+
+/* Estilos para el precio del producto */
+.producto-precio {
+  font-size: 1rem; 
+  color: #333; 
+  margin-top: 10px;
+}
+
+/* Estilos para el botón de agregar al carrito */
 .agregar-carrito {
   margin-top: 10px;
   padding: 10px 15px; 
@@ -11,179 +48,20 @@
 }
 
 .agregar-carrito:hover { 
-  background-color: rosybrown; 
+  background-color: #a55a5a; /* Cambia a un tono más oscuro al pasar el mouse */
 }
 
-.producto-grid {
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /*Ajusta el tamaño mínimo de las columnas*/
-  gap: 20px; /* Espacio entre los elementos */
-  padding: 20px; /* Espacio alrededor del grid */
-  
-}
-
-.producto-item {
-  background-color: #fff7f7;  
-  border-radius: 8px; 
-  text-align: center; /* Centra el texto */
-  transition: transform 0.3s ease; /* Transición suave para la animación */
-}
-
-.producto-item img {
-  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
-  height: 50%; /* Ajusta la altura según sea necesario */
-  border-radius: 4px; /* Bordes redondeados para la imagen */
-}
-
-.producto-item h3 {
-  font-size: 1rem; 
-  margin-top: 10px;
-  color: black;
-}
-
-.producto-precio {
-  font-size: 1rem; 
-  color: #333; 
-  margin-top: 10px;
-  color: #000000; /* Color rojo para llamar la atención al precio */
-}
-
-/* Carrito lateral derecho (tus estilos existentes) */
-.carrito-lateral {
-  width: 320px;
-  background: #fff7f7;
-  border-left: 2px solid #e0e0e0;
-  padding: 24px;
-  box-sizing: border-box;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-.carrito-lateral h2 {
+/* Títulos de la página de productos */
+.productos-page {
   text-align: center;
 }
-.carrito-lateral ul {
-  list-style: none;
-  padding: 0;
-  flex: 1;
-  margin: 0;
-}
-.carrito-lateral li {
-  margin-bottom: 18px;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 12px;
-  display: block;
-}
-.carrito-lateral .nombre-producto {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-.carrito-lateral .precio-producto {
-  display: block;
-  color: #c77d7d;
-  margin-bottom: 8px;
-}
-.carrito-lateral .cantidad-controles {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-}
-.carrito-lateral .cantidad-controles button {
-  padding: 2px 8px;
-  border-radius: 50%;
-  border: 1px solid #c77d7d;
-  background: #fff;
-  color: #c77d7d;
-  font-weight: bold;
-  cursor: pointer;
-}
-.carrito-lateral .cantidad-controles span {
-  min-width: 24px;
-  text-align: center;
-}
-.carrito-lateral .total-carrito {
-  margin-top: auto;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-top: 2px solid #e0e0e0;
-  padding-top: 16px;
-}
 
-.btn-vaciar-carrito{
-  margin-top: 10px; 
-  width: 100%; 
-  padding: 10px; 
-  background: orange; 
-  color: white; 
-  border: none;
-  border-radius: 5px;
-}
-.btn-cerrar-carrito{
-  margin-top: 5px ;
-  width: 100%;
-  padding: 10px;
-  background-color: #ccc; 
-  border: none;
-  border-radius: 5px;
-}
-.btn-borrar-prodct{
-  margin-left: 10px ;
-  background: red ;
-  color: white; 
-  border: none;
-  border-radius: 4px; 
-  padding: 2px 6px;
-}
-
-.productos-page{
-  text-align: center;
-}
-.tituloProducts{
+.tituloProducts {
   margin-top: 20px;
   color: #333;
 }
 
-/* NUEVOS ESTILOS: Para el modal del carrito (agrega esto al final) */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;  /* Sobre todo lo demás */
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  max-width: 500px;  /* Ancho máximo del modal */
-  width: 90%;  /* Responsive */
-  max-height: 80vh;  /* Altura máxima con scroll */
-  overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);  /* Sombra para resaltar */
-  padding: 0;  /* Sin padding extra, usa el de .carrito-lateral */
-}
-
-/* Ajustes para .carrito-lateral dentro del modal (agrega esto para adaptarlo) */
-.modal-content .carrito-lateral {
-  width: 100%;  /* Full width en modal */
-  height: auto;  /* No fijo */
-  position: relative;  /* No sticky en modal */
-  border-left: none;  /* Quita borde izquierdo en modal */
-  border-radius: 8px;  /* Bordes redondeados en el modal */
-}
-
-/* NUEVOS ESTILOS: Para la paginación en ProductoGrid (agrega esto al final) */
+/* Paginación */
 .paginacion {
   display: flex;
   justify-content: center;
@@ -199,18 +77,18 @@
 
 .btn-paginacion {
   padding: 8px 12px;
-  background-color: rosybrown;  /* Mismo color que tus botones */
+  background-color: rosybrown;  /* Color rosado */
   color: white;
   border: none;
-  border-radius: 20px;  /* Redondeado como agregar-carrito */
+  border-radius: 20px;  /* Bordes redondeados */
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  transition: 0.3s ease;
   min-width: 40px;
 }
 
 .btn-paginacion:hover:not(:disabled) {
-  background-color: #a55a5a;  /* Hover más oscuro (ajusta a tu tema) */
+  background-color: #a55a5a;  /* Hover más oscuro */
 }
 
 .btn-paginacion:disabled {
@@ -220,7 +98,7 @@
 }
 
 .btn-paginacion.active {
-  background-color: #8b4513;  /* Color para página activa (más oscuro) */
+  background-color: #8b4513;  /* Color para página activa */
   font-weight: bold;
 }
 
@@ -239,56 +117,5 @@
   .producto-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));  /* Menos columnas en móvil */
     padding: 10px;
-  }
-}
-/* Banner de promoción en productos (cartelito) */
-.promocion-banner {
-  width: 100%;  /* Ocupa todo el ancho */
-  background: linear-gradient(45deg, #ff6b6b, #ffa500);  /* Gradiente rojo-naranja para "lindo" y destacar */
-  color: white;
-  text-align: center;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;  /* Bordes redondeados */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Sombra para profundidad */
-  animation: fadeIn 0.5s ease-in-out;  /* Animación de entrada suave */
-}
-
-/* Animación fadeIn para banner (compleja: usa keyframes para transición) */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }  /* Desde opaco y arriba */
-  to { opacity: 1; transform: translateY(0); }  /* A visible y posición normal */
-}
-
-/* Etiqueta de descuento en producto (pequeño cartelito sobre imagen) */
-.descuento-etiqueta {
-  position: absolute;  /* Posición absoluta para superponer */
-  top: 10px;
-  right: 10px;
-  background: #ff6b6b;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-weight: bold;
-  z-index: 10;  /* z-index: Asegura que esté encima de la imagen (mayor número = más arriba) */
-}
-
-/* Carrusel (repite de antes, pero integrado) */
-.carrusel-promociones {
-  width: 100vw;
-  height: 400px;
-  position: relative;
-  overflow: hidden;
-  margin: 0;
-  background-color: #f0f0f0;
-}
-/* Responsive para banners */
-@media (max-width: 768px) {
-  .promocion-banner {
-    padding: 15px;  /* Menos padding en móviles */
-    font-size: 14px;  /* Texto más pequeño */
-  }
-  .descuento-etiqueta {
-    font-size: 12px;  /* Etiqueta más pequeña */
   }
 }

@@ -1,12 +1,13 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
 
-// Estado inicial (agregué showCarrito para modal)
+// Estado inicial del carrito
 const initialState = {
-  items: {},          // o [] si preferís usar array
-  totalItems: 0,
-  totalPrice: 0,
-  showCarrito: false
+  items: {},  // Almacena los productos en el carrito
+  totalItems: 0,  // Total de productos en el carrito
+  totalPrice: 0,  // Precio total del carrito
+  showCarrito: false  // Controla si el carrito está visible
 };
+
 
 // Reducer (agregué TOGGLE_CART y CLOSE_CART)
 //función que decide cómo cambia el estado del carrito según una acción
@@ -122,7 +123,7 @@ const carritoReducer = (state, action) => {
 // Parte que crea, guarda y comparte el ESTADO DEL CARRITO 
 const CarritoContext = createContext(); //crea un “contexto” global de React. | Util para no usar props
 
-//CarritoProvider: componente envoltorio (wrapper). proveedor del contexto
+//CarritoProvider: componente envoltorio (wrapper). Proveedor del contexto
 export const CarritoProvider = ({ children }) => {
 
   //base del estado del carrito: En vez de usar useState, usa useReducer porque hay muchas acciones

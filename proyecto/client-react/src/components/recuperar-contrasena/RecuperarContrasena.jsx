@@ -1,58 +1,59 @@
+// src/components/recuperarContrasena.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./recuperarContrasena.css";  // Importa el CSS
 
 export default function RecuperarContrasena() {
-  const [email, setEmail] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");  // Estado para almacenar el email ingresado
+  const [mensaje, setMensaje] = useState("");  // Estado para mensajes de éxito
+  const [error, setError] = useState("");  // Estado para mensajes de error
+  const [loading, setLoading] = useState(false);  // Estado para controlar la carga
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setMensaje("");
-    setLoading(true);
+    e.preventDefault();  // Evita la recarga de la página
+    setError("");  // Resetea el error
+    setMensaje("");  // Resetea el mensaje
+    setLoading(true);  // Activa el estado de carga
 
     try {
       const res = await fetch("http://localhost:5000/usuarios/recuperar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email }),  // Envía el email como JSON
       });
-      const data = await res.json();
+      const data = await res.json();  // Convierte la respuesta a JSON
       if (res.ok) {
-        setMensaje("Email enviado. Revisa tu bandeja de entrada.");
+        setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Mensaje de éxito
       } else {
-        setError(data.error);
+        setError(data.error);  // Muestra el error si ocurre
       }
     } catch (err) {
-      setError("Error de conexión con el servidor.");
+      setError("Error de conexión con el servidor.");  // Maneja errores de conexión
     } finally {
-      setLoading(false);
+      setLoading(false);  // Desactiva el estado de carga
     }
   };
 
   return (
-    <div className="recuperar-container">  {/* Clase CSS en lugar de style */}
+    <div className="recuperar-container">  {/* Contenedor principal */}
       <h1 className="recuperar-title">Recuperar Contraseña</h1>
       <p>Ingresa tu email para recibir un enlace de recuperación</p>
-      {mensaje && <p className="recuperar-message">{mensaje}</p>}
-      {error && <p className="recuperar-error">{error}</p>}
-      <form onSubmit={handleSubmit} className="recuperar-form">
+      {mensaje && <p className="recuperar-message">{mensaje}</p>}  {/* Mensaje de éxito */}
+      {error && <p className="recuperar-error">{error}</p>}  {/* Mensaje de error */}
+      <form onSubmit={handleSubmit} className="recuperar-form">  {/* Formulario */}
         <input
           type="email"
           placeholder="Tu email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}  // Actualiza el estado del email
           required
-          className="recuperar-input"
+          className="recuperar-input"  // Clase CSS para el input
         />
-        <button type="submit" disabled={loading} className="recuperar-btn">
-          {loading ? "Enviando..." : "Enviar Email"}
+        <button type="submit" disabled={loading} className="recuperar-btn">  {/* Botón de enviar */}
+          {loading ? "Enviando..." : "Enviar Email"}  {/* Cambia el texto según el estado de carga */}
         </button>
       </form>
-      <Link to="/login" className="recuperar-link">Volver a Login</Link>
+      <Link to="/login" className="recuperar-link">Volver a Login</Link>  {/* Enlace para volver a login */}
     </div>
   );
 }
