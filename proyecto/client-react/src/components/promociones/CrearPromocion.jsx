@@ -1,5 +1,5 @@
 // src/components/promociones/CrearPromocion.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { usePromociones } from '../../contexts/PromocionesContext';  // Importa el contexto
 import './crearEditarPromociones.css';  // Importa el CSS específico

@@ -83,7 +83,7 @@ export function Registrarse() {
       <section className="section-register">
         <h1>Registrarse</h1>
         {error ? <h5>Por favor, complete todos los campos</h5> : ""}
-        <form className="formulario">
+        <form className="formularioRegister">
           <input
             type="text"
             placeholder="Nombre"

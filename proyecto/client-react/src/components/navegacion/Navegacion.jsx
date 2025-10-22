@@ -54,7 +54,7 @@ export function BarraNavegacion() {
     <>
       <header className="encabezado">
         <Link to="/">
-          <img src="/logo.jpg" className="miLogo" alt="Logo de la tienda" />
+          <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
         </Link>
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 

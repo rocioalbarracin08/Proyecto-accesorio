@@ -11,7 +11,7 @@
   border-radius: 10px;
 }
 
-.formulario{
+.formularioRegister{
     display: flex;
     justify-content: center;
     flex-direction: column;

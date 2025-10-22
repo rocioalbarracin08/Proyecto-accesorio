@@ -14,13 +14,12 @@ box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra suave */
 margin: 2rem auto; /* Centrado horizontal */
 }
 
-.formulario {
+.formRegistrarEmpleado {
 display: flex;
 justify-content: center;
 flex-direction: column;
 width: 80%; /* Más ancho para comodidad */
 text-align: center;
-gap: 1.2rem;
 }
 
 a {
@@ -127,7 +126,7 @@ transition: color 0.3s ease;
     min-height: 60vh;
 }
 
-.formulario {
+.formRegistrarEmpleado {
     width: 100%;
     gap: 1rem;
 }

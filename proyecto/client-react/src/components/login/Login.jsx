@@ -76,7 +76,7 @@ export function Login(){
                     />
                     <span 
                         onClick={() => setShowPassword((prev) => !prev)}
-                        className='password-toggle-icon'
+                        className='password-icon'
                     >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </span>

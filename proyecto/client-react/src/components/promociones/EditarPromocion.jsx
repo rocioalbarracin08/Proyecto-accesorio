@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { usePromociones } from '../../contexts/PromocionesContext';  // Importa el contexto
 import './crearEditarPromociones.css';  // Importa el CSS específico

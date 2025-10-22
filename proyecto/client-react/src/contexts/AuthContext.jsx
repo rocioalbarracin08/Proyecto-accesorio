@@ -44,11 +44,20 @@ export function AuthProvider({ children }) {
       });
   }, [location]);  // Dependencia: se ejecuta al cambiar location
 
-  const login = () => setIsLogged(true);  // Función para marcar logueado
-  const logout = () => {                   // Función para marcar no logueado y resetear
-    setIsLogged(false);
-    setIsOwner(false);
-    setUserRole(null);
+  // Función para marcar logueado
+  const login = () => setIsLogged(true);  
+
+  // Función para marcar no logueado y resetear
+  const logout = () => {  
+    fetch("http://localhost:5000/usuarios/logout", {
+    method: "POST",
+    credentials: "include",
+    })
+    .finally(() => {
+      setIsLogged(false);
+      setIsOwner(false);
+      setUserRole(null);
+    });                 
   };
 
   return (
@@ -58,6 +67,7 @@ export function AuthProvider({ children }) {
   );
 }
 
+// Hook personalizado para acceder a los valores del contexto
 export function useAuthContext() {
   return useContext(AuthContext);
 }

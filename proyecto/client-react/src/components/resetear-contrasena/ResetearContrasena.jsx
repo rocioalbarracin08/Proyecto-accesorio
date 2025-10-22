@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuthContext } from "../../contexts/AuthContext"; // Importar el contexto
 import "./resetearContrasena.css";
 
 export default function CambiarContrasena() {
@@ -10,6 +11,7 @@ export default function CambiarContrasena() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuthContext(); // Usar la función logout
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,17 +32,23 @@ export default function CambiarContrasena() {
           contrasena_actual: contrasenaActual,
           nueva_contrasena: password,
         }),
-        credentials: "include",  // Aseguramos que la cookie JWT se envíe con la solicitud
+        credentials: "include", // Aseguramos que la cookie JWT se envíe con la solicitud
       });
       const data = await res.json();
 
       if (res.ok) {
         setMensaje("Contraseña cambiada exitosamente.");
-        // Borrar la cookie del token
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; //la cookie que contiene el token JWT se elimina
         
-        // Redirigir al login
-        setTimeout(() => navigate("/login"), 2000);  // Redirige después de 2 segundos
+        // Limpiar inputs (previene error de "contraseña actual incorrecta")
+        setContrasenaActual("");
+        setPassword("");
+        setConfirmPassword("");
+        
+        // Llamamos a logout para actualizar el estado de autenticación (resetea isLogged, etc.)
+        logout();
+        
+        // Redirección inmediata al login (sin setTimeout para evitar fallos por desmontaje del componente)
+        navigate("/login");
       } else {
         setError(data.error);
       }

@@ -16,7 +16,9 @@ import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarCont
 import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasena";
 import CarruselPromociones from './components/promociones/CarruselPromociones';
 import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena";
-
+import CrearPromocion from "./components/promociones/CrearPromocion";
+import Promociones from "./components/promociones/Promociones";
+import EditarPromocion from "./components/promociones/EditarPromocion";
 
 
 function App() {
@@ -25,6 +27,9 @@ function App() {
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
       <Route path="/resetear-contrasena" element={<ResetearContrasena/>}/>
       <Route path="/cambiar-contrasena" element={<CambiarContrasena/>}/>
+      <Route path="/crear-promocion" element={<CrearPromocion/>}/>
+      <Route path="/promociones" element={<Promociones/>}/>
+      <Route path="/editarPromociones" element={<EditarPromocion/>}/>
       <Route
         path="/"
         element={

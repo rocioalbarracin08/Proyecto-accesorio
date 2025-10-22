@@ -90,7 +90,7 @@ export default function RegistrarEmpleado() {
     <section className="section-registrar-empleado">
       <h1>Registrar Nuevo Empleado</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit} className="formulario">
+      <form onSubmit={handleSubmit} className="formRegistrarEmpleado">
 
         <input type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
 

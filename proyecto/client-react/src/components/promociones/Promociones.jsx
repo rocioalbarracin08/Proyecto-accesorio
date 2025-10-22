@@ -1,6 +1,6 @@
 // src/components/Promociones.jsx
 import { useState } from 'react';
-import { usePromociones } from '../contexts/PromocionesContext';  // usePromociones: Hook para acceder al contexto global
+import { usePromociones } from '../../contexts/PromocionesContext';  // usePromociones: Hook para acceder al contexto global
 import CrearPromocion from './CrearPromocion';
 import EditarPromocion from './EditarPromocion';
 import "./promociones.css";
@@ -23,8 +23,8 @@ const Promociones = () => {
         {promociones.map(p => (
           <li key={p.id_promocion}>
             {p.descripcion} - {p.descuento} ({p.tipo_descuento}) - Activa: {p.activo ? 'Sí' : 'No'}
-            <button onClick={() => setEditando(p)}>Editar</button>  // Setea promoción para editar
-            <button onClick={() => desactivarPromocion(p.id_promocion)}>Desactivar</button>  // Usa función del contexto
+            <button onClick={() => setEditando(p)}>Editar</button> 
+            <button onClick={() => desactivarPromocion(p.id_promocion)}>Desactivar</button> 
             <button onClick={() => eliminarPromocion(p.id_promocion)}>Eliminar</button>
           </li>
         ))}

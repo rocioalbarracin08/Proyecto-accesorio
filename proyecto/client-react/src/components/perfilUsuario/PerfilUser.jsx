@@ -7,6 +7,8 @@ export default function PerfilUser() {
   const { isLogged } = useAuthContext();
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState("");
+
+  const { isOwner } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,6 +49,16 @@ export default function PerfilUser() {
           >
             Cambiar Contraseña
           </button>
+        </div>
+      )}
+            {/* Apartado condicional para dueño */}
+      {isOwner && (
+        <div className="apartado-dueno">
+          <h2>Opciones de Dueño</h2>
+          <Link to="/registrar-empleado">
+            <button className="btn-registrar-empleado">Registrar Nuevo Empleado</button>
+          </Link>
+          <Link to="/promociones">Eliminar | Editar promociones | Crear promociones</Link>
         </div>
       )}
     </div>

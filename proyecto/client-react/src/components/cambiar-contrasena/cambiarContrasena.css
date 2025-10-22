@@ -29,14 +29,12 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #a0522d;
+  color: grey;
   font-size: 1.2rem;
   z-index: 2;
 }
 
 input {
-  width: 100%;
-  padding: 10px;
   border-radius: 5px;
   border: 1px solid #cd5c5c;
   text-align: center;
