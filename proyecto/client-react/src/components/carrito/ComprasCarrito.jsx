@@ -7,8 +7,8 @@ export function ComprasCarrito() {
   const calcularSubtotal = (item) => item.precio * item.cantidad;  // Calcula el subtotal de un item
 
   return (
-    <div className="carrito-overlay" onClick={toggleCarrito}>  {/* Cierra el carrito al hacer clic en el overlay */}
-      <div className="carrito-contenedor" onClick={(e) => e.stopPropagation()}>  {/* Evita que el clic cierre el carrito */}
+    <section className="carrito-overlay" onClick={toggleCarrito}>  {/* Cierra el carrito al hacer clic en el overlay */}
+      <section className="carrito-contenedor" onClick={(e) => e.stopPropagation()}>  {/* Evita que el clic cierre el carrito */}
         <h2 className="carrito-titulo">Mis Compras</h2>
 
         {Object.keys(state.items).length === 0 ? (  // Verifica si el carrito está vacío
@@ -43,28 +43,8 @@ export function ComprasCarrito() {
               <p>
                 <strong>Total: </strong>${state.totalPrice.toFixed(2)}
               </p>
-<<<<<<< HEAD
-
-              <div className="carrito-botones">
-               
-
-                <button
-                  className="btn-cerrar-carrito"
-                  onClick={toggleCarrito}
-                >
-                  Cerrar
-                </button>
-                  <button
-                  className="btn-finalizar-compra"
-                  onClick={finalizarCompra}
-                >
-                  Finalizar Compra
-                </button>
-              </div>
-=======
               <button className="btn-vaciar-carrito" onClick={clearCart}>Vaciar Carrito</button>  {/* Botón para vaciar el carrito */}
               <button className="btn-cerrar-carrito" onClick={toggleCarrito}>Cerrar</button>  {/* Botón para cerrar el carrito */}
->>>>>>> 5fe2e09f94e94f4bb3d420092b0099ea05c534b9
             </div>
           </>
         )}
