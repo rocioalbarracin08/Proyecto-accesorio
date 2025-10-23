@@ -1,15 +1,14 @@
 import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./factura.css";
 
 export function Factura() {
   const { state } = useCarrito();
-  const { user } = useAuthContext(); // Obtener user del contexto
+  const { isLogged, user } = useAuthContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para autenticación
   const [entrega, setEntrega] = useState("");
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
@@ -19,11 +18,9 @@ export function Factura() {
   const [codigoPostal, setCodigoPostal] = useState("");
   const [telefono, setTelefono] = useState("");
 
-  // Actualizar isAuthenticated basado en user
   useEffect(() => {
-    console.log("User from context:", user); // <-- AGREGADO: Muestra el valor de user (null, objeto, etc.)
-    setIsAuthenticated(!!user); // true si user existe, false si no
-    console.log("isAuthenticated set to:", !!user); // <-- AGREGADO: Confirma si isAuthenticated es true o false
+    console.log("User from context:", user); 
+    console.log("isLogged set to:", isLogged);
   }, [user]);
 
   // Actualizar email cuando user cambie
@@ -32,6 +29,19 @@ export function Factura() {
   }, [user]);
 
   const handleEntregaClick = (opcion) => setEntrega(opcion);
+
+  // Función para validar si el formulario está completo
+  const isFormValid = useMemo(() => {
+    if (!user || !isLogged) return false;
+    if (!email.trim()) return false;
+    if (!entrega) return false;
+    if (!nombre.trim() || !apellido.trim()) return false;
+    if (!telefono.trim()) return false;
+    if (entrega === "envio" && (!direccion.trim() || !ciudad.trim() || !provincia.trim() || !codigoPostal.trim())) {
+      return false;
+    }
+    return true;
+  }, [user, isLogged, email, entrega, nombre, apellido, telefono, direccion, ciudad, provincia, codigoPostal]);
 
   const handleFinalizar = () => {
     if (!user) {
@@ -97,44 +107,9 @@ export function Factura() {
 
         {/* Columna derecha: Opciones de entrega o mensaje */}
         <div className="factura-options">
-          {isAuthenticated ? (
-            <div className="factura-form">
-              <label>
-                Email:
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </label>
-
-              <label>
-                Nombre:
-                <input
-                  type="text"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                />
-              </label>
-
-              <label>
-                Apellido:
-                <input
-                  type="text"
-                  value={apellido}
-                  onChange={(e) => setApellido(e.target.value)}
-                />
-              </label>
-
-              <label>
-                Teléfono:
-                <input
-                  type="text"
-                  value={telefono}
-                  onChange={(e) => setTelefono(e.target.value)}
-                />
-              </label>
-
+          {isLogged ? (
+            <form className="factura-form">
+              {/* Botones de entrega siempre visibles */}
               <div className="factura-entrega-buttons">
                 <button
                   type="button"
@@ -156,50 +131,95 @@ export function Factura() {
                 </button>
               </div>
 
-              {/* Campos adicionales si selecciona envío */}
-              {entrega === "envio" && (
-                <div className="direccion-section">
+              {/* Formulario completo solo si se seleccionó un método de entrega */}
+              {entrega && (
+                <>
                   <label>
-                    Dirección:
                     <input
-                      type="text"
-                      value={direccion}
-                      onChange={(e) => setDireccion(e.target.value)}
+                    placeholder="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </label>
-                  <label>
-                    Ciudad:
-                    <input
-                      type="text"
-                      value={ciudad}
-                      onChange={(e) => setCiudad(e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Provincia:
-                    <input
-                      type="text"
-                      value={provincia}
-                      onChange={(e) => setProvincia(e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Código Postal:
-                    <input
-                      type="text"
-                      value={codigoPostal}
-                      onChange={(e) => setCodigoPostal(e.target.value)}
-                    />
-                  </label>
-                </div>
-              )}
 
-              <button className="btn-finalizar" onClick={handleFinalizar}>
-                Finalizar Compra
-              </button>
-            </div>
+                  <label>
+                    <input 
+                    placeholder="Nombre"
+                      type="text"
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                    />
+                  </label>
+
+                  <label>
+                    <input 
+                    placeholder="Apellido"
+                      type="text"
+                      value={apellido}
+                      onChange={(e) => setApellido(e.target.value)}
+                    />
+                  </label>
+
+                  <label>
+                    <input
+                    placeholder="Telefono"
+
+                      type="text"
+                      value={telefono}
+                      onChange={(e) => setTelefono(e.target.value)}
+                    />
+                  </label>
+
+                  {/* Campos adicionales si selecciona envío */}
+                  {entrega === "envio" && (
+                    <div className="direccion-section">
+                      <label>
+                        <input
+                        placeholder="Direccion"
+                          type="text"
+                          value={direccion}
+                          onChange={(e) => setDireccion(e.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <input
+                        placeholder="Ciudad"
+                          type="text"
+                          value={ciudad}
+                          onChange={(e) => setCiudad(e.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <input
+                        placeholder="Provincia"
+                          type="text"
+                          value={provincia}
+                          onChange={(e) => setProvincia(e.target.value)}
+                        />
+                      </label>
+                      <label>
+                        <input
+                        placeholder="Codigo postal"
+                          type="text"
+                          value={codigoPostal}
+                          onChange={(e) => setCodigoPostal(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                  )}
+
+                  <button 
+                    className="btn-finalizar" 
+                    onClick={handleFinalizar}
+                    disabled={!isFormValid}
+                  >
+                    Finalizar Compra
+                  </button>
+                </>
+              )}
+            </form>
           ) : (
-            // Si no está autenticado, mostrar el mensaje rojo
             <p style={{ color: "red" }}>
               Debes iniciar sesión para seleccionar el método de entrega.
             </p>

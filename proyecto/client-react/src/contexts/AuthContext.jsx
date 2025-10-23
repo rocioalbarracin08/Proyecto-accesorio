@@ -8,6 +8,8 @@ export function AuthProvider({ children }) {
   const [isOwner, setIsOwner] = useState(false);    // Estado: ¿Es dueño?
   const [userRole, setUserRole] = useState(null);   // Estado: Rol ('cliente', 'empleado', 'dueño')
 
+  //utilizar el authcontext para utilizar los datos del cliente en cualquier pagina, para no crear el get devuelta
+  
   const location = useLocation();  // Detecta cambios de página
 
   useEffect(() => {

@@ -10,15 +10,18 @@
 .producto-item {
   background-color: #fff7f7;  
   border-radius: 8px; 
-  text-align: center; /* Centra el texto */
-  transition: transform 0.3s ease; /* Transición suave para la animación */
+  align-items: center;     /* Centra imagen y texto verticalmente */
+  gap: 10px;
+  transition: transform 0.3s ease;
 }
 
 /* Estilos para la imagen del producto */
 .producto-item img {
-  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
-  height: auto; /* Ajusta la altura automáticamente */
+  width: 90%; /* La imagen ocupa todo el ancho del contenedor */
+  height: 60%; /* Ajusta la altura automáticamente */
   border-radius: 4px; /* Bordes redondeados para la imagen */
+  object-fit: cover;  /* Mantiene la proporción de la imagen */
+
 }
 
 /* Estilos para el título del producto */
