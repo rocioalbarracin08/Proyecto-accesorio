@@ -112,6 +112,10 @@ const carritoReducer = (state, action) => {
     //Vacía el carrito completamente.
     case 'CLEAR_CART':
       return { ...initialState, showCarrito: state.showCarrito };  // Limpia items, mantiene modal
+    
+    //abre el modal de carrito
+    case 'OPEN_CART':
+      return { ...state, showCarrito: true };
 
     default://Si llega otra accion no esperada
       return state;//“No sé qué me pedís, así que no toco nada.”
@@ -180,6 +184,8 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
+  //abre el carrito cuando se presiona el boton "agregar al carrito"
+  const openCarrito = () => dispatch({ type: 'OPEN_CART' });
   //Elimina el producto
   const removeItem = (productoId) => dispatch({ type: 'REMOVE_ITEM', payload: { removeId: productoId } });
 
@@ -192,7 +198,7 @@ export const CarritoProvider = ({ children }) => {
 
   return (
     //Esto provee el contexto (los datos y funciones del carrito) a todos los componentes hijos
-    <CarritoContext.Provider value={{ state, addItem, updateQuantity, removeItem, toggleCarrito, closeCarrito, clearCart }}>
+    <CarritoContext.Provider value={{ state, addItem, updateQuantity, removeItem, openCarrito, toggleCarrito, closeCarrito, clearCart }}>
       {children}
     </CarritoContext.Provider>
   );

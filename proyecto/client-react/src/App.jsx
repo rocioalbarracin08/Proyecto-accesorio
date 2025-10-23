@@ -19,6 +19,7 @@ import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena
 import CrearPromocion from "./components/promociones/CrearPromocion";
 import Promociones from "./components/promociones/Promociones";
 import EditarPromocion from "./components/promociones/EditarPromocion";
+import { Factura } from "./components/factura/factura";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       <Route path="/crear-promocion" element={<CrearPromocion/>}/>
       <Route path="/promociones" element={<Promociones/>}/>
       <Route path="/editarPromociones" element={<EditarPromocion/>}/>
+      <Route path="/resumen-compra" element={<Factura/>}/>
       <Route
         path="/"
         element={
