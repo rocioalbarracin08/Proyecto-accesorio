@@ -12,4 +12,5 @@ pip install flask-cors
 pip install werkzeug
 pip install PyJWT
 npm install react-leaflet leaflet
+pip install flask-mail
 pip install Flask-Mail

@@ -26,7 +26,7 @@ export default function RecuperarContrasena() {
       if (res.ok) {
         setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Muestra mensaje de éxito
         // Redirige a login después de 2 segundos para que el usuario vea el mensaje
-        setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
+        //setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
       } else {
         setError(data.error);  // Muestra el error si ocurre (e.g., email no registrado)
       }

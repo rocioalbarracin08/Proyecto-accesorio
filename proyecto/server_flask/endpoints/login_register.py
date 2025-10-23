@@ -15,7 +15,7 @@ bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 from server_flask.config import SECRET_KEY
 
 @bp.route('/register', methods=['POST'])
-def register(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
+def register():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
@@ -168,6 +168,7 @@ def cambiar_contrasena():
         g.db.rollback()
         return jsonify({"error": f"Error cambiando contraseña: {err}"}), 500
 
+################### LO TENGO DUPLICADO EN AUTH_DUENO ###########################3
 @bp.route('/es_dueno')
 def es_dueno():
     token = request.cookies.get('token')
@@ -208,7 +209,7 @@ def recuperar_contrasena():
         g.db_cursor.execute("""
             SELECT u.id_usuario FROM usuarios u 
             JOIN roles r ON u.id_rol = r.id_rol 
-            WHERE u.email = %s AND r.rol = 'cliente'
+            WHERE u.email = %s
         """, (email,))
         user = g.db_cursor.fetchone()
         if not user:
@@ -230,8 +231,8 @@ def recuperar_contrasena():
         reset_url = f"http://localhost:5173/resetear-contrasena?token={reset_token}"  # Ajusta dominio
         msg = Message('Recuperación de Contraseña', sender='tuemail@gmail.com', recipients=[email])
         msg.body = f'Haz click aquí para resetear tu contraseña: {reset_url}'
-        mail.send(msg)  # mail configurado en app.py
-        
+        #mail.send(msg)   mail configurado en app.py
+        print(f"Simulación: Email enviado a {email}. Enlace de recuperación: {reset_url}")
         return jsonify({"mensaje": "Email de recuperación enviado"}), 200
     except Exception as err:
         g.db.rollback()
