@@ -34,17 +34,10 @@ def crearCliente():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     if request.method == 'POST':
-        datos = request.get_json()
-        nombre = datos.get("nombre")  # Cambié a "nombre" (consistente con frontend)
-        apellido = datos.get("apellido")
-        genero = datos.get("genero")
-        email = datos.get("email")
-        password = datos.get("password")
         try:
             # Corrección: Inserta en tabla 'clientes', no 'categoria'
             g.db_cursor.execute(
-                "INSERT INTO clientes (name, apellido, genero, email, password) VALUES (%s, %s, %s, %s, %s)",
-                (nombre, apellido, genero, email, password)
+                "INSERT INTO clientes () VALUES ()"
             )
             g.db.commit()
             return jsonify({"mensaje": "Cliente creado exitosamente."}), 201
