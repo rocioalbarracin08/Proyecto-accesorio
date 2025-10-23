@@ -1,39 +1,51 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCarrito } from "../../context/CarritoContext";  // Ajusta path si es necesario
-import "./producto.css";  // Tu CSS para grid y botones
+import { usePromociones } from "../../contexts/PromocionesContext";
+import { useCarrito } from "../../contexts/CarritoContext"; 
+import axios from "axios";
+import "./producto.css";
 
 export function Productos() {
-  const { idCategoria } = useParams();  // Lee ID de URL
+  const { idCategoria } = useParams();
+  const { promociones } = usePromociones();
+  const { addItem } = useCarrito();
+
   const [productos, setProductos] = useState([]);
   const [categoriaNombre, setCategoriaNombre] = useState("Cargando...");
   const [loading, setLoading] = useState(true);
-  const { addItem , openCarrito} = useCarrito();  // Para carrito
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
+  // Promoción activa
+  const promocionActiva = promociones.find(
+    p => p.id_categoria == idCategoria && p.activo
+  );
+
+  const cargarProductos = async () => {
     setLoading(true);
-    fetch(`http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`)
-      .then(res => {
-        if (!res.ok) throw new Error('Error en servidor');
-        return res.json();
-      })
-      .then(data => {
-        setProductos(data.productos || []);
-        setTotalPages(data.total_pages || 1);
-        setPage(data.page || 1);
-        if (data.productos && data.productos.length > 0) {
-          setCategoriaNombre(data.productos[0].categoria || "");
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error cargando productos por categoría:", err);
-        setLoading(false);
-      });
-  }, [idCategoria, page]);
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`,
+        { withCredentials: true }
+      );
+      const data = res.data;
+      setProductos(data.productos || []);
+      setTotalPages(data.total_pages || 1);
+      setPage(data.page || 1);
+      if (data.productos && data.productos.length > 0) {
+        setCategoriaNombre(data.productos[0].categoria || "");
+      }
+    } catch (err) {
+      console.error("Error cargando productos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarProductos();
+  }, [idCategoria, page, promociones]);
 
   if (loading) return <div className="producto-grid">Cargando productos...</div>;
 
@@ -49,32 +61,65 @@ export function Productos() {
     <div className="productos-page">
       <h2 className="tituloProducts">Productos de {categoriaNombre}</h2>
 
-      <div className="producto-grid"> 
+      {/* Banner de promoción */}
+      {promocionActiva && (
+        <div className="promocion-banner">
+          <h3>¡Promoción Especial!</h3>
+          <p>
+            {promocionActiva.descripcion} - Descuento:{" "}
+            {promocionActiva.tipo_descuento === "porcentaje"
+              ? `${promocionActiva.descuento * 100}% OFF`
+              : `$${promocionActiva.descuento} OFF`}
+          </p>
+          <p>Válido hasta: {new Date(promocionActiva.fecha_fin).toLocaleDateString()}</p>
+        </div>
+      )}
+
+      <div className="producto-grid">
         {productos.length === 0 ? (
           <p>No hay productos en esta categoría.</p>
         ) : (
-          productos.map((producto) => (
-            <div className="producto-item" key={getId(producto)}>
-              <img 
-                src={producto.imagen || producto.imagen_url || '/default-product.jpg'}
-                alt={producto.name}
-              />
-              <h3>{producto.name}</h3>
-              <p className="producto-precio">${producto.precio}</p>
-              <button 
-                className="agregar-carrito" 
-                onClick={() => {addItem(producto), openCarrito();}}
-              >
-                Agregar al Carrito
-              </button>
-            </div>
-          ))
+          productos.map((producto) => {
+            let precioFinal = producto.precio;
+            if (promocionActiva) {
+              if (promocionActiva.tipo_descuento === "porcentaje") {
+                precioFinal = precioFinal * (1 - promocionActiva.descuento);
+              } else {
+                precioFinal = Math.max(precioFinal - promocionActiva.descuento, 0);
+              }
+            }
+
+            return (
+              <div className="producto-item" key={getId(producto)} style={{ position: "relative" }}>
+                {promocionActiva && (
+                  <span className="descuento-etiqueta">
+                    {promocionActiva.tipo_descuento === "porcentaje"
+                      ? `${promocionActiva.descuento * 100}% OFF`
+                      : `$${promocionActiva.descuento} OFF`}
+                  </span>
+                )}
+                <img
+                  src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
+                  alt={producto.name}
+                />
+                <h3>{producto.name}</h3>
+                <p className="producto-precio">${precioFinal.toFixed(2)}</p>
+                <button
+                  className="agregar-carrito"
+                  onClick={() => addItem({ ...producto, precio: precioFinal })}
+                >
+                  Agregar al Carrito
+                </button>
+              </div>
+            );
+          })
         )}
       </div>
-      {/* Paginación (siempre visible si totalPages > 1) */}
+
+      {/* Paginación */}
       {totalPages > 1 && (
-        <div className="paginacion" style={{ marginTop: '40px', textAlign: 'center' }}>
-          <button onClick={handlePrev} disabled={page === 1} className="btn-paginacion" style={{ margin: '0 10px' }}>
+        <div className="paginacion">
+          <button onClick={handlePrev} disabled={page === 1} className="btn-paginacion">
             Anterior
           </button>
           {[...Array(Math.min(5, totalPages))].map((_, i) => {
@@ -83,14 +128,13 @@ export function Productos() {
               <button
                 key={pageNum}
                 onClick={() => goToPage(pageNum)}
-                className={`btn-paginacion ${pageNum === page ? 'active' : ''}`}
-                style={{ margin: '0 5px' }}
+                className={`btn-paginacion ${pageNum === page ? "active" : ""}`}
               >
                 {pageNum}
               </button>
             );
           })}
-          <button onClick={handleNext} disabled={page === totalPages} className="btn-paginacion" style={{ margin: '0 10px' }}>
+          <button onClick={handleNext} disabled={page === totalPages} className="btn-paginacion">
             Siguiente
           </button>
         </div>

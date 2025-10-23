@@ -1,81 +1,49 @@
-import { useCarrito } from "../../context/CarritoContext";
-import { useNavigate } from "react-router-dom"; // Para redireccionar
-import "./carrito.css";
+import { useCarrito } from '../../contexts/CarritoContext';  
+import './carrito.css'; 
 
 export function ComprasCarrito() {
-  const { state, addItem, updateQuantity, removeItem, clearCart, toggleCarrito } = useCarrito();
-  const navigate = useNavigate(); // hook de react-router
+  const { state, updateQuantity, removeItem, clearCart, toggleCarrito } = useCarrito();  // Accede a funciones del contexto
 
-  if (!state.showCarrito) return null;
-
-  const handleIncrement = (id) => {
-    const currentQty = state.items[id]?.cantidad || 0;
-    updateQuantity(id, currentQty + 1);
-  };
-
-  const handleDecrement = (id) => {
-    const currentQty = state.items[id]?.cantidad || 0;
-    if (currentQty > 1) updateQuantity(id, currentQty - 1);
-    else removeItem(id);
-  };
-
-  const calcularSubtotal = (item) =>
-    (item.cantidad * parseFloat(item.producto.precio || 0)).toFixed(2);
-
-   const finalizarCompra = () => {
-    toggleCarrito(); // Cierra el modal
-    navigate("/factura"); // Redirige a la página de factura
-  };
+  const calcularSubtotal = (item) => item.precio * item.cantidad;  // Calcula el subtotal de un item
 
   return (
-    <section className="carrito-overlay" onClick={toggleCarrito}>
-      <section
-        className="carrito-contenedor"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="carrito-titulo">Mis compras </h2>
+    <div className="carrito-overlay" onClick={toggleCarrito}>  {/* Cierra el carrito al hacer clic en el overlay */}
+      <div className="carrito-contenedor" onClick={(e) => e.stopPropagation()}>  {/* Evita que el clic cierre el carrito */}
+        <h2 className="carrito-titulo">Mis Compras</h2>
 
-        {Object.keys(state.items).length === 0 ? (
+        {Object.keys(state.items).length === 0 ? (  // Verifica si el carrito está vacío
           <p className="carrito-vacio">No hay productos en el carrito.</p>
         ) : (
           <>
-            <div className="carrito-lista">
-              {Object.entries(state.items).map(([id, item]) => (
-                <div className="carrito-item" key={id}>
+            <div className="carrito-lista">  {/* Contenedor para la lista de items */}
+              {Object.values(state.items).map((item, index) => (
+                <div className="carrito-item" key={`${item.producto.id_producto || item.producto.id || index}-${index}`}>
                   <img
-                    src={
-                      item.producto.imagen ||
-                      item.producto.imagen_url ||
-                      "/default-product.jpg"
-                    }
+                    src={item.producto.imagen || item.producto.imagen_url || "/default-product.jpg"}
                     alt={item.producto.nombre || item.producto.name}
                     className="carrito-item-img"
                   />
-
                   <div className="carrito-item-info">
                     <h3>{item.producto.nombre || item.producto.name}</h3>
                     <p>${item.producto.precio}</p>
-
                     <div className="carrito-controles">
-                      <button onClick={() => handleDecrement(id)}>-</button>
+                      <button onClick={() => updateQuantity(item.producto.id_producto || item.producto.id, item.cantidad - 1)}>-</button>
                       <span>{item.cantidad}</span>
-                      <button onClick={() => handleIncrement(id)}>+</button>
-                      <button onClick={() => removeItem(id)}  className="btn-eliminar-producto" title="Eliminar producto"> Eliminar</button>
-            
+                      <button onClick={() => updateQuantity(item.producto.id_producto || item.producto.id, item.cantidad + 1)}>+</button>
                     </div>
-
                     <p className="subtotal">
-                      Subtotal: ${calcularSubtotal(item)}
+                      Subtotal: ${(item.cantidad * parseFloat(item.producto.precio || 0)).toFixed(2)}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="carrito-total">
+            <div className="carrito-total">  {/* Total del carrito */}
               <p>
                 <strong>Total: </strong>${state.totalPrice.toFixed(2)}
               </p>
+<<<<<<< HEAD
 
               <div className="carrito-botones">
                
@@ -93,6 +61,10 @@ export function ComprasCarrito() {
                   Finalizar Compra
                 </button>
               </div>
+=======
+              <button className="btn-vaciar-carrito" onClick={clearCart}>Vaciar Carrito</button>  {/* Botón para vaciar el carrito */}
+              <button className="btn-cerrar-carrito" onClick={toggleCarrito}>Cerrar</button>  {/* Botón para cerrar el carrito */}
+>>>>>>> 5fe2e09f94e94f4bb3d420092b0099ea05c534b9
             </div>
           </>
         )}

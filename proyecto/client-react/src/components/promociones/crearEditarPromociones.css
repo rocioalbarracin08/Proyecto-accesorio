@@ -1,0 +1,135 @@
+/* Overlay del modal (fondo oscuro) */
+.modal-overlay {
+  position: fixed;  /* Fijo en pantalla */
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Ocupa todo el ancho de la ventana */
+  height: 100vh;  /* Ocupa toda la altura de la ventana */
+  background: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente para oscurecer el fondo */
+  display: flex;  /* Centra el modal */
+  justify-content: center;  /* Centra horizontalmente */
+  align-items: center;  /* Centra verticalmente */
+  z-index: 1000;  /* Alto z-index para estar encima de otros elementos */
+  animation: 0.3s ease;  /* Animación de entrada */
+}
+
+/* Animación para overlay (complejo: keyframes para transición suave) */
+@keyframes fadeInOverlay {
+  from { opacity: 0; }  /* Comienza invisible */
+  to { opacity: 1; }  /* Termina visible */
+}
+
+/* Contenido del modal */
+.modal-content {
+  background: #f8d7da;  /* Color de fondo rosado claro */
+  padding: 30px;  /* Espaciado interno */
+  border-radius: 15px;  /* Bordes redondeados */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);  /* Sombra para profundidad */
+  max-width: 500px;  /* Ancho máximo del modal */
+  width: 90%;  /* Ancho responsivo */
+  animation: 0.3s ease;  /* Animación de deslizamiento */
+}
+
+/* Animación para modal (complejo: combina translateY y opacity) */
+@keyframes slideIn {
+  from { transform: translateY(-50px); opacity: 0; }  /* Comienza desde arriba y es invisible */
+  to { transform: translateY(0); opacity: 1; }  /* Termina en su posición original y visible */
+}
+
+/* Título del modal */
+.modal-content h2 {
+  text-align: center;  /* Centra el texto */
+  color: #c0392b;  /* Color rosado oscuro para el título */
+  margin-bottom: 20px;  /* Espacio debajo del título */
+}
+
+/* Formulario */
+.promocion-form {
+  display: flex;  /* Flexbox para organizar inputs */
+  flex-direction: column;  /* Elementos en columna */
+  gap: 15px;  /* Espacio entre inputs */
+}
+
+/* Inputs y selects */
+.promocion-form input,
+.promocion-form select {
+  padding: 12px;  /* Espaciado interno */
+  border: 2px solid #ecf0f1;  /* Borde gris claro */
+  border-radius: 8px;  /* Bordes redondeados */
+  font-size: 16px;  /* Tamaño de fuente */
+  transition: 0.3s ease;  /* Transición suave al enfocar */
+}
+
+.promocion-form input:focus,
+.promocion-form select:focus {
+  border-color: #e74c3c;  /* Color rosado oscuro al enfocar */
+  outline: none;  /* Sin outline por defecto */
+}
+
+/* Checkbox */
+.checkbox-container {
+  display: flex;  /* Flexbox para alinear checkbox y texto */
+  align-items: center;  /* Centra verticalmente */
+  gap: 10px;  /* Espacio entre checkbox y texto */
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 20px;  /* Ancho del checkbox */
+  height: 20px;  /* Alto del checkbox */
+}
+
+/* Botones del formulario */
+.form-buttons {
+  display: flex;  /* Flexbox para organizar botones */
+  justify-content: space-between;  /* Espacia botones */
+  margin-top: 20px;  /* Espacio arriba de los botones */
+}
+
+.btn-submit {
+  padding: 12px 24px;  /* Espaciado interno */
+  background: linear-gradient(45deg, #e74c3c, #c0392b);  /* Gradiente rosado oscuro */
+  color: white;  /* Texto blanco */
+  border: none;  /* Sin borde */
+  border-radius: 25px;  /* Bordes redondeados */
+  font-size: 16px;  /* Tamaño de fuente */
+  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
+  transition: all 0.3s ease;  /* Transición suave */
+  flex: 1;  /* Ocupa espacio */
+  margin-right: 10px;  /* Espacio a la derecha */
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);  /* Eleva el botón al pasar el mouse */
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);  /* Sombra más intensa */
+}
+
+.btn-cancel {
+  padding: 12px 24px;  /* Espaciado interno */
+  background: #95a5a6;  /* Color gris */
+  color: white;  /* Texto blanco */
+  border: none;  /* Sin borde */
+  border-radius: 25px;  /* Bordes redondeados */
+  font-size: 16px;  /* Tamaño de fuente */
+  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
+  transition: 0.3s ease;  /* Transición suave */
+  flex: 1;  /* Ocupa espacio */
+}
+
+.btn-cancel:hover {
+  background: #7f8c8d;  /* Color más oscuro al pasar el mouse */
+}
+
+/* Responsive: En móviles, ajusta modal */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 20px;  /* Menos padding en móviles */
+    width: 95%;  /* Ancho más pequeño */
+  }
+  .form-buttons {
+    flex-direction: column;  /* Apila botones en móviles */
+    gap: 10px;  /* Espacio entre botones */
+  }
+  .btn-submit, .btn-cancel {
+    flex: none;  /* Sin flex para móviles */
+  }
+}

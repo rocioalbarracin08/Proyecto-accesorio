@@ -1,0 +1,131 @@
+/* Contenedor principal de la lista de promociones */
+.promociones-container {
+    max-width: 1200px;  /* Limita ancho para no ocupar toda la pantalla */
+    margin: 20px auto;  /* Centra horizontalmente con margen automático */
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);  /* Gradiente suave azul-gris para fondo "lindo" */
+    border-radius: 15px;  /* Bordes redondeados */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  /* Sombra para profundidad */
+  }
+  
+  /* Título */
+  .promociones-container h1 {
+    text-align: center;
+    color: #2c3e50;  /* Azul oscuro para elegancia */
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 20px;
+  }
+  
+  /* Botón para crear promoción */
+  .btn-crear {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 12px 24px;
+    background: linear-gradient(45deg, #3498db, #2980b9);  /* Gradiente azul */
+    color: white;
+    border: none;
+    border-radius: 25px;  /* Bordes muy redondeados para "lindo" */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;  /* Transición suave en hover */
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);  /* Sombra azul */
+  }
+  
+  .btn-crear:hover {
+    transform: translateY(-2px);  /* Eleva botón en hover (complejo: usa transform para animación 3D) */
+    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);  /* Sombra más intensa */
+  }
+  
+  /* Lista de promociones */
+  .promociones-lista {
+    list-style: none;  /* Sin viñetas */
+    padding: 0;
+  }
+  
+  .promociones-lista li {
+    background: white;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;  /* Flexbox para alinear contenido y botones */
+    justify-content: space-between;  /* Espacia elementos */
+    align-items: center;
+    transition: transform 0.2s ease;  /* Transición en hover */
+  }
+  
+  .promociones-lista li:hover {
+    transform: scale(1.02);  /* Escala ligera en hover para feedback visual */
+  }
+  
+  /* Texto de la promoción */
+  .promocion-info {
+    flex: 1;  /* Ocupa espacio disponible */
+    color: #34495e;
+  }
+  
+  /* Contenedor de botones */
+  .promocion-botones {
+    display: flex;
+    gap: 10px;  /* Espacio entre botones */
+  }
+  
+  .promocion-botones button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-editar {
+    background: #f39c12;  /* Naranja */
+    color: white;
+  }
+  
+  .btn-editar:hover {
+    background: #e67e22;
+  }
+  
+  .btn-desactivar {
+    background: #e74c3c;  /* Rojo */
+    color: white;
+  }
+  
+  .btn-desactivar:hover {
+    background: #c0392b;
+  }
+  
+  .btn-eliminar {
+    background: #95a5a6;  /* Gris */
+    color: white;
+  }
+  
+  .btn-eliminar:hover {
+    background: #7f8c8d;
+  }
+  
+  /* Estados de carga y error */
+  .loading, .error {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+    font-size: 18px;
+  }
+  
+  /* Responsive: En móviles, ajusta layout */
+  @media (max-width: 768px) {
+    .promociones-container {
+      margin: 10px;
+      padding: 15px;
+    }
+    .promociones-lista li {
+      flex-direction: column;  /* Apila elementos verticalmente */
+      align-items: flex-start;
+    }
+    .promocion-botones {
+      margin-top: 10px;
+      flex-wrap: wrap;  /* Botones se envuelven si no caben */
+    }
+  }

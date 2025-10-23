@@ -5,17 +5,42 @@
   align-items: center;
   width: 100%;
 }
+
+.perfil{
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  display: block;
+  object-fit: contain;
+  transition: 0.2s;
+}
+.perfil:hover {
+  transform: scale(1.1);
+}
 .user img{
   width: 50px;
+  height: 50px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s;
 }
-.user :hover{
-  width: 55px;
+.user img:hover {
+  transform: scale(1.1);
 }
-.carrito img{
-  width: 55px;
+.carrito {
+  position: relative;
+  border: none;  /* Elimina el borde del botón */
+  outline: none; /* Elimina cualquier contorno al hacer foco */
+  padding: 0%;
 }
-.carrito img:hover{
-  width: 60px;
+
+.carrito img {
+  width: 40px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+  border: none;  /* Elimina cualquier borde */
+  outline: none;  /* Elimina cualquier contorno por defecto */
 }
 
 .direccionamiento{
@@ -26,7 +51,7 @@
   overflow: hidden;  /* Evita desborde en hover */
 }
 .miLogo{
-  width: 60px;
+  width: 90px;
   border-radius: 10px;
 }
 .buscador{
@@ -37,18 +62,15 @@
   height: 25px;
   text-align: center;
 }
-.carrito {
-  position: relative;  /* Para posicionar el badge */
-}
 .carrito-count {
   position: absolute;
-  top: -2px;
-  right: -8px;
-  background-color: red;
+  top: -6px;
+  right: -10px;
+  background-color: red;  /* Fondo rojo */
   color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 25px;  /* Tamaño fijo */
+  height: 20px;  /* Tamaño fijo */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,4 +80,66 @@
 .btn-cerrarSesion{
   background-color: white;
   color: rosybrown;
+  border: 1px solid rosybrown;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: bold;
+  margin-left: 18px;
+  margin-right: 8px;
+  transition: 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.btn-cerrarSesion:hover {
+  background-color: rgb(238, 204, 204);
+  color: #a05252;
+  border: 1.5px solid #a05252;
+}
+
+.iconosUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 55px;
+}
+/* Dropdown de búsqueda */
+.buscador-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.buscador-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.buscador-link {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.buscador-img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.buscador-loading {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: gray;
 }

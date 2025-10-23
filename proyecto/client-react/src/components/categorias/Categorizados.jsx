@@ -24,7 +24,6 @@ export function Categorizados() {
 
   return (
     <main className="category-section">
-      <h2 className="main-category">Categorías</h2>
       <div className="categorias-container">
         {categorias.length === 0 ? (
           <p>No hay categorías disponibles.</p>

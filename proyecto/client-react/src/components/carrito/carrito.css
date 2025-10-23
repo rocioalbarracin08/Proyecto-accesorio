@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .btn-eliminar-producto {
   background: transparent; 
   border: 1px solid rgb(255, 255, 255);
@@ -148,31 +149,140 @@
   border-radius: 8px;  /* Bordes redondeados en el modal */
 }
 
+=======
+/* Overlay del carrito (fondo oscuro) */
+>>>>>>> 5fe2e09f94e94f4bb3d420092b0099ea05c534b9
 .carrito-overlay {
-  position: fixed;
+  position: fixed;  /* Fijo en pantalla */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: 20px;
-  z-index: 1000;
+  width: 100%;  /* Ocupa todo el ancho */
+  height: 100%;  /* Ocupa toda la altura */
+  background-color: rgba(0, 0, 0, 0.4);  /* Fondo semi-transparente */
+  display: flex;  /* Centra el contenido */
+  justify-content: flex-end;  /* Alinea el carrito a la derecha */
+  align-items: flex-start;  /* Alinea el carrito en la parte superior */
+  padding: 20px;  /* Espaciado interno */
+  z-index: 1000;  /* Alto z-index para estar encima de otros elementos */
 }
 
+/* Contenedor del carrito */
 .carrito-contenedor {
-  background-color: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  width: 350px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.3s ease;
+  background-color: #f8d7da;  /* Color de fondo rosado claro */
+  border-radius: 16px;  /* Bordes redondeados */
+  padding: 20px;  /* Espaciado interno */
+  width: 350px;  /* Ancho fijo del carrito */
+  max-height: 90vh;  /* Altura máxima con scroll */
+  overflow-y: auto;  /* Habilita scroll si el contenido excede la altura */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);  /* Sombra para resaltar */
+  animation: slideIn 0.3s ease;  /* Animación de entrada */
 }
 
+/* Animación para el carrito (complejo: keyframes para transición suave) */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);  /* Comienza fuera de la pantalla */
+  }
+  to {
+    transform: translateX(0);  /* Termina en su posición original */
+  }
+}
+
+/* Título del carrito */
+.carrito-titulo {
+  text-align: center;  /* Centra el texto */
+  font-size: 1.5rem;  /* Tamaño de fuente */
+  margin-bottom: 10px;  /* Espacio debajo del título */
+}
+
+/* Mensaje si el carrito está vacío */
+.carrito-vacio {
+  text-align: center;  /* Centra el texto */
+  color: #777;  /* Color gris */
+}
+
+/* Lista de items en el carrito */
+.carrito-lista {
+  display: flex;  /* Flexbox para organizar items */
+  flex-direction: column;  /* Coloca items en columna */
+  gap: 15px;  /* Espacio entre items */
+}
+
+/* Item del carrito */
+.carrito-item {
+  display: flex;  /* Flexbox para alinear imagen y texto */
+  align-items: center;  /* Centra verticalmente */
+  gap: 10px;  /* Espacio entre imagen y texto */
+  border-bottom: 1px solid #eee;  /* Línea separadora */
+  padding-bottom: 10px;  /* Espacio debajo del item */
+}
+
+/* Imagen del item */
+.carrito-item-img {
+  width: 70px;  /* Ancho de la imagen */
+  height: 70px;  /* Alto de la imagen */
+  object-fit: cover;  /* Mantiene la proporción de la imagen */
+  border-radius: 8px;  /* Bordes redondeados */
+}
+
+/* Información del item */
+.carrito-item-info h3 {
+  margin: 0;  /* Sin margen */
+  font-size: 1rem;  /* Tamaño de fuente */
+}
+
+/* Controles de cantidad */
+.carrito-controles {
+  display: flex;  /* Flexbox para alinear controles */
+  align-items: center;  /* Centra verticalmente */
+  gap: 10px;  /* Espacio entre controles */
+  margin-top: 5px;  /* Espacio arriba de los controles */
+}
+
+/* Botones de cantidad */
+.carrito-controles button {
+  background-color: #f0b6c1;  /* Color rosado claro */
+  border: none;  /* Sin borde */
+  padding: 5px 10px;  /* Espaciado interno */
+  border-radius: 8px;  /* Bordes redondeados */
+  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
+  font-size: 1rem;  /* Tamaño de fuente */
+}
+
+/* Hover para botones de cantidad */
+.carrito-controles button:hover {
+  background-color: #d98b99;  /* Color más oscuro al pasar el mouse */
+}
+
+/* Subtotal de cada item */
+.subtotal {
+  font-size: 0.9rem;  /* Tamaño de fuente más pequeño */
+  color: #555;  /* Color gris */
+}
+
+/* Total del carrito */
+.carrito-total {
+  border-top: 2px solid #ddd;  /* Línea separadora */
+  margin-top: 15px;  /* Espacio arriba del total */
+  padding-top: 10px;  /* Espacio arriba del total */
+  text-align: center;  /* Centra el texto */
+}
+
+/* Botón para cerrar el carrito */
+.cerrar-carrito {
+  margin-top: 10px;  /* Espacio arriba del botón */
+  background-color: rosybrown;  /* Color rosado */
+  color: white;  /* Texto blanco */
+  border: none;  /* Sin borde */
+  padding: 10px 20px;  /* Espaciado interno */
+  border-radius: 10px;  /* Bordes redondeados */
+  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
+}
+
+/* Hover para cerrar carrito */
+.cerrar-carrito:hover {
+  background-color: #a76c70;  /* Color más oscuro al pasar el mouse */
+}
 @keyframes slideIn {
   from {
     transform: translateX(100%);
@@ -180,87 +290,4 @@
   to {
     transform: translateX(0);
   }
-}
-
-.carrito-titulo {
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.carrito-vacio {
-  text-align: center;
-  color: #777;
-}
-
-.carrito-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.carrito-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.carrito-item-img {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.carrito-item-info h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.carrito-controles {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 5px;
-}
-
-.carrito-controles button {
-  background-color: #f0b6c1;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.carrito-controles button:hover {
-  background-color: #d98b99;
-}
-
-.subtotal {
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.carrito-total {
-  border-top: 2px solid #ddd;
-  margin-top: 15px;
-  padding-top: 10px;
-  text-align: center;
-}
-
-.cerrar-carrito {
-  margin-top: 10px;
-  background-color: rosybrown;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.cerrar-carrito:hover {
-  background-color: #a76c70;
 }

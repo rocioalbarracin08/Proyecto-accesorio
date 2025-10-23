@@ -1,63 +1,103 @@
-/* Icono mostrar/ocultar contraseña */
+/* Contenedor principal */
+.section-log {
+    background-color: rgba(250, 134, 134, 0.61);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 100%;
+    
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Título */
+.section-log h1 {
+    margin-bottom: 1.5rem;
+    color: #6a4f4f;
+}
+
+/* Input (email y contraseña) */
+.email-input, .password-input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+    background-color: #f4e1e1; /* RosyBrown claro */
+    font-size: 1rem;
+}
+
+/* Contenedor del icono para mostrar/ocultar contraseña */
 .password-container {
     position: relative;
     width: 100%;
 }
 
-.password-toggle-icon {
+/* Icono para mostrar/ocultar la contraseña */
+.password-icon {
     position: absolute;
-    right: 0.7rem;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 0.5rem;
+    top: 18%;
     cursor: pointer;
     color: #888;
-    font-size: 1.2rem;
-    z-index: 2;
+    font-size: 1.3rem;
 }
 
-.email-input,
-.password-input {
-    width: 100%;
-    padding-right: 2.5rem;
+/* Botón de inicio de sesión */
+.btn-log {
+    padding: 0.8rem;
+    background-color: #cd7f7f; /* RosyBrown */
+    color: white;
+    border-radius: 10%;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s ease;
 }
 
-/*Estilo para el form*/
-.section-log{
-    background-color: rgba(250, 134, 134, 0.61);
-
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-
-    height: 80%;
-    width: 50%;
-    gap: 1rem;
-    
+.btn-log:hover {
+    background-color: #a45d5d; /* RosyBrown oscuro */
 }
-a{
+
+/* Mensajes de error */
+.section-log p {
+    color: red;
+    font-size: 0.9rem;
+    text-align: center;  /* Alinea el texto de los mensajes de error al centro */
+    width: 100%;  /* Asegura que el mensaje de error ocupe todo el ancho del contenedor */
+    margin-top: 1rem;
+}
+
+/* Estilo de enlaces */
+.LinksLog {
     text-decoration: none;
     color: white;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
 }
-button{
-    background-color: rgb(197, 119, 119);
-    border: none;
-    border-radius: 10%;
-    color: aliceblue;
-}
-input{
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    border: none;
 
-    padding: 0.5rem;
-    text-align: center;
+.LinksLog:hover {
+    text-decoration: underline;
 }
-.btn-log:hover {
-    background-color: rgb(172, 99, 99);
-    cursor: pointer;
+
+/* Link de "volver" */
+.ultLink {
+    margin-top: 1rem;
+    color: #6a4f4f;
+    font-size: 0.9rem;
 }
-.ultLink{
-    margin-bottom: 40px;
+
+/* Responsividad */
+@media (max-width: 500px) {
+    .section-log {
+        width: 90%;
+    }
+    .email-input, .password-input, .btn-log {
+        font-size: 0.9rem;
+    }
 }

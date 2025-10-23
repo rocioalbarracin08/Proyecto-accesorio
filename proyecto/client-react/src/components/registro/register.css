@@ -11,7 +11,7 @@
   border-radius: 10px;
 }
 
-.formulario{
+.formularioRegister{
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -23,7 +23,7 @@ a{
     text-decoration: none;
     color: white;
 }
-button{
+.registro{
     background-color: rgb(197, 119, 119);
     border: none;
     border-radius: 10%;
@@ -38,7 +38,7 @@ input{
     padding-right: 2.5rem;
     text-align: center;
 }
-button:hover {
+.registro:hover {
     cursor: pointer;
 }
 .ultLink{

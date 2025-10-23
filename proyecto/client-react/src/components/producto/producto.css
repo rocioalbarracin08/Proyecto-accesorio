@@ -1,5 +1,67 @@
+/* Estilos para el contenedor de productos */
+.producto-grid {
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Ajusta el tamaño mínimo de las columnas */
+  gap: 20px; /* Espacio entre los elementos */
+  padding: 20px; /* Espacio alrededor del grid */
+}
 
-/* NUEVOS ESTILOS: Para la paginación en ProductoGrid (agrega esto al final) */
+/* Estilos para cada item de producto */
+.producto-item {
+  background-color: #fff7f7;  
+  border-radius: 8px; 
+  text-align: center; /* Centra el texto */
+  transition: transform 0.3s ease; /* Transición suave para la animación */
+}
+
+/* Estilos para la imagen del producto */
+.producto-item img {
+  width: 100%; /* La imagen ocupa todo el ancho del contenedor */
+  height: auto; /* Ajusta la altura automáticamente */
+  border-radius: 4px; /* Bordes redondeados para la imagen */
+}
+
+/* Estilos para el título del producto */
+.producto-item h3 {
+  font-size: 1rem; 
+  margin-top: 10px;
+  color: black;
+}
+
+/* Estilos para el precio del producto */
+.producto-precio {
+  font-size: 1rem; 
+  color: #333; 
+  margin-top: 10px;
+}
+
+/* Estilos para el botón de agregar al carrito */
+.agregar-carrito {
+  margin-top: 10px;
+  padding: 10px 15px; 
+  background-color: rosybrown; 
+  color: white; 
+  border: none;
+  border-radius: 20px; 
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 1rem; 
+}
+
+.agregar-carrito:hover { 
+  background-color: #a55a5a; /* Cambia a un tono más oscuro al pasar el mouse */
+}
+
+/* Títulos de la página de productos */
+.productos-page {
+  text-align: center;
+}
+
+.tituloProducts {
+  margin-top: 20px;
+  color: #333;
+}
+
+/* Paginación */
 .paginacion {
   display: flex;
   justify-content: center;
@@ -15,18 +77,18 @@
 
 .btn-paginacion {
   padding: 8px 12px;
-  background-color: rosybrown;  /* Mismo color que tus botones */
+  background-color: rosybrown;  /* Color rosado */
   color: white;
   border: none;
-  border-radius: 20px;  /* Redondeado como agregar-carrito */
+  border-radius: 20px;  /* Bordes redondeados */
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  transition: 0.3s ease;
   min-width: 40px;
 }
 
 .btn-paginacion:hover:not(:disabled) {
-  background-color: #a55a5a;  /* Hover más oscuro (ajusta a tu tema) */
+  background-color: #a55a5a;  /* Hover más oscuro */
 }
 
 .btn-paginacion:disabled {
@@ -36,7 +98,7 @@
 }
 
 .btn-paginacion.active {
-  background-color: #8b4513;  /* Color para página activa (más oscuro) */
+  background-color: #8b4513;  /* Color para página activa */
   font-weight: bold;
 }
 
