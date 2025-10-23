@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";  // Agrega useNavigate para redirección
 import "./recuperarContrasena.css";  // Importa el CSS
 
+
 export default function RecuperarContrasena() {
-  const [email, setEmail] = useState("");  // Estado para almacenar el email ingresado
-  const [mensaje, setMensaje] = useState("");  // Estado para mensajes de éxito
-  const [error, setError] = useState("");  // Estado para mensajes de error
-  const [loading, setLoading] = useState(false);  // Estado para controlar la carga
-  const navigate = useNavigate();  // Hook para redirigir programáticamente
+  const [email, setEmail] = useState(""); 
+  const [mensaje, setMensaje] = useState(""); 
+  const [error, setError] = useState("");  
+  const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();  // Evita la recarga de la página

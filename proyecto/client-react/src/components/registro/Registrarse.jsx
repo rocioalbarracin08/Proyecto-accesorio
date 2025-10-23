@@ -21,7 +21,7 @@ export function Registrarse() {
     setUsuarioApellido,
     email,
     setEmail,
-  } = useAuth(); //La lógica del programa va en el hook
+  } = useAuth(); // La lógica del programa va en el hook
 
   const [genero, setGenero] = useState("F");
   const [loading, setLoading] = useState(false);
@@ -31,24 +31,40 @@ export function Registrarse() {
   const handleClick = async (event) => {
     event.preventDefault();
 
-    //Hacemos la comparación y validaciones
-    if (
-      usuarioName === "" ||
-      usuarioApellido === "" ||
-      contraseña === "" ||
-      repetirContraseña === "" ||
-      email === "" ||
-      genero === ""
-    ) {
-      return setError(true);
+    // Resetear error antes de validar
+    setError("");
+
+    // Validaciones personalizadas
+    if (!usuarioName.trim()) {
+      return setError("El nombre es obligatorio.");
+    }
+    if (!usuarioApellido.trim()) {
+      return setError("El apellido es obligatorio.");
+    }
+    if (!email.trim()) {
+      return setError("El email es obligatorio.");
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      return setError("Por favor, ingresa un email válido.");
+    }
+    if (!contraseña.trim()) {
+      return setError("La contraseña es obligatoria.");
+    }
+    if (contraseña.length < 6) {
+      return setError("La contraseña debe tener al menos 6 caracteres.");
+    }
+    if (!repetirContraseña.trim()) {
+      return setError("Debes repetir la contraseña.");
     }
     if (contraseña !== repetirContraseña) {
-      return setError(true);
+      return setError("Las contraseñas no coinciden.");
     }
-    setError(false);
-    setLoading(true); //Inicia el proceso de carga de datos
+    if (!genero) {
+      return setError("Debes seleccionar un género.");
+    }
+    setLoading(true);
 
-    // Enviar datos al backend
     try {
       const response = await fetch("http://localhost:5000/usuarios/register", {
         method: "POST",
@@ -63,17 +79,18 @@ export function Registrarse() {
       });
       if (response.ok) {
         navigate("/login");
-        //navigate(-1)
       } else {
-        setError(true); // Error en el registro
+        const data = await response.json();
+        setError(data.error || "Error en el registro. Inténtalo de nuevo.");
       }
     } catch (err) {
-      setError(true);
+      setError("Error de conexión. Verifica tu internet.");
     } finally {
-      setLoading(false); //Termina el proceso de carga de datos
+      setLoading(false);
     }
   };
-  //Segunda forma de hace el evento al hacer click
+
+  // Evento para el input de nombre
   const handleInputUsuario = (event) => {
     setUsuarioName(event.target.value);
   };
@@ -82,7 +99,7 @@ export function Registrarse() {
     <>
       <section className="section-register">
         <h1>Registrarse</h1>
-        {error ? <h5>Por favor, complete todos los campos</h5> : ""}
+        {error && <h5 style={{ color: "red" }}>{error}</h5>} {/* Mostrar mensaje solo si hay error */}
         <form className="formularioRegister">
           <input
             type="text"
@@ -142,10 +159,12 @@ export function Registrarse() {
           </div>
         </form>
 
-        <button onClick={handleClick} className="registro">Registrarse</button>
+        <button onClick={handleClick} className="registro" disabled={loading}>
+          {loading ? "Registrando..." : "Registrarse"}
+        </button>
 
         <Link to="/login">
-          ¿Ya tenés una cuenta?{" "}
+          ¿Ya tenés una cuenta?
         </Link>
         <Link to="/" className="ultLink">Volver</Link>
       </section>

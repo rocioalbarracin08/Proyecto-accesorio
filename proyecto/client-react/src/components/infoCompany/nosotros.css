@@ -34,6 +34,7 @@
   border-radius: 50%;
   margin: 0 50px;
   transition: 0.2s;
+  color: white;
 }
 .carrusel-btn:hover {
   background: rgb(211, 184, 184);
@@ -49,6 +50,7 @@
   width: 100%;
   text-align: left;
   background: rosybrown;
+  color: white;
   border: none;
   padding: 12px;
   font-weight: bold;

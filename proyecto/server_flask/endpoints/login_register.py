@@ -12,7 +12,7 @@ from flask import make_response
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
-SECRET_KEY = "clave_super_secreta"
+from server_flask.config import SECRET_KEY
 
 @bp.route('/register', methods=['POST'])
 def register(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
@@ -56,8 +56,8 @@ def register(): #CORREGIR PARA QUE SE DIRIJAN A ESTA RUTA
     
     except Exception as err:
         g.db.rollback()  #conexión en 'g' para revertir | rollback: deshacer los cambios realizados que no se han confirmado commit()
-        print(f"Error al eliminar el registro: {err}")
-        return jsonify({"error": f"Error al eliminar el registro: {err}"}), 500
+        print(err)
+        return jsonify({"error": f"Error al registrar: {err}"}), 500
 
 
 @bp.route('/login', methods=['POST'])

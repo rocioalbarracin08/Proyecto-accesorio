@@ -1,5 +1,5 @@
-import { useCarrito } from "../../context/CarritoContext";
-import { useAuthContext } from "../../context/AuthContext";
+import { useCarrito } from "../../contexts/CarritoContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./factura.css";

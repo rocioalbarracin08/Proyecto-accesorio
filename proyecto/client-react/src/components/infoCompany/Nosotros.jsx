@@ -1,77 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./nosotros.css";
 
 export default function Nosotros() {
-  // Carrusel
-  const images = [
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fd3%2F27%2Ff0%2Fd327f00412bea9a5755bf145a648fbf4.jpg&f=1&nofb=1&ipt=c53fe0c859894f2ac81a9b6335e98a68e79a5b48b250a47453258628e73602e0",
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.abc.com.py%2Fresizer%2FjZBG-qqWlwO290Uk0RTWNAJ--R4%3D%2Ffit-in%2F770x495%2Fsmart%2Ffilters%3Aformat(webp)%2Fcloudfront-us-east-1.images.arcpublishing.com%2Fabccolor%2FLVOLF2IC3VAVRDA4W77IVAO7TI.JPG&f=1&nofb=1&ipt=9b4897bd844459d055ad9374600b58fd34f19f50bbe31a3082847625876a5d7e",
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F27%2Fef%2F96%2F27ef96bc072c386d371f3f796eb65b55.jpg&f=1&nofb=1&ipt=4c20b94c6ca135d396d1eb1a3a1c3a035cf7a5158de8f1ca3401b64e375939ab"
-  ];
-
+  const [data, setData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const [current, setCurrent] = useState(0);
-  const nextSlide = () => setCurrent((current + 1) % images.length);
-  const prevSlide = () => setCurrent((current - 1 + images.length) % images.length);
-
-  // Preguntas desplegables
   const [open, setOpen] = useState(null);
-  const preguntas = [
-    {
-      pregunta: "¿Quiénes somos?",
-      respuesta: "Somos una empresa dedicada a la venta de accesorios únicos, comprometidos con la calidad y la satisfacción de nuestros clientes."
-    },
-    {
-      pregunta: "¿Qué hacemos?",
-      respuesta: "Ofrecemos una amplia variedad de productos, desde broches hasta bolsos, diseñados para resaltar tu estilo y personalidad."
-    },
-    {
-      pregunta: "¿Dónde estamos?",
-      respuesta: "Nos encontramos en [ubicación], pero realizamos envíos a todo el país."
-    }
-  ];
 
-  const toggle = (idx) => setOpen(open === idx ? null : idx);
+  useEffect(() => {
+    // Datos principales
+    fetch("http://localhost:5000/nosotros", { credentials: "include" })
+      .then(res => res.json())
+      .then(setData)
+      .catch(console.error);
+
+    // Verificar si es dueño
+    fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" })
+      .then(res => res.json())
+      .then(res => setIsOwner(res.es_dueno))
+      .catch(() => setIsOwner(false));
+  }, []);
+
+  if (!data) return <p>Cargando...</p>;
 
   return (
-    <div className="nosotros-container">
-      <h2>Nosotros</h2>
-      <div className="carrusel">
-        <button className="carrusel-btn" onClick={prevSlide}>&lt;</button>
-        <img src={images[current]} alt={`slide-${current}`} className="carrusel-img" />
-        <button className="carrusel-btn" onClick={nextSlide}>&gt;</button>
-      </div>
-      
-      <div className="preguntas">
-        {preguntas.map((item, idx) => (
-          <div key={idx} className="pregunta-item"> {/* Contenedor de cada pregunta */}
-            <button className="pregunta-btn" onClick={() => toggle(idx)}>
-              {item.pregunta}
-            </button>
-            {open === idx && (
-              <div className="respuesta">
-                {item.respuesta}
-                {idx === 2 && open === idx && (
-                  // Mostrar el mapa solo si la pregunta "¿Dónde estamos?" está abierta
-                  <div className="mapa-container" style={{ width: '100%', height: '400px' }}>
-                    <MapContainer center={[-34.6037, -58.3816]} zoom={13} style={{ width: '100%', height: '100%' }}>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      />
-                      <Marker position={[-34.6037, -58.3816]}>
-                        <Popup>
-                          Estamos aquí
-                        </Popup>
-                      </Marker>
-                    </MapContainer>
+    <main className="nosotros-container">
+      <header>
+        <h1>{data.titulo}</h1>
+        {isOwner && !isEditing && (
+          <button onClick={() => setIsEditing(true)}>Editar</button>
+        )}
+      </header>
+
+      {isEditing ? (
+        <section>
+          <label>
+            Título
+            <input
+              value={data.titulo}
+              onChange={e => setData({ ...data, titulo: e.target.value })}
+            />
+          </label>
+          <label>
+            Descripción
+            <textarea
+              value={data.descripcion}
+              onChange={e =>
+                setData({ ...data, descripcion: e.target.value })
+              }
+            />
+          </label>
+          <button
+            onClick={() => {
+              fetch("http://localhost:5000/nosotros", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                credentials: "include",
+              })
+                .then(() => setIsEditing(false))
+                .catch(() => alert("Error al guardar"));
+            }}
+          >
+            Guardar
+          </button>
+          <button onClick={() => setIsEditing(false)}>Cancelar</button>
+        </section>
+      ) : (
+        <>
+          <section className="carrusel">
+            <button onClick={() => setCurrent((current - 1 + data.imagenes.length) % data.imagenes.length)}>&lt;</button>
+            <img src={data.imagenes[current]} alt={`slide-${current}`} />
+            <button onClick={() => setCurrent((current + 1) % data.imagenes.length)}>&gt;</button>
+          </section>
+
+          <section className="preguntas">
+            {data.preguntas.map((item, idx) => (
+              <article key={idx}>
+                <button onClick={() => setOpen(open === idx ? null : idx)}>
+                  {item.pregunta}
+                </button>
+                {open === idx && (
+                  <div>
+                    <p>{item.respuesta}</p>
+                    {idx === 2 && (
+                      <aside style={{ height: 400 }}>
+                        <MapContainer
+                          center={[data.ubicacion_lat, data.ubicacion_lng]}
+                          zoom={13}
+                          style={{ width: "100%", height: "100%" }}
+                        >
+                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                          <Marker position={[data.ubicacion_lat, data.ubicacion_lng]}>
+                            <Popup>{data.ubicacion_descripcion}</Popup>
+                          </Marker>
+                        </MapContainer>
+                      </aside>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div> {/* Aquí está el comentario correctamente colocado */}
-    </div> 
+              </article>
+            ))}
+          </section>
+        </>
+      )}
+    </main>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../contexts/AuthContext";
 import "./cambiarContrasena.css";
 
 export default function CambiarContrasena() {
@@ -11,17 +12,37 @@ export default function CambiarContrasena() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { logout } = useAuthContext();
   const [showActual, setShowActual] = useState(false);
   const [showNueva, setShowNueva] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (nuevaContrasena !== confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
+
+    // Resetear error y mensaje
     setError("");
+    setMensaje("");
+
+    // Validaciones personalizadas
+    if (!contrasenaActual.trim()) {
+      return setError("La contraseña actual es obligatoria.");
+    }
+    if (!nuevaContrasena.trim()) {
+      return setError("La nueva contraseña es obligatoria.");
+    }
+    if (nuevaContrasena.length < 6) {
+      return setError("La nueva contraseña debe tener al menos 6 caracteres.");
+    }
+    if (!confirmPassword.trim()) {
+      return setError("Debes confirmar la nueva contraseña.");
+    }
+    if (nuevaContrasena !== confirmPassword) {
+      return setError("Las contraseñas no coinciden.");
+    }
+
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/usuarios/cambiar_contrasena", {
@@ -31,10 +52,23 @@ export default function CambiarContrasena() {
         body: JSON.stringify({ contrasena_actual: contrasenaActual, nueva_contrasena: nuevaContrasena }),
       });
       const data = await res.json();
-      if (res.ok) setMensaje(data.mensaje);
-      else setError(data.error);
-    } catch {
+      if (res.ok) {
+        setMensaje(data.mensaje || "Contraseña cambiada exitosamente.");
+        setContrasenaActual("");
+        setNuevaContrasena("");
+        setConfirmPassword("");
+        // Llamamos a logout para actualizar el estado de autenticación
+        logout();
+        navigate("/login");
+      } else {
+        setError(data.error || "Error al cambiar la contraseña.");
+        // Corregido: Loguear el error del servidor en lugar de 'err' indefinido
+        console.error("Error en CambiarContrasena:", data.error);
+      }
+    } catch (error) {
+      // Corregido: Capturar el error de la petición
       setError("Error de conexión con el servidor.");
+      console.error("Error de conexión:", error);
     } finally {
       setLoading(false);
     }
@@ -88,7 +122,7 @@ export default function CambiarContrasena() {
         <button className="btnCont" type="submit" disabled={loading}>
           {loading ? "Cambiando..." : "Confirmar Cambio"}
         </button>
-        <Link to= "/perfil" className="linkVolverPerfil">Volver al perfil</Link>
+        <Link to="/perfil" className="linkVolverPerfil">Volver al perfil</Link>
       </form>
     </section>
   );
