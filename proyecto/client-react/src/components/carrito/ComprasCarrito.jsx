@@ -78,10 +78,6 @@ export function ComprasCarrito() {
               <p>
                 <strong>Total: </strong>${state.totalPrice.toFixed(2)}
               </p>
-<<<<<<< HEAD
-              <button className="btn-vaciar-carrito" onClick={clearCart}>Vaciar Carrito</button>  {/* Botón para vaciar el carrito */}
-              <button className="btn-cerrar-carrito" onClick={toggleCarrito}>Cerrar</button>  {/* Botón para cerrar el carrito */}
-=======
               <div className="carrito-botones">
                 <button className="btn-vaciar-carrito" onClick={clearCart}>
                   Vaciar Carrito
@@ -93,7 +89,6 @@ export function ComprasCarrito() {
                   Finalizar Compra
                 </button>
               </div>
->>>>>>> 19c8de205c4512a0787251236ce004176dfc2cc3
             </div>
           </>
         )}

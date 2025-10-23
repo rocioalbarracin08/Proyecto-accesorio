@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { AuthProvider } from "./contexts/AuthContext";
+import { BrowserRouter } from 'react-router-dom';
 import App from './App'
 import { CarritoProvider } from './contexts/CarritoContext';
 import { PromocionesProvider } from './contexts/PromocionesContext';
@@ -8,6 +9,7 @@ import { PromocionesProvider } from './contexts/PromocionesContext';
 ReactDOM.createRoot(document.getElementById('root')).render(
   //Cuando lo rodeo con CarritoProvider estoy dicinedo que todo dentro de <App /> puede acceder al carrito
   <React.StrictMode>
+    <BrowserRouter>
       <AuthProvider>
         <PromocionesProvider>
           <CarritoProvider> {/* Nuevo: Wrappea todo para que el carrito sea accesible en toda la app */}
@@ -15,5 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </CarritoProvider>
         </PromocionesProvider>
       </AuthProvider>
+      </BrowserRouter>
   </React.StrictMode>,
 )

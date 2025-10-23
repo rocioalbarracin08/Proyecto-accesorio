@@ -1,3 +1,18 @@
+.factura-container {
+  display: flex;
+  gap: 20px; /* Espacio entre columnas */
+  align-items: flex-start; /* Alinear al inicio */
+}
+
+.factura-table {
+  flex: 1; /* Ocupa el espacio disponible */
+}
+
+.factura-options {
+  flex: 1; /* Ocupa el espacio disponible */
+  min-width: 300px; /* Ancho mínimo para evitar que se comprima demasiado */
+}
+
 /* Estilos para el formulario de información del usuario */
 .factura-formulario {
   margin-top: 20px;

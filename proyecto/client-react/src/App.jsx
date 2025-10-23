@@ -31,13 +31,14 @@ function App() {
       <Route path="/crear-promocion" element={<CrearPromocion/>}/>
       <Route path="/promociones" element={<Promociones/>}/>
       <Route path="/editarPromociones" element={<EditarPromocion/>}/>
-      <Route path="/resumen-compra" element={<Factura/>}/>
+      <Route path="/factura" element={<Factura/>}/>
       <Route
         path="/"
         element={
           <>
             <BarraNavegacion />
             <CarruselPromociones /> 
+            <productosDestacados/>
             <Destacados />
             <Categorizados />  {/* Muestra categorías en home */}
             <PiePagina />
