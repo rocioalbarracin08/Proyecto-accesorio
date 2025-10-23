@@ -58,7 +58,9 @@ export function Factura() {
   return (
     <div className="factura-page">
       <h2>Factura de Compra</h2>
-
+      <form action="">
+        <input type="text" />
+      </form>
       <table>
         <thead>
           <tr>

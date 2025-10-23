@@ -8,11 +8,11 @@ import "./producto.css";
 export function Productos() {
   const { idCategoria } = useParams();
   const { promociones } = usePromociones();
-  const { addItem } = useCarrito();
 
   const [productos, setProductos] = useState([]);
   const [categoriaNombre, setCategoriaNombre] = useState("Cargando...");
   const [loading, setLoading] = useState(true);
+  const {addItem, openCarrito } = useCarrito();  // Para carrito
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -69,7 +69,7 @@ export function Productos() {
             {promocionActiva.descripcion} - Descuento:{" "}
             {promocionActiva.tipo_descuento === "porcentaje"
               ? `${promocionActiva.descuento * 100}% OFF`
-              : `$${promocionActiva.descuento} OFF`}
+              : `${promocionActiva.descuento} OFF`}
           </p>
           <p>Válido hasta: {new Date(promocionActiva.fecha_fin).toLocaleDateString()}</p>
         </div>
@@ -106,7 +106,10 @@ export function Productos() {
                 <p className="producto-precio">${precioFinal.toFixed(2)}</p>
                 <button
                   className="agregar-carrito"
-                  onClick={() => addItem({ ...producto, precio: precioFinal })}
+                  onClick={() => {
+                    addItem({ ...producto, precio: precioFinal });
+                    openCarrito();  // Abre el carrito al agregar (opcional, quítalo si no lo quieres)
+                  }}
                 >
                   Agregar al Carrito
                 </button>

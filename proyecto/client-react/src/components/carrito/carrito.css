@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 19c8de205c4512a0787251236ce004176dfc2cc3
 .btn-eliminar-producto {
   background: transparent; 
   border: 1px solid rgb(255, 255, 255);
@@ -149,9 +152,13 @@
   border-radius: 8px;  /* Bordes redondeados en el modal */
 }
 
+<<<<<<< HEAD
 =======
 /* Overlay del carrito (fondo oscuro) */
 >>>>>>> 5fe2e09f94e94f4bb3d420092b0099ea05c534b9
+=======
+/* Overlay del carrito (fondo oscuro) */
+>>>>>>> 19c8de205c4512a0787251236ce004176dfc2cc3
 .carrito-overlay {
   position: fixed;  /* Fijo en pantalla */
   top: 0;
