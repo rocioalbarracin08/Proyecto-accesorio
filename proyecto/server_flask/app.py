@@ -70,6 +70,7 @@ from server_flask.endpoints.registro_productos import bp as registro_productos_b
 from server_flask.endpoints.tickets import bp as ticket_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
+from server_flask.endpoints.detalle_compra import bp as info_bp
 
 from server_flask.extensions import mail
 

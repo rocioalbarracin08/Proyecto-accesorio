@@ -70,7 +70,53 @@ export function Factura() {
       return;
     }
     
-    alert(`Pedido enviado a ${email} con entrega: ${entrega}`);
+    // Construir payload para enviar al backend
+    const payload = {
+      id_factura: Date.now().toString(), // temporal: usar timestamp como id de factura; idealmente el backend debe generar el id
+      entrega, // Indicamos la opción seleccionada para que el backend decida qué guardar
+      mail: email,
+      nombre,
+      apellido,
+      telefono,
+      // Enviamos los datos de dirección sólo si el usuario seleccionó envío
+      direccion: entrega === "envio" ? direccion : null,
+      ciudad: entrega === "envio" ? ciudad : null,
+      provincia: entrega === "envio" ? provincia : null,
+      codigo_postal: entrega === "envio" ? codigoPostal : null,
+      total: state.totalPrice,
+      items: Object.entries(state.items).map(([id, item]) => ({
+        producto_id: item.producto.id || id,
+        nombre_producto: item.producto.nombre || item.producto.name,
+        cantidad: item.cantidad,
+        precio_unitario: item.producto.precio,
+        subtotal: (item.cantidad * item.producto.precio),
+      })),
+    };
+
+    // Enviar al endpoint; el backend actual espera un solo detalle por petición,
+    // pero aquí enviamos un lote. Si el backend no acepta lote, puede ajustarse.
+    fetch("http://localhost:5000/detalle_factura/insertar/compra", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || "Error al guardar la factura");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        alert(data.mensaje || `Pedido enviado a ${email} con entrega: ${entrega}`);
+        // Aquí podríamos limpiar el carrito o redirigir
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Error al enviar factura:", err);
+        alert("Ocurrió un error al procesar la compra: " + err.message);
+      });
   };
 
   return (
@@ -161,15 +207,7 @@ export function Factura() {
                     />
                   </label>
 
-                  <label>
-                    <input
-                    placeholder="Telefono"
-
-                      type="text"
-                      value={telefono}
-                      onChange={(e) => setTelefono(e.target.value)}
-                    />
-                  </label>
+               
 
                   {/* Campos adicionales si selecciona envío */}
                   {entrega === "envio" && (
