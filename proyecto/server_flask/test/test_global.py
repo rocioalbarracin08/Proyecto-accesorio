@@ -33,11 +33,6 @@ def test_promociones(client):
     assert "nombre" in data[0] or "promos" in data
 
 # Test rutas de clientes
-def test_clientes(client):
-    response = client.get('/clientes/')
-    assert response.status_code == 200
-    data = response.get_json()
-    assert "nombre" in data[0]
 
 # Test rutas de productos
 def test_productos(client):

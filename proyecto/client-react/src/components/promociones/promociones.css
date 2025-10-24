@@ -1,131 +1,152 @@
-/* Contenedor principal de la lista de promociones */
+/* promociones.css - Versión limpia y moderna */
+
 .promociones-container {
-    max-width: 1200px;  /* Limita ancho para no ocupar toda la pantalla */
-    margin: 20px auto;  /* Centra horizontalmente con margen automático */
-    padding: 20px;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);  /* Gradiente suave azul-gris para fondo "lindo" */
-    border-radius: 15px;  /* Bordes redondeados */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  /* Sombra para profundidad */
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5dc; /* Beige claro para un fondo cálido */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.promociones-title {
+  text-align: center;
+  color: rosybrown; /* Color principal */
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.promociones-create-btn {
+  display: block;
+  margin: 0 auto 30px auto;
+  padding: 10px 20px;
+  background-color: rosybrown;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.promociones-create-btn:hover {
+  background-color: white;
+  color: rosybrown;
+  border-color: rosybrown;
+}
+
+.promociones-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.promocion-item {
+  background-color: white;
+  border: 1px solid rosybrown;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease 0.2s ease;
+}
+
+.promocion-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.promocion-info {
+  flex: 1;
+  color: #333;
+}
+
+.promocion-info p {
+  margin: 5px 0;
+  font-size: 1rem;
+}
+
+.promocion-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.promocion-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.promocion-btn-edit {
+  background-color: rosybrown; 
+  color: white;
+}
+
+.promocion-btn-edit:hover {
+  background-color: green;
+}
+
+.promocion-btn-deactivate {
+  background-color: rgb(196, 108, 108);
+  color: #333;
+}
+
+.promocion-btn-deactivate:hover {
+  background-color: white;
+  color: rosybrown;
+}
+
+.promocion-btn-delete {
+  background-color: #cd5c5c; /* IndianRed para eliminar */
+  color: white;
+}
+
+.promocion-btn-delete:hover {
+  background-color: red;
+}
+
+/* Responsive para móviles */
+@media (max-width: 600px) {
+  .promocion-item {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  /* Título */
-  .promociones-container h1 {
-    text-align: center;
-    color: #2c3e50;  /* Azul oscuro para elegancia */
-    font-family: 'Arial', sans-serif;
-    margin-bottom: 20px;
+
+  .promocion-buttons {
+    margin-top: 10px;
+    flex-wrap: wrap;
   }
-  
-  /* Botón para crear promoción */
-  .btn-crear {
-    display: block;
-    margin: 0 auto 20px;
-    padding: 12px 24px;
-    background: linear-gradient(45deg, #3498db, #2980b9);  /* Gradiente azul */
-    color: white;
-    border: none;
-    border-radius: 25px;  /* Bordes muy redondeados para "lindo" */
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;  /* Transición suave en hover */
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);  /* Sombra azul */
+
+  .promociones-title {
+    font-size: 2rem;
   }
-  
-  .btn-crear:hover {
-    transform: translateY(-2px);  /* Eleva botón en hover (complejo: usa transform para animación 3D) */
-    box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);  /* Sombra más intensa */
-  }
-  
-  /* Lista de promociones */
-  .promociones-lista {
-    list-style: none;  /* Sin viñetas */
-    padding: 0;
-  }
-  
-  .promociones-lista li {
-    background: white;
-    margin-bottom: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;  /* Flexbox para alinear contenido y botones */
-    justify-content: space-between;  /* Espacia elementos */
-    align-items: center;
-    transition: transform 0.2s ease;  /* Transición en hover */
-  }
-  
-  .promociones-lista li:hover {
-    transform: scale(1.02);  /* Escala ligera en hover para feedback visual */
-  }
-  
-  /* Texto de la promoción */
-  .promocion-info {
-    flex: 1;  /* Ocupa espacio disponible */
-    color: #34495e;
-  }
-  
-  /* Contenedor de botones */
-  .promocion-botones {
-    display: flex;
-    gap: 10px;  /* Espacio entre botones */
-  }
-  
-  .promocion-botones button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .btn-editar {
-    background: #f39c12;  /* Naranja */
-    color: white;
-  }
-  
-  .btn-editar:hover {
-    background: #e67e22;
-  }
-  
-  .btn-desactivar {
-    background: #e74c3c;  /* Rojo */
-    color: white;
-  }
-  
-  .btn-desactivar:hover {
-    background: #c0392b;
-  }
-  
-  .btn-eliminar {
-    background: #95a5a6;  /* Gris */
-    color: white;
-  }
-  
-  .btn-eliminar:hover {
-    background: #7f8c8d;
-  }
-  
-  /* Estados de carga y error */
-  .loading, .error {
-    text-align: center;
-    padding: 20px;
-    color: #7f8c8d;
-    font-size: 18px;
-  }
-  
-  /* Responsive: En móviles, ajusta layout */
-  @media (max-width: 768px) {
-    .promociones-container {
-      margin: 10px;
-      padding: 15px;
-    }
-    .promociones-lista li {
-      flex-direction: column;  /* Apila elementos verticalmente */
-      align-items: flex-start;
-    }
-    .promocion-botones {
-      margin-top: 10px;
-      flex-wrap: wrap;  /* Botones se envuelven si no caben */
-    }
-  }
+}
+.promociones-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 15px;
+  background-color: rosybrown;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.promociones-back-btn:hover {
+  background-color: #bc8f8f; /* Tono más oscuro */
+}
+/* Ajusta el contenedor para que el botón absoluto no se superponga */
+.promociones-container {
+  position: relative;  /* Agrega esto si no está */
+}

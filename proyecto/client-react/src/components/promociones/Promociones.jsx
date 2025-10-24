@@ -1,11 +1,14 @@
-// src/components/Promociones.jsx
 import { useState } from 'react';
 import { usePromociones } from '../../contexts/PromocionesContext';  // usePromociones: Hook para acceder al contexto global
 import CrearPromocion from './CrearPromocion';
 import EditarPromocion from './EditarPromocion';
+import { useNavigate } from 'react-router-dom';
 import "./promociones.css";
 
 const Promociones = () => {
+  
+  const navigate = useNavigate();  // Hook para navegación
+
   const { promociones, loading, error, eliminarPromocion, desactivarPromocion } = usePromociones();  // Accede a estado y funciones del contexto
   const [mostrarCrear, setMostrarCrear] = useState(false);  // Estado local para mostrar modal de crear
   const [editando, setEditando] = useState(null);  // Estado local para promoción en edición (null si no edita)
@@ -14,18 +17,23 @@ const Promociones = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>Promociones</h1>
-      <button onClick={() => setMostrarCrear(true)}>Crear Promoción</button>  // Abre modal de crear
-      {mostrarCrear && <CrearPromocion onCerrar={() => setMostrarCrear(false)} />}  // Pasa onCerrar para cerrar modal (simple prop)
-      {editando && <EditarPromocion promocion={editando} onCerrar={() => setEditando(null)} />}  // Pasa promoción y onCerrar
-      <ul>
+    <div className="promociones-container">
+      <button className="promociones-back-btn" onClick={() => navigate(-1)}>Volver Atrás</button>  {/* Botón para volver atrás */}
+      <h1 className="promociones-title">Promociones</h1>
+      <button className="promociones-create-btn" onClick={() => setMostrarCrear(true)}>Crear Promoción</button>
+      {mostrarCrear && <CrearPromocion onCerrar={() => setMostrarCrear(false)} />}
+      {editando && <EditarPromocion promocion={editando} onCerrar={() => setEditando(null)} />}
+      <ul className="promociones-list">
         {promociones.map(p => (
-          <li key={p.id_promocion}>
-            {p.descripcion} - {p.descuento} ({p.tipo_descuento}) - Activa: {p.activo ? 'Sí' : 'No'}
-            <button onClick={() => setEditando(p)}>Editar</button> 
-            <button onClick={() => desactivarPromocion(p.id_promocion)}>Desactivar</button> 
-            <button onClick={() => eliminarPromocion(p.id_promocion)}>Eliminar</button>
+          <li key={p.id_promocion} className="promocion-item">
+            <div className="promocion-info">
+              <p>{p.descripcion} - {p.descuento} ({p.tipo_descuento}) - Activa: {p.activo ? 'Sí' : 'No'}</p>
+            </div>
+            <div className="promocion-buttons">
+              <button className="promocion-btn promocion-btn-edit" onClick={() => setEditando(p)}>Editar</button>
+              <button className="promocion-btn promocion-btn-deactivate" onClick={() => desactivarPromocion(p.id_promocion)}>Desactivar</button>
+              <button className="promocion-btn promocion-btn-delete" onClick={() => eliminarPromocion(p.id_promocion)}>Eliminar</button>
+            </div>
           </li>
         ))}
       </ul>

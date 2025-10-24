@@ -58,12 +58,14 @@ input {
   background-color: #e0a899;
   cursor: not-allowed;
 }
+
 .linkVolverPerfil {
   display: block;
   margin-top: 15px;
   color: rosybrown;
   text-decoration: none;
 }
+
 .linkVolverPerfil:hover {
   text-decoration: underline;
 }

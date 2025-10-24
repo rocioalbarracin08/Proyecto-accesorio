@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";  // Agrega useNavigate para redirección
 import "./recuperarContrasena.css";  // Importa el CSS
 
+
 export default function RecuperarContrasena() {
-  const [email, setEmail] = useState("");  // Estado para almacenar el email ingresado
-  const [mensaje, setMensaje] = useState("");  // Estado para mensajes de éxito
-  const [error, setError] = useState("");  // Estado para mensajes de error
-  const [loading, setLoading] = useState(false);  // Estado para controlar la carga
-  const navigate = useNavigate();  // Hook para redirigir programáticamente
+  const [email, setEmail] = useState(""); 
+  const [mensaje, setMensaje] = useState(""); 
+  const [error, setError] = useState("");  
+  const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();  // Evita la recarga de la página
@@ -25,7 +26,7 @@ export default function RecuperarContrasena() {
       if (res.ok) {
         setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Muestra mensaje de éxito
         // Redirige a login después de 2 segundos para que el usuario vea el mensaje
-        setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
+        //setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
       } else {
         setError(data.error);  // Muestra el error si ocurre (e.g., email no registrado)
       }

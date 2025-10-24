@@ -8,7 +8,8 @@ from flask import make_response
 
 bp = Blueprint('empleados', __name__, url_prefix='/empleados')
 
-SECRET_KEY = "clave_super_secreta"
+
+from server_flask.config import SECRET_KEY
 
 ################## Registrar empleados (solo dueño)###########################
 @bp.route('/registro_por_dueno', methods=['POST'])

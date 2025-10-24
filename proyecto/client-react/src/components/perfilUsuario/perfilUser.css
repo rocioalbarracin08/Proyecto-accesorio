@@ -4,7 +4,18 @@
   padding: 20px;
   text-align: center;
 }
-
+.linkPromos{
+  color: rosybrown;
+  padding: 0.5%;
+}
+.apartado-dueno{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.linkPromos:hover{
+  font-size: 20px;
+}
 .datos-cliente-nav {
   display: flex;
   align-items: center;

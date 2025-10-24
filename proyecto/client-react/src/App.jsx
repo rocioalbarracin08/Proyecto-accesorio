@@ -13,9 +13,10 @@ import Nosotros from "./components/infoCompany/Nosotros";
 import PerfilUser from "./components/perfilUsuario/PerfilUser";
 import RegistrarEmpleado from "./components/empleados/RegistrarEmpleados"; 
 import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
-import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasena";
+import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasenaToken";
 import CarruselPromociones from './components/promociones/CarruselPromociones';
 import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena";
+import ResetearContrasenaToken from "./components/resetear-contrasena/ResetearContrasenaToken";
 import CrearPromocion from "./components/promociones/CrearPromocion";
 import Promociones from "./components/promociones/Promociones";
 import EditarPromocion from "./components/promociones/EditarPromocion";
@@ -26,8 +27,8 @@ function App() {
   return (
     <Routes>
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
-      <Route path="/resetear-contrasena" element={<ResetearContrasena/>}/>
-      <Route path="/cambiar-contrasena" element={<CambiarContrasena/>}/>
+      <Route path="/resetear-contrasena" element={<ResetearContrasenaToken/>}/>
+      <Route path="/cambiar-contrasena" element={<CambiarContrasena/>}/> {/*Cuando ya estan logueados */}
       <Route path="/crear-promocion" element={<CrearPromocion/>}/>
       <Route path="/promociones" element={<Promociones/>}/>
       <Route path="/editarPromociones" element={<EditarPromocion/>}/>
