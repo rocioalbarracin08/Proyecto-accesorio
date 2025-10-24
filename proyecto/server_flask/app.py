@@ -14,6 +14,16 @@ from server_flask.config import SECRET_KEY
 load_dotenv() #Libreria que lee el archivo .env
 
 app = Flask(__name__) #"__name__" variable especial que se reemplaza por el nombre del archivo
+
+# Configuración de Flask-Mail (lee del .env)
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))  # Convierte a int, por defecto 587
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'  # Convierte string a bool
+app.config['MAIL_USE_SSL'] = False  # No uso SSL si uso TLS (común para puerto 587)
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')  # Remitente por defecto (opcional, usa el username)
+
 db_config = {
             "host" : os.getenv("DB_HOST"), 
             "port" : os.getenv("DB_PORT"),    
@@ -59,6 +69,7 @@ from server_flask.endpoints.promociones import bp as promociones_bp
 from server_flask.endpoints.registro_productos import bp as registro_productos_bp
 from server_flask.endpoints.tickets import bp as ticket_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
+from server_flask.endpoints.nosotros import bp as info_bp
 
 from server_flask.extensions import mail
 
@@ -77,6 +88,7 @@ def create_app(test_config = None):
     app.register_blueprint(tiendas_bp)
     app.register_blueprint(registro_productos_bp)
     app.register_blueprint(promociones_bp)
+    app.register_blueprint(info_bp)
 
 
     mail.init_app(app)

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./perfilUser.css";
 
 export default function PerfilUser() {
@@ -55,10 +56,9 @@ export default function PerfilUser() {
       {isOwner && (
         <div className="apartado-dueno">
           <h2>Opciones de Dueño</h2>
-          <Link to="/registrar-empleado">
-            <button className="btn-registrar-empleado">Registrar Nuevo Empleado</button>
+          <Link to="/registrar-empleado" className="linkPromos"> Registrar Nuevo Empleado
           </Link>
-          <Link to="/promociones">Eliminar | Editar promociones | Crear promociones</Link>
+          <Link to="/promociones" className="linkPromos">Eliminar | Editar promociones | Crear promociones</Link>
         </div>
       )}
     </div>

@@ -1,77 +1,172 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./nosotros.css";
 
 export default function Nosotros() {
-  // Carrusel
-  const images = [
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fd3%2F27%2Ff0%2Fd327f00412bea9a5755bf145a648fbf4.jpg&f=1&nofb=1&ipt=c53fe0c859894f2ac81a9b6335e98a68e79a5b48b250a47453258628e73602e0",
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.abc.com.py%2Fresizer%2FjZBG-qqWlwO290Uk0RTWNAJ--R4%3D%2Ffit-in%2F770x495%2Fsmart%2Ffilters%3Aformat(webp)%2Fcloudfront-us-east-1.images.arcpublishing.com%2Fabccolor%2FLVOLF2IC3VAVRDA4W77IVAO7TI.JPG&f=1&nofb=1&ipt=9b4897bd844459d055ad9374600b58fd34f19f50bbe31a3082847625876a5d7e",
-    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F27%2Fef%2F96%2F27ef96bc072c386d371f3f796eb65b55.jpg&f=1&nofb=1&ipt=4c20b94c6ca135d396d1eb1a3a1c3a035cf7a5158de8f1ca3401b64e375939ab"
-  ];
-
+  const [data, setData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const [current, setCurrent] = useState(0);
-  const nextSlide = () => setCurrent((current + 1) % images.length);
-  const prevSlide = () => setCurrent((current - 1 + images.length) % images.length);
-
-  // Preguntas desplegables
   const [open, setOpen] = useState(null);
-  const preguntas = [
-    {
-      pregunta: "¿Quiénes somos?",
-      respuesta: "Somos una empresa dedicada a la venta de accesorios únicos, comprometidos con la calidad y la satisfacción de nuestros clientes."
-    },
-    {
-      pregunta: "¿Qué hacemos?",
-      respuesta: "Ofrecemos una amplia variedad de productos, desde broches hasta bolsos, diseñados para resaltar tu estilo y personalidad."
-    },
-    {
-      pregunta: "¿Dónde estamos?",
-      respuesta: "Nos encontramos en [ubicación], pero realizamos envíos a todo el país."
-    }
-  ];
+  // Nuevos estados para agregar preguntas
+  const [nuevaPregunta, setNuevaPregunta] = useState("");
+  const [nuevaRespuesta, setNuevaRespuesta] = useState("");
 
-  const toggle = (idx) => setOpen(open === idx ? null : idx);
+  useEffect(() => {
+    // Datos principales
+    fetch("http://localhost:5000/nosotros", { credentials: "include" })
+      .then(res => res.json())
+      .then(setData)
+      .catch(console.error);
+
+    // Verificar si es dueño
+    fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" })
+      .then(res => res.json())
+      .then(res => setIsOwner(res.es_dueno))
+      .catch(() => setIsOwner(false));
+  }, []);
+
+  if (!data) return <p>Cargando...</p>;
+
+  // Función para agregar nueva pregunta
+  const agregarPregunta = () => {
+    if (nuevaPregunta.trim() && nuevaRespuesta.trim()) {
+      const nuevasPreguntas = [...data.preguntas, { pregunta: nuevaPregunta, respuesta: nuevaRespuesta }];
+      setData({ ...data, preguntas: nuevasPreguntas });
+      setNuevaPregunta("");
+      setNuevaRespuesta("");
+    }
+  };
+
+  // Función para guardar solo título y descripción
+  const guardarCambios = () => {
+    const cambios = { titulo: data.titulo, descripcion: data.descripcion };
+    fetch("http://localhost:5000/nosotros", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cambios),
+      credentials: "include",
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+        return res.json();
+      })
+      .then(() => {
+        alert("Cambio en título guardado exitosamente");
+      })
+      .catch(err => {
+        console.error("Error al guardar cambios:", err);
+        alert(`Error al guardar cambios: ${err.message}`);
+      });
+  };
 
   return (
-    <div className="nosotros-container">
-      <h2>Nosotros</h2>
-      <div className="carrusel">
-        <button className="carrusel-btn" onClick={prevSlide}>&lt;</button>
-        <img src={images[current]} alt={`slide-${current}`} className="carrusel-img" />
-        <button className="carrusel-btn" onClick={nextSlide}>&gt;</button>
-      </div>
-      
-      <div className="preguntas">
-        {preguntas.map((item, idx) => (
-          <div key={idx} className="pregunta-item"> {/* Contenedor de cada pregunta */}
-            <button className="pregunta-btn" onClick={() => toggle(idx)}>
-              {item.pregunta}
-            </button>
-            {open === idx && (
-              <div className="respuesta">
-                {item.respuesta}
-                {idx === 2 && open === idx && (
-                  // Mostrar el mapa solo si la pregunta "¿Dónde estamos?" está abierta
-                  <div className="mapa-container" style={{ width: '100%', height: '400px' }}>
-                    <MapContainer center={[-34.6037, -58.3816]} zoom={13} style={{ width: '100%', height: '100%' }}>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      />
-                      <Marker position={[-34.6037, -58.3816]}>
-                        <Popup>
-                          Estamos aquí
-                        </Popup>
-                      </Marker>
-                    </MapContainer>
-                  </div>
-                )}
-              </div>
-            )}
+    <main className="nosotros-container">
+      <header className="nosotros-header">
+        <h1 className="nosotros-title">{data.titulo}</h1>
+        {isOwner && !isEditing && (
+          <button className="nosotros-edit-btn" onClick={() => setIsEditing(true)}>Editar</button>
+        )}
+      </header>
+
+      {isEditing ? (
+        <section className="nosotros-edit-section">
+          <label className="nosotros-edit-label">
+            Título
+            <input
+              className="nosotros-edit-input"
+              value={data.titulo}
+              onChange={e => setData({ ...data, titulo: e.target.value })}
+            />
+          </label>
+          
+          <button className="nosotros-save-changes-btn" onClick={guardarCambios}>Guardar cambios</button>
+          
+          {/* Nueva sección para agregar preguntas */}
+          <div className="nosotros-add-pregunta">
+            <h3>Agregar Nueva Pregunta</h3>
+            <input
+              className="nosotros-edit-input"
+              placeholder="Pregunta"
+              value={nuevaPregunta}
+              onChange={e => setNuevaPregunta(e.target.value)}
+            />
+            <textarea
+              className="nosotros-edit-textarea"
+              placeholder="Respuesta"
+              value={nuevaRespuesta}
+              onChange={e => setNuevaRespuesta(e.target.value)}
+            />
+            <button className="nosotros-add-btn" onClick={agregarPregunta}>Agregar Pregunta</button>
           </div>
-        ))}
-      </div> {/* Aquí está el comentario correctamente colocado */}
-    </div> 
+          <button className="nosotros-save-btn" onClick={() => {
+            fetch("http://localhost:5000/nosotros", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+              credentials: "include",
+            })
+              .then(res => {
+                if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+                return res.json();
+              })
+              .then(() => {
+                alert("Guardado exitosamente");
+                setIsEditing(false);
+              })
+              .catch(err => {
+                console.error("Error al guardar:", err);
+                alert(`Error al guardar: ${err.message}`);
+              });
+          }}>
+            Guardar
+          </button>
+          <button className="nosotros-cancel-btn" onClick={() => setIsEditing(false)}>Cancelar</button>
+        </section>
+      ) : (
+        <>
+          <section className="carrusel">
+            <button className="carrusel-btn" onClick={() => setCurrent((current - 1 + data.imagenes.length) % data.imagenes.length)}>&lt;</button>
+            <img className="carrusel-img" src={data.imagenes[current]} alt={`slide-${current}`} />
+            <button className="carrusel-btn" onClick={() => setCurrent((current + 1) % data.imagenes.length)}>&gt;</button>
+          </section>
+
+          {/* Separador y sección de preguntas */}
+          <hr className="nosotros-separator" />
+          <section className="preguntas-section">
+            <h2 className="preguntas-title">PREGUNTAS (CLIENTES)</h2>
+            <div className="preguntas">
+              {data.preguntas.map((item, idx) => (
+                <article className="pregunta-item" key={idx}>
+                  <button className="pregunta-btn" onClick={() => setOpen(open === idx ? null : idx)}>
+                    {item.pregunta}
+                  </button>
+                  {open === idx && (
+                    <div className="respuesta">
+                      <p>{item.respuesta}</p>
+                      {idx === 2 && (
+                        <div className="mapa-container">
+                          <MapContainer
+                            center={[data.ubicacion_lat, data.ubicacion_lng]}
+                            zoom={13}
+                            style={{ width: "100%", height: "100%" }}
+                          >
+                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                            <Marker position={[data.ubicacion_lat, data.ubicacion_lng]}>
+                              <Popup>{data.ubicacion_descripcion}</Popup>
+                            </Marker>
+                          </MapContainer>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+    </main>
   );
 }

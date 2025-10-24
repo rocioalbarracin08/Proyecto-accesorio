@@ -3,7 +3,7 @@ import jwt
 from flask import request, jsonify, g
 from functools import wraps
 
-SECRET_KEY = "clave_super_secreta"
+from server_flask.config import SECRET_KEY
 
 def solo_dueno(f):
     @wraps(f)
