@@ -1,0 +1,32 @@
+.compras-section {
+  padding: 2rem 1rem;       /* espacio interno arriba/abajo y a los lados */
+  text-align: center;       /* centra el texto */
+  color: rosybrown;           /* color del texto */
+}
+.compras-grid {
+  display: flex;            /* usa flexbox para organizar los elementos */
+  justify-content: center;  /* centra los ítems horizontalmente */
+  gap: 2rem;                /* espacio entre los ítems */
+  flex-wrap: wrap;          /* permite que bajen de línea si no entran */
+}
+
+.compras-item {
+  border-radius: 10px;              /* bordes redondeados */
+  padding: 1rem;                    /* espacio interno */
+  width: 180px;                     /* ancho fijo */
+  transition: 0.2s;       /* suaviza el efecto al pasar el mouse */
+}
+
+.compras-item:hover {
+  transform: scale(1.05);           /* agranda ligeramente al pasar el mouse */
+}
+
+.compras-item img {
+  width: 100%;                      /* imagen ocupa todo el ancho del contenedor*/
+}
+
+.compras-item p {
+  color: rosybrown;         /* título en tono principal */
+  font-weight: bold;       
+  margin-bottom: 1.5rem;    /* separación hacia abajo */
+}

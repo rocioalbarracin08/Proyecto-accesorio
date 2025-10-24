@@ -21,6 +21,7 @@ import CrearPromocion from "./components/promociones/CrearPromocion";
 import Promociones from "./components/promociones/Promociones";
 import EditarPromocion from "./components/promociones/EditarPromocion";
 import { Factura } from "./components/factura/factura";
+import DiseñoMain from "./components/diseño-main/DiseñoMain";
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <productosDestacados/>
             <Destacados />
             <Categorizados />  {/* Muestra categorías en home */}
+            <DiseñoMain/>
             <PiePagina />
           </>
         }

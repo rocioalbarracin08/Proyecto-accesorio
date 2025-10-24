@@ -11,6 +11,7 @@ export function BarraNavegacion() {
   const [busqueda, setBusqueda] = useState("");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // Nuevo estado para controlar si el input está abierto
   const { state, toggleCarrito, closeCarrito } = useCarrito();
 
   const handleLogout = async () => {
@@ -34,20 +35,36 @@ export function BarraNavegacion() {
       setResultados(data.resultados || []);
     } catch (err) {
       console.error("Error en búsqueda:", err);
-      setResultados([]);
+      setResultados(["ERROR DE BÚSQUEDA"]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => handleBuscar(busqueda), 300);
-    return () => clearTimeout(timeout);
-  }, [busqueda]);
+    if (isSearchOpen && busqueda) { // Solo buscar si el input está abierto y hay búsqueda
+      const timeout = setTimeout(() => handleBuscar(busqueda), 300);
+      return () => clearTimeout(timeout);
+    } else {
+      setResultados([]); // Limpiar resultados si no hay búsqueda
+    }
+  }, [busqueda, isSearchOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handleBuscar(busqueda);
+  };
+
+  const handleMouseEnter = () => {
+    setIsSearchOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    // Opcional: cerrar solo si no hay foco en el input o dropdown
+    // Para simplicidad, lo cierro al salir del contenedor
+    setIsSearchOpen(false);
+    setBusqueda("");
+    setResultados([]);
   };
 
   return (
@@ -61,42 +78,70 @@ export function BarraNavegacion() {
         <Link to="/productos" className='direccionamiento'>Tienda</Link>
         <Link to="/nosotros" className='direccionamiento'>Nosotros</Link>  
 
-        <form onSubmit={handleSubmit} className="buscador-form">  {/* Agregué clase para el form */}
-          <input
-            className="buscador"
-            type="text"
-            placeholder="Buscar producto o categoría"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-          
-          {resultados.length > 0 && (
-            <ul className="buscador-dropdown">  {/* Clase CSS en lugar de style */}
-              {resultados.map((prod) => (
-                <li key={prod.id_producto} className="buscador-item">  {/* Clase CSS */}
-                  <Link
-                    to={`/productos/${prod.id_categoria}`}
-                    onClick={() => {
-                      setBusqueda("");
-                      setResultados([]);
-                    }}
-                    className="buscador-link" >
-                    <img 
-                      src={prod.imagen_url || "/default.jpg"} 
-                      alt={prod.name} 
-                      className="buscador-img"
-                    />
-                    <div>
-                      <strong>{prod.categoria}</strong>: {prod.name} - ${prod.precio}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-          {loading && <p className="buscador-loading">Buscando...</p>}  {/* Clase CSS */}
-        </form>
+        {/* Contenedor del buscador desplegable */}
+        <div className="buscador-container">
+          {!isSearchOpen ? (
+            <button
+              className="buscador-icono"
+              aria-label="Abrir búsqueda"
+              onClick={() => setIsSearchOpen(true)}
+            >
+              <img src="/logos/lupa.png" alt="Buscar" />
+            </button>
+          ) : (
+            <form onSubmit={handleSubmit} className="buscador-form">
+              <div className="buscador-header">
+                <input
+                  className="buscador"
+                  type="text"
+                  placeholder="Buscar producto o categoría"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  className="buscador-cerrar"
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setBusqueda("");
+                    setResultados([]);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
 
+              {resultados.length > 0 && (
+                <ul className="buscador-dropdown">
+                  {resultados.map((prod) => (
+                    <li key={prod.id_producto} className="buscador-item">
+                      <Link
+                        to={`/productos/${prod.id_categoria}`}
+                        onClick={() => {
+                          setBusqueda("");
+                          setResultados([]);
+                          setIsSearchOpen(false);
+                        }}
+                        className="buscador-link"
+                      >
+                        <img
+                          src={prod.imagen_url || "/default.jpg"}
+                          alt={prod.name}
+                          className="buscador-img"
+                        />
+                        <div>
+                          <strong>CATEGORIA: {prod.categoria}</strong>: {prod.name}
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {loading && <p className="buscador-loading">Buscando...</p>}
+            </form>
+          )}
+        </div>
         <div className="iconosUser">
           {isLogged ? (
             <>

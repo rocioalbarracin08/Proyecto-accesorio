@@ -290,10 +290,52 @@
   font-size: 0.9rem;
   cursor: pointer;
   margin-top: 10px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: 0.3s ease 0.2s ease;
 }
 
 .nosotros-save-changes-btn:hover {
   background-color: #b8860b;
   transform: scale(1.05);
+}
+/* Sección de edición para preguntas (solo visible si es dueño) */
+.preguntas-edit-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.preguntas-edit-section h3 {
+  color: rosybrown;
+  margin-bottom: 15px;
+}
+/* Sección de edición para preguntas (solo visible si es dueño) */
+.preguntas-edit-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.preguntas-edit-section h3 {
+  color: rosybrown;
+  margin-bottom: 15px;
+}
+.preguntas-nosotros {
+  margin-bottom: 20px;
+}
+.preguntas-nosotros h3 {
+  color: rosybrown;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+.preguntas-clientes {
+  margin-bottom: 20px;
+}
+.mapa-container h3 {
+  color: rosybrown;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
 }
