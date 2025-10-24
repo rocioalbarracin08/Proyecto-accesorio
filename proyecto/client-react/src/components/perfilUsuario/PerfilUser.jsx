@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-<<<<<<< HEAD
 import { useNavigate, Link } from "react-router-dom";
-=======
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
->>>>>>> da554486988d5d4a4504277112f749dc0fffa767
 import "./perfilUser.css";
 
 export default function PerfilUser() {

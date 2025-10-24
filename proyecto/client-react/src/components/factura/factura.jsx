@@ -1,10 +1,6 @@
 import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
-<<<<<<< HEAD
 import { useState, useEffect, useMemo } from "react";
-=======
-import { useState, useEffect } from "react";
->>>>>>> da554486988d5d4a4504277112f749dc0fffa767
 import { useNavigate } from "react-router-dom";
 import "./factura.css";
 
