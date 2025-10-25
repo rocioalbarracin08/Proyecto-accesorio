@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, g
-from server_flask.endpoints.auth_dueno import solo_dueno
+from proyecto.server_flask.utils.auth_dueno import solo_dueno
 import json
 
 bp = Blueprint('nosotros', __name__, url_prefix='/nosotros')

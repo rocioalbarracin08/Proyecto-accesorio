@@ -1,12 +1,25 @@
-.encabezado{
+.encabezado {
   background-color: rosybrown;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
+  position: relative; /* Para posicionar el buscador relativo al header */
+  transition: 0.3s ease; /* Transición suave para opacidad */
 }
 
-.perfil{
+/* Opacidad cuando la búsqueda está activa */
+.encabezado.search-active {
+  opacity: 0.85; /* Opacidad ligera para indicar búsqueda activa */
+  pointer-events: none; /* Desactiva interacciones en el header, excepto el buscador */
+}
+
+/* Excepción: Mantén interacciones en el buscador */
+.encabezado.search-active .buscador-container {
+  pointer-events: auto;
+}
+
+.perfil {
   width: 40px;
   height: 40px;
   object-fit: cover;
@@ -17,20 +30,22 @@
 .perfil:hover {
   transform: scale(1.1);
 }
-.user img{
+
+.user img {
   width: 50px;
   height: 50px;
   object-fit: cover;
   display: block;
-  transition: transform 0.2s;
+  transition: 0.2s;
 }
 .user img:hover {
   transform: scale(1.1);
 }
+
 .carrito {
   position: relative;
-  border: none;  /* Elimina el borde del botón */
-  outline: none; /* Elimina cualquier contorno al hacer foco */
+  border: none;
+  outline: none;
   padding: 0%;
 }
 
@@ -39,22 +54,24 @@
   height: 50px;
   object-fit: contain;
   display: block;
-  border: none;  /* Elimina cualquier borde */
-  outline: none;  /* Elimina cualquier contorno por defecto */
+  border: none;
+  outline: none;
 }
 
-.direccionamiento{
+.direccionamiento {
   gap: 1rem;
 }
-.direccionamiento:hover{
+.direccionamiento:hover {
   color: rgb(238, 204, 204);
-  overflow: hidden;  /* Evita desborde en hover */
+  overflow: hidden;
 }
-.miLogo{
+
+.miLogo {
   width: 90px;
   border-radius: 10px;
 }
-.buscador{
+
+.buscador {
   background-color: rgb(250, 219, 219);
   border: none;
   color: black;
@@ -62,22 +79,24 @@
   height: 25px;
   text-align: center;
 }
+
 .carrito-count {
   position: absolute;
   top: -6px;
   right: -10px;
-  background-color: red;  /* Fondo rojo */
+  background-color: red;
   color: white;
   border-radius: 50%;
-  width: 25px;  /* Tamaño fijo */
-  height: 20px;  /* Tamaño fijo */
+  width: 25px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: bold;
 }
-.btn-cerrarSesion{
+
+.btn-cerrarSesion {
   background-color: white;
   color: rosybrown;
   border: 1px solid rosybrown;
@@ -86,7 +105,7 @@
   font-weight: bold;
   margin-left: 18px;
   margin-right: 8px;
-  transition: 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
+  transition: 0.2s, color 0.2s, border 0.2s;
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
 .btn-cerrarSesion:hover {
@@ -101,29 +120,45 @@
   gap: 12px;
   height: 55px;
 }
+
+/* Contenedor del buscador */
 .buscador-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
+/* Ícono del buscador */
 .buscador-icono {
   background: none;
   border: none;
   cursor: pointer;
   padding: 5px;
+  transition: transform 0.2s ease;
+}
+.buscador-icono:hover {
+  transform: scale(1.1);
 }
 
+/* Formulario del buscador: Ahora fixed para superponerse completamente */
 .buscador-form {
-  position: absolute;
-  top: 60px; /* separa del header */
-  left: 0;
+  position: fixed; /* Cambiado a fixed para superponerse sobre todo */
+  top: 70px; /* Ajusta para que esté justo debajo del header */
+  left: 50%; /* Centra horizontalmente */
+  transform: translateX(-50%); /* Centra perfectamente */
   width: 320px;
   background: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Alto z-index para superponerse */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+  animation: slideDown 0.3s ease; /* Animación de deslizamiento */
+}
+
+/* Animación para el buscador */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .buscador-header {
@@ -167,6 +202,10 @@
 .buscador-item {
   padding: 10px;
   border-top: 1px solid #eee;
+  transition: 0.2s ease;
+}
+.buscador-item:hover {
+  background: rgb(250, 219, 219); /* Hover rosado */
 }
 
 .buscador-link {
@@ -181,4 +220,75 @@
   height: 50px;
   margin-right: 10px;
   object-fit: cover;
+}
+
+.buscador-loading {
+  padding: 10px;
+  text-align: center;
+  color: #a05252;
+}
+
+/* Responsive: Para móviles y tablets */
+@media (max-width: 768px) {
+  .encabezado {
+    justify-content: space-between; /* Ajusta distribución en móviles */
+    padding: 0 10px; /* Padding lateral */
+  }
+
+  .miLogo {
+    width: 70px; /* Logo más pequeño */
+  }
+
+  .direccionamiento {
+    display: none; /* Oculta enlaces en móviles para espacio (puedes usar un menú hamburguesa si quieres) */
+  }
+
+  .buscador-form {
+    width: 90%; /* Ancho casi completo en móviles */
+    max-width: 300px; /* Máximo ancho */
+    top: 60px; /* Ajusta posición */
+  }
+
+  .buscador {
+    width: 100%; /* Input ocupa todo el ancho disponible */
+  }
+
+  .iconosUser {
+    gap: 8px; /* Menos gap */
+  }
+
+  .perfil, .carrito img {
+    width: 35px; /* Íconos más pequeños */
+    height: 35px;
+  }
+
+  .user img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-cerrarSesion {
+    padding: 6px 12px; /* Botón más pequeño */
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .buscador-form {
+    width: 95%;
+    top: 55px;
+  }
+
+  .buscador-header {
+    padding: 6px;
+  }
+
+  .buscador {
+    height: 28px;
+  }
+
+  .buscador-img {
+    width: 40px;
+    height: 40px;
+  }
 }

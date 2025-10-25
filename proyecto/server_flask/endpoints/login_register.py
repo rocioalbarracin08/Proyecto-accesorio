@@ -12,7 +12,7 @@ from flask import make_response
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
-from server_flask.config import SECRET_KEY
+from proyecto.server_flask.utils.config import SECRET_KEY
 
 @bp.route('/register', methods=['POST'])
 def register():

@@ -22,7 +22,7 @@ import Promociones from "./components/promociones/Promociones";
 import EditarPromocion from "./components/promociones/EditarPromocion";
 import { Factura } from "./components/factura/factura";
 import DiseñoMain from "./components/diseño-main/DiseñoMain";
-
+import RegistrarVenta from "./components/ventas/RegistrarVenta";
 
 function App() {
   return (
@@ -86,14 +86,20 @@ function App() {
         </>
       } />
       <Route path="/registro" element={<Registrarse />} />
-      {/* NUEVA: Ruta para registrar empleados (protegida, solo dueño) */}
+      {/* Ruta para registrar empleados (protegida, solo dueño) */}
       <Route path="/registrar-empleado" element={
         <> 
         <BarraNavegacion /> 
         <RegistrarEmpleado /> 
         <PiePagina /> 
       </>} />
-    
+      <Route path="/registrar-venta" element={
+        <>
+          <BarraNavegacion />
+          <RegistrarVenta />
+          <PiePagina />
+        </>
+      } />
     </Routes>
   );
 }

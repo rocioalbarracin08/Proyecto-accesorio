@@ -1,9 +1,8 @@
-# server_flask/utils/auth_utils.py
 import jwt
 from flask import request, jsonify, g
 from functools import wraps
 
-from server_flask.config import SECRET_KEY
+from server_flask.utils.config import SECRET_KEY
 
 def solo_dueno(f):
     @wraps(f)

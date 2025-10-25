@@ -60,8 +60,6 @@ export function BarraNavegacion() {
   };
 
   const handleMouseLeave = () => {
-    // Opcional: cerrar solo si no hay foco en el input o dropdown
-    // Para simplicidad, lo cierro al salir del contenedor
     setIsSearchOpen(false);
     setBusqueda("");
     setResultados([]);
@@ -69,7 +67,7 @@ export function BarraNavegacion() {
 
   return (
     <>
-      <header className="encabezado">
+      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
         <Link to="/">
           <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
         </Link>

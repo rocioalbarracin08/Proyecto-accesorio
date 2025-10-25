@@ -37,6 +37,11 @@ export function AuthProvider({ children }) {
         if (data?.id_cliente) setUserRole('cliente');
         else if (data?.id_empleado) setUserRole('empleado');
         else setUserRole('dueño');
+
+        // Redirección automática para empleados
+        if (data?.id_empleado) {
+          window.location.href = '/registrar-venta';
+        }
       })
       .catch(() => {
         // Resetea si hay error (e.g., token expirado)
