@@ -7,7 +7,7 @@ from flask import make_response
 bp = Blueprint('empleados', __name__, url_prefix='/empleados')
 
 from proyecto.server_flask.utils.config import SECRET_KEY
-from server_flask.utils.auth_dueno import solo_dueno # Importa el decorador
+from proyecto.server_flask.utils.auth import solo_dueno
 
 @bp.route('/listar')
 @solo_dueno
@@ -17,7 +17,7 @@ def listar_empleados():
     try:
         g.db_cursor.execute("""
             SELECT e.id_empleado, e.nombre, e.apellido, e.email, e.puesto_trabajo, e.telefono, 
-                   t.nombre AS tienda_nombre, u.genero
+                   t.nombre AS tienda_nombre, u.genero, e.activo
             FROM empleados e
             JOIN tiendas t ON e.id_tienda = t.id_tienda
             JOIN usuarios u ON e.id_empleado = u.id_empleado
@@ -40,7 +40,7 @@ def editar_empleado(id_empleado):
         puesto_trabajo = data.get('puesto_trabajo')
         telefono = data.get('telefono')
         genero = data.get('genero')
-        password = data.get('password')  
+        password = data.get('password')
 
         # Actualizar empleados
         g.db_cursor.execute("""
@@ -49,7 +49,7 @@ def editar_empleado(id_empleado):
             WHERE id_empleado = %s
         """, (nombre, apellido, email, puesto_trabajo, telefono, id_empleado))
         
-        # Actualizar usuarios (email, genero, password si se proporciona)
+        # Actualizar usuarios
         if password:
             hashed_password = generate_password_hash(password)
             g.db_cursor.execute("""
@@ -70,27 +70,29 @@ def editar_empleado(id_empleado):
         g.db.rollback()
         return jsonify({"error": f"Error al editar empleado: {err}"}), 500
 
-# Eliminar empleado (solo dueño) - Actualizado para eliminar de ambas tablas
-@bp.route("/borrar/<int:id_empleado>", methods=["DELETE"])
+# Desactivar/Activar empleado (en lugar de eliminar)
+@bp.route("/desactivar/<int:id_empleado>", methods=["PATCH"])
 @solo_dueno
-def borrar_empleado(id_empleado):
+def desactivar_empleado(id_empleado):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        # Verificar que existe
-        g.db_cursor.execute("SELECT id_empleado FROM empleados WHERE id_empleado = %s", (id_empleado,))
-        if not g.db_cursor.fetchone():
+        # Verificar si existe y obtener estado actual
+        g.db_cursor.execute("SELECT activo FROM empleados WHERE id_empleado = %s", (id_empleado,))
+        emp = g.db_cursor.fetchone()
+        if not emp:
             return jsonify({"error": "Empleado no encontrado"}), 404
         
-        # Eliminar de usuarios primero (FK)
-        g.db_cursor.execute("DELETE FROM usuarios WHERE id_empleado = %s", (id_empleado,))
-        # Eliminar de empleados
-        g.db_cursor.execute("DELETE FROM empleados WHERE id_empleado = %s", (id_empleado,))
+        nuevo_activo = 0 if emp['activo'] == 1 else 1  # Toggle
+        
+        # Actualizar empleados y usuarios
+        g.db_cursor.execute("UPDATE empleados SET activo = %s WHERE id_empleado = %s", (nuevo_activo, id_empleado))
+        g.db_cursor.execute("UPDATE usuarios SET activo = %s WHERE id_empleado = %s", (nuevo_activo, id_empleado))
         g.db.commit()
-        return jsonify({"mensaje": "Empleado eliminado"}), 200
+        return jsonify({"mensaje": f"Empleado {'desactivado' if nuevo_activo == 0 else 'activado'}"}), 200
     except Exception as err:
         g.db.rollback()
-        return jsonify({"error": f"Error al borrar empleado: {err}"}), 500
+        return jsonify({"error": f"Error al cambiar estado: {err}"}), 500
 
 ################## Registrar empleados (solo dueño)###########################
 @bp.route('/registro_por_dueno', methods=['POST'])
@@ -140,15 +142,15 @@ def registro_por_dueno():
         
         #Insertar en empleados primero
         g.db_cursor.execute("""
-            INSERT INTO empleados (nombre, apellido, email, id_tienda, puesto_trabajo, telefono)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO empleados (nombre, apellido, email, id_tienda, puesto_trabajo, telefono, activo)
+            VALUES (%s, %s, %s, %s, %s, %s,1)
         """, (nombre, apellido, email, id_tienda, puesto_trabajo, telefono))
         id_empleado = g.db_cursor.lastrowid  # Obtener ID del empleado
         
         #Insertar en usuarios con id_empleado y rol 'empleado'
         g.db_cursor.execute("""
-            INSERT INTO usuarios (id_empleado, email, password, id_rol, nombre, apellido,genero)
-            VALUES (%s, %s, %s, (SELECT id_rol FROM roles WHERE rol = 'empleado'), %s, %s,%s)
+            INSERT INTO usuarios (id_empleado, email, password, id_rol, nombre, apellido,genero, activo)
+            VALUES (%s, %s, %s, (SELECT id_rol FROM roles WHERE rol = 'empleado'), %s, %s,%s,1)
         """, (id_empleado, email, hashed_password, nombre, apellido, genero))
         
         g.db.commit()
@@ -157,19 +159,3 @@ def registro_por_dueno():
     except Exception as err:
         g.db.rollback()
         return jsonify({"error": f"Error al registrar empleado: {err}"}), 500
-
-@bp.route("/borrar", methods=["DELETE"])
-def borrar_empleado():
-    if g.db_cursor is None:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    try:
-        data = request.get_json()
-        id_empleado = data.get("id_empleado")
-        if not id_empleado:
-            return jsonify({"error": "ID de empleado requerido"}), 400
-        g.db_cursor.execute("DELETE FROM empleados WHERE id_empleado = %s", (id_empleado,))
-        g.db.commit()
-        return jsonify({"mensaje": "Empleado eliminado"}), 200
-    except Exception as err:
-        g.db.rollback()
-        return jsonify({"error": f"Error al borrar empleado: {err}"}), 500

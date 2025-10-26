@@ -1,5 +1,4 @@
 import "./App.css";
-import { Perfil } from "./components/perfil";
 import { Login } from "./components/login/Login";
 import { BarraNavegacion } from "./components/navegacion/Navegacion";
 import { PiePagina } from "./components/piePagina/PiePag";
@@ -54,7 +53,6 @@ function App() {
           <>
             <BarraNavegacion />
             <ProductoGrid />  {/* Productos generales */}
-            <Perfil />
             <PiePagina />
           </>
         }
@@ -65,7 +63,6 @@ function App() {
           <>
             <BarraNavegacion />
             <Productos />  {/* Componente para productos FILTRADOS */}
-            <Perfil />
             <PiePagina />
           </>
         }

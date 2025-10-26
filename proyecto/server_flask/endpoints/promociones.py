@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g  # g: Objeto global de Flask pa
 import jwt  # Librería PyJWT para manejar tokens JWT (decodificar/verificar)
 from proyecto.server_flask.utils.config import SECRET_KEY
 
-from proyecto.server_flask.utils.auth_dueno import solo_dueno  # importá el decorador
+from proyecto.server_flask.utils.auth import solo_dueno  # importá el decorador
 
 bp = Blueprint('promociones', __name__, url_prefix='/promociones')  # Blueprint: Módulo de Flask para organizar rutas
 

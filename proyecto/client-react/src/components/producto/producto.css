@@ -10,34 +10,44 @@
 .producto-item {
   background-color: #fff7f7;  
   border-radius: 8px; 
-  align-items: center;     /* Centra imagen y texto verticalmente */
-  gap: 10px;
-  transition: transform 0.3s ease;
+  padding: 15px;  /* Agrega padding para espacio interno */
+  display: flex;  /* Usa flexbox para alinear contenido */
+  flex-direction: column;  /* Columna: imagen arriba, texto abajo */
+  align-items: center;  /* Centra horizontalmente */
+  justify-content: space-between;  /* Distribuye espacio */
+  height: 300px;  /* Altura fija para uniformidad (ajusta según necesites) */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* Sombra sutil */
+  transition: 0.3s ease;
 }
 
 /* Estilos para la imagen del producto */
 .producto-item img {
-  width: 90%; /* La imagen ocupa todo el ancho del contenedor */
-  height: 60%; /* Ajusta la altura automáticamente */
-  border-radius: 4px; /* Bordes redondeados para la imagen */
-  object-fit: cover;  /* Mantiene la proporción de la imagen */
-
+  width: 100%;  /* Ocupa todo el ancho */
+  height: 150px;  /* Altura fija para uniformidad */
+  border-radius: 4px;
+  object-fit: cover;  /* Mantiene proporción, recorta si es necesario */
 }
 
 /* Estilos para el título del producto */
 .producto-item h3 {
   font-size: 1rem; 
-  margin-top: 10px;
+  margin: 10px 0;
   color: black;
+  text-align: center;  /* Centra texto */
+  overflow: hidden;  /* Oculta texto largo */
+  text-overflow: ellipsis;  /* Agrega "..." si es largo */
+  white-space: nowrap;  /* Evita saltos de línea */
 }
 
 /* Estilos para el precio del producto */
 .producto-precio {
   font-size: 1rem; 
   color: #333; 
-  margin-top: 10px;
+  margin: 5px 0;
+  text-align: center;
 }
 
+/* Estilos para el botón de agregar al carrito */
 /* Estilos para el botón de agregar al carrito */
 .agregar-carrito {
   margin-top: 10px;
@@ -46,12 +56,13 @@
   color: white; 
   border: none;
   border-radius: 20px; 
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  cursor: pointer;
   font-size: 1rem; 
+  width: 100%;  /* Ocupa todo el ancho */
 }
 
 .agregar-carrito:hover { 
-  background-color: #a55a5a; /* Cambia a un tono más oscuro al pasar el mouse */
+  background-color: #a55a5a;
 }
 
 /* Títulos de la página de productos */
@@ -121,4 +132,38 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));  /* Menos columnas en móvil */
     padding: 10px;
   }
+}
+
+/* Nuevos estilos para botones de empleados */
+.btn-empleado {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #007bff;  /* Azul para empleados */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.btn-empleado:hover {
+  background-color: #0056b3;
+}
+
+.btn-agregar-global {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px;
+  background-color: #28a745; 
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-agregar-global:hover {
+  background-color: #218838;
 }

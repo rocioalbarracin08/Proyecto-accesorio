@@ -82,6 +82,9 @@ def login():
             return jsonify({"error": "El email no está registrado"}), 401
         if not check_password_hash(user["password"], password):  #Rompía por usar el índice de la lista y no la clave del objeto
             return jsonify({"error": "La contraseña es incorrecta"}), 401
+        # Verificar si está activo
+        if user.get("activo", 1) == 0:
+            return jsonify({"error": "Cuenta desactivada"}), 403
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 

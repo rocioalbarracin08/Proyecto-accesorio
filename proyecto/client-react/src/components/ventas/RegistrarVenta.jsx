@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import './registrarVenta.css';  // Importa el CSS
+import './registrarVenta.css';
 
 function RegistrarVenta() {
   const { isLogged, userRole } = useAuthContext();
@@ -15,21 +15,24 @@ function RegistrarVenta() {
   const [clienteEncontrado, setClienteEncontrado] = useState(null);
   const [mensaje, setMensaje] = useState("");
 
-  // Solo empleados pueden acceder
+  // Calcular total dinámico
+  const total = venta.detalles.reduce((sum, det) => {
+    const prod = productos.find(p => p.id_producto === det.id_producto);
+    return sum + (prod ? prod.precio * det.cantidad : 0);
+  }, 0);
+
   useEffect(() => {
     if (!isLogged || userRole !== 'empleado') {
       window.location.href = '/login';
     }
   }, [isLogged, userRole]);
 
-  // Cargar productos
   useEffect(() => {
     fetch("http://localhost:5000/productos/mostrar?page=1&per_page=100")
       .then(res => res.json())
       .then(data => setProductos(data.productos || []));
   }, []);
 
-  // Buscar cliente al escribir
   useEffect(() => {
     if (busquedaCliente.trim().length > 2) {
       fetch(`http://localhost:5000/clientes?busqueda=${encodeURIComponent(busquedaCliente)}`)
@@ -44,7 +47,7 @@ function RegistrarVenta() {
     setVenta({ ...venta, id_cliente: cliente.id_cliente });
     setClienteEncontrado(cliente);
     setBusquedaCliente(`${cliente.nombre} ${cliente.apellido}`);
-    setClientes([]);  // Oculta la lista
+    setClientes([]);
   };
 
   const sinCliente = () => {
@@ -63,8 +66,19 @@ function RegistrarVenta() {
     }
   };
 
+  const removerProducto = (id_producto) => {
+    setVenta(prev => ({
+      ...prev,
+      detalles: prev.detalles.filter(d => d.id_producto !== id_producto)
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (venta.detalles.length === 0) {
+      setMensaje({ text: "Agrega al menos un producto.", type: 'error' });
+      return;
+    }
     fetch("http://localhost:5000/ventas/registrar_venta", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -126,10 +140,29 @@ function RegistrarVenta() {
                   type="number"
                   min="1"
                   placeholder="Cant."
-                  onChange={e => agregarProducto(p.id_producto, e.target.value)}
+                  onChange={e => agregarProducto(p.id.id_producto, e.target.value)}
                 />
               </div>
             ))}
+            {venta.detalles.length > 0 && (
+              <div>
+                <h4>Productos Agregados:</h4>
+                <ul>
+                  {venta.detalles.map(d => {
+                    const prod = productos.find(p => p.id_producto === d.id_producto);
+                    return (
+                      <li key={d.id_producto}>
+                        {prod?.name} x {d.cantidad} = ${prod ? prod.precio * d.cantidad : 0}
+                        <button onClick={() => removerProducto(d.id_producto)}>Remover</button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="venta-total">
+            Total: ${total.toFixed(2)}
           </div>
           <div className="venta-buttons">
             <button type="submit" className="btn-submit">Registrar Venta</button>

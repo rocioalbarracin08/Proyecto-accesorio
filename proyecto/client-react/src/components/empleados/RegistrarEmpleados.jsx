@@ -1,21 +1,15 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import useAuth from "../../hooks/useAuth"; 
-import { FaEye, FaEyeSlash, FaEdit, FaTrash } from "react-icons/fa";  // Iconos para editar/eliminar
+import { FaEye, FaEyeSlash, FaEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";  // Íconos actualizados
 import { Link, useNavigate } from "react-router-dom";
 import "./registrarEmpleados.css";
 
 export default function RegistrarEmpleado() {
-  // Estados para registro (reutilizando useAuth)
-  const {
-    usuarioName: nombre, setUsuarioName: setNombre,
-    usuarioApellido: apellido, setUsuarioApellido: setApellido,
-    email, setEmail,
-    contraseña: password, setContraseña: setPassword,
-    error, setError,
-  } = useAuth();
-
-  // Estados específicos para registro
+  // Estados para registro
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [idTienda, setIdTienda] = useState("");
   const [puestoTrabajo, setPuestoTrabajo] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -24,23 +18,21 @@ export default function RegistrarEmpleado() {
   const [loadingTiendas, setLoadingTiendas] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Estados para lista y edición
   const [empleados, setEmpleados] = useState([]);
-  const [editando, setEditando] = useState(null);  // Empleado en edición
-  const [showModal, setShowModal] = useState(false);  // Modal para editar
+  const [editando, setEditando] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  // Estados para edición (reutilizando useAuth)
-  const {
-    usuarioName: editNombre, setUsuarioName: setEditNombre,
-    usuarioApellido: editApellido, setUsuarioApellido: setEditApellido,
-    email: editEmail, setEmail: setEditEmail,
-    contraseña: editPassword, setContraseña: setEditPassword,
-  } = useAuth();
-
+  // Estados para edición
+  const [editNombre, setEditNombre] = useState("");
+  const [editApellido, setEditApellido] = useState("");
+  const [editEmail, setEditEmail] = useState("");
   const [editPuestoTrabajo, setEditPuestoTrabajo] = useState("");
   const [editTelefono, setEditTelefono] = useState("");
   const [editGenero, setEditGenero] = useState("");
+  const [editPassword, setEditPassword] = useState("");
 
   const { isOwner } = useAuthContext();
   const navigate = useNavigate();
@@ -63,7 +55,7 @@ export default function RegistrarEmpleado() {
       }
     };
     fetchTiendas();
-  }, [setError]);
+  }, []);
 
   // Cargar empleados
   useEffect(() => {
@@ -81,7 +73,7 @@ export default function RegistrarEmpleado() {
       }
     };
     if (isOwner) fetchEmpleados();
-  }, [isOwner, setError]);
+  }, [isOwner]);
 
   // Verificar acceso
   useEffect(() => {
@@ -89,7 +81,7 @@ export default function RegistrarEmpleado() {
       setError("Acceso denegado. Solo el dueño puede gestionar empleados.");
       navigate("/");
     }
-  }, [isOwner, navigate, setError]);
+  }, [isOwner, navigate]);
 
   // Registrar empleado
   const handleSubmit = async (e) => {
@@ -103,7 +95,7 @@ export default function RegistrarEmpleado() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/empleados/registro_por_dueno", {  
+      const response = await fetch("http://localhost:5000/empleados/registro_por_dueno", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -130,28 +122,28 @@ export default function RegistrarEmpleado() {
     }
   };
 
-  // Eliminar empleado
-  const eliminarEmpleado = async (id_empleado) => {
-    if (!confirm("¿Eliminar empleado?")) return;
+  // Toggle activar/desactivar
+  const toggleEmpleado = async (id_empleado) => {
     try {
-      const response = await fetch("http://localhost:5000/empleados/borrar", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_empleado }),
+      const response = await fetch(`http://localhost:5000/empleados/desactivar/${id_empleado}`, {
+        method: "PATCH",
         credentials: "include",
       });
       if (response.ok) {
-        setEmpleados(empleados.filter(e => e.id_empleado !== id_empleado));
-        alert("Empleado eliminado.");
+        // Recargar lista
+        const res = await fetch("http://localhost:5000/empleados/listar", { credentials: "include" });
+        if (res.ok) setEmpleados(await res.json());
       } else {
-        setError("Error al eliminar.");
+        setError("Error al cambiar estado.");
       }
     } catch (err) {
       setError("Error de conexión.");
     }
   };
-  // Abrir modal de edición
+
+  // Abrir editar
   const abrirEditar = (empleado) => {
+    if (empleado.activo === 0) return;  // No editar inactivos
     setEditando(empleado);
     setEditNombre(empleado.nombre);
     setEditApellido(empleado.apellido);
@@ -163,6 +155,7 @@ export default function RegistrarEmpleado() {
     setShowModal(true);
   };
 
+  // Guardar edición
   const guardarEdicion = async (e) => {
     e.preventDefault();
     try {
@@ -170,12 +163,15 @@ export default function RegistrarEmpleado() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nombre: editNombre, apellido: editApellido, email: editEmail, puesto_trabajo: editPuestoTrabajo, telefono: editTelefono, genero: editGenero, password: editPassword || undefined,
+          nombre: editNombre, apellido: editApellido, email: editEmail,
+          puesto_trabajo: editPuestoTrabajo, telefono: editTelefono, genero: editGenero,
+          password: editPassword || undefined,  // Corregido: quitar coma extra
         }),
         credentials: "include",
       });
       if (response.ok) {
-        setEmpleados(empleados.map(e => e.id_empleado === editando.id_empleado ? { ...e, nombre: editNombre, apellido: editApellido, email: editEmail, puesto_trabajo: editPuestoTrabajo, telefono: editTelefono, genero: editGenero } : e));
+        const res = await fetch("http://localhost:5000/empleados/listar", { credentials: "include" });
+        if (res.ok) setEmpleados(await res.json());
         setShowModal(false);
         alert("Empleado actualizado.");
       } else {
@@ -192,7 +188,7 @@ export default function RegistrarEmpleado() {
     <section className="section-registrar-empleado">
       <h1>Gestión de Empleados</h1>
       {error && <p className="error-message">{error}</p>}
-      
+
       {/* Sección de Registro */}
       <div className="registro-section">
         <h2>Registrar Nuevo Empleado</h2>
@@ -228,25 +224,27 @@ export default function RegistrarEmpleado() {
           </button>
         </form>
       </div>
-      
+
       {/* Sección de Lista */}
       <div className="lista-section">
         <h2>Empleados Registrados</h2>
         <ul className="empleados-lista">
           {empleados.map(e => (
-            <li key={e.id_empleado} className="empleado-item">
+            <li key={e.id_empleado} className={`empleado-item ${e.activo === 0 ? 'inactivo' : ''}`}>
               <div>
                 <strong>{e.nombre} {e.apellido}</strong> - {e.email} - {e.puesto_trabajo} - {e.tienda_nombre}
               </div>
               <div>
-                <button onClick={() => abrirEditar(e)} className="btn-edit"><FaEdit /> Editar</button>
-                <button onClick={() => eliminarEmpleado(e.id_empleado)} className="btn-delete"><FaTrash /> Eliminar</button>
+                <button onClick={() => abrirEditar(e)} className="btn-edit" disabled={e.activo === 0}><FaEdit /> Editar</button>
+                <button onClick={() => toggleEmpleado(e.id_empleado)} className="btn-toggle">
+                  {e.activo === 1 ? <FaToggleOn /> : <FaToggleOff />} {e.activo === 1 ? 'Desactivar' : 'Activar'}
+                </button>
               </div>
             </li>
           ))}
         </ul>
       </div>
-      
+
       {/* Modal para Editar */}
       {showModal && (
         <div className="modal-overlay">
@@ -276,7 +274,7 @@ export default function RegistrarEmpleado() {
           </div>
         </div>
       )}
-      
+
       <Link to="/" className="volver-link">Volver a inicio</Link>
     </section>
   );

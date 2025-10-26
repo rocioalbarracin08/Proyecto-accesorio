@@ -68,7 +68,13 @@ def registrar_venta():
                     return jsonify({"error": "Cliente no encontrado"}), 404
             # id_cliente puede ser NULL
         
-        # Obtener datos de la tienda (solo para física, pero por simplicidad, siempre)
+        # Determinar id_tienda para restar stock
+        if es_venta_fisica:
+            id_tienda_para_stock = id_tienda_empleado  # Tienda del empleado
+        elif es_venta_online:
+            id_tienda_para_stock = 1  # Tienda default para online (cambia si necesitas otra)
+        
+        # Obtener datos de la tienda (solo para física)
         if es_venta_fisica:
             tienda_query = """
                 SELECT nombre, direccion, telefono 
@@ -80,10 +86,9 @@ def registrar_venta():
             if not tienda:
                 return jsonify({"error": "Tienda del empleado no encontrada"}), 500
         else:
-            # Para online, podrías hardcodear o obtener de otro lado; por ahora, usa NULL o un valor default
             tienda = {'nombre': 'Online', 'direccion': 'N/A', 'telefono': 'N/A'}
         
-        # Calcular total y validar productos (igual que antes)
+        # Calcular total y validar productos
         costo_total = 0
         detalles_validos = []
         for det in detalles:
@@ -107,6 +112,13 @@ def registrar_venta():
                 'precio_unitario': precio_unitario
             })
         
+        # Restar stock (para física y online)
+        for det in detalles_validos:
+            g.db_cursor.execute("""
+                UPDATE inventario SET stock_actual = stock_actual - %s 
+                WHERE id_producto = %s AND id_tienda = %s
+            """, (det['cantidad'], det['id_producto'], id_tienda_para_stock))
+        
         # Insertar factura
         fecha = datetime.now().date()
         hora = datetime.now().time()
@@ -116,7 +128,7 @@ def registrar_venta():
         """, (fecha, hora, tienda['nombre'], tienda['direccion'], tienda['telefono'], id_cliente, id_empleado, metodo_pago, costo_total))
         id_factura = g.db_cursor.lastrowid
         
-        # Insertar detalles (igual que antes)
+        # Insertar detalles
         for det in detalles_validos:
             g.db_cursor.execute("""
                 INSERT INTO detalle_factura (id_factura, id_producto, nombre_producto, cantidad, precio_unitario)
@@ -130,7 +142,7 @@ def registrar_venta():
         g.db.rollback()
         return jsonify({"error": f"Error al registrar venta: {err}"}), 500
 
-#Listar ventas del empleado (paginado, similar a productos)
+# Listar ventas del empleado (paginado)
 @bp.route('/', methods=['GET'])
 def listar_ventas():
     if g.db_cursor is None:

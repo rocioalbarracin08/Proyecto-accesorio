@@ -67,7 +67,7 @@ export function BarraNavegacion() {
 
   return (
     <>
-      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
+      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}> {/*Clase condicional*/}
         <Link to="/">
           <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
         </Link>

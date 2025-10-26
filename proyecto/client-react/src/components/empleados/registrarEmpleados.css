@@ -167,6 +167,7 @@ h1 {
     font-size: 0.9rem;
   }
 }
+
 /* Sección de registro (para organizar) */
 .registro-section {
   width: 100%;
@@ -219,8 +220,15 @@ h1 {
   gap: 0.5rem;
 }
 
-/* Botones de editar y eliminar */
-.btn-edit, .btn-delete {
+/* Empleado inactivo */
+.empleado-item.inactivo {
+  background: rgba(255, 0, 0, 0.1);  /* Rojo bajito */
+  opacity: 0.6;  /* Más bajo */
+  border: 1px solid red;
+}
+
+/* Botones de editar y toggle */
+.btn-edit, .btn-toggle {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 20px;
@@ -234,20 +242,33 @@ h1 {
   color: white;
 }
 
-.btn-edit:hover {
+.btn-edit:hover:not(:disabled) {
   background-color: white;
   color: rosybrown;
   transform: scale(1.05);
 }
 
-.btn-delete {
+.btn-edit:disabled {
   background-color: #ccc;
-  color: #333;
+  cursor: not-allowed;
 }
 
-.btn-delete:hover {
-  background-color: #999;
+.btn-toggle {
+  background-color: #28a745;  /* Verde para activar */
+  color: white;
+}
+
+.btn-toggle:hover {
+  background-color: #218838;
   transform: scale(1.05);
+}
+
+.empleado-item.inactivo .btn-toggle {
+  background-color: #dc3545;  /* Rojo para desactivar */
+}
+
+.empleado-item.inactivo .btn-toggle:hover {
+  background-color: #c82333;
 }
 
 /* Modal overlay */
