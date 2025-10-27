@@ -8,8 +8,7 @@ from flask_cors import CORS
 from flask import g
 from flask_mail import Mail
 
-from server_flask.config import SECRET_KEY
-
+from server_flask.utils.config import SECRET_KEY
 
 load_dotenv() #Libreria que lee el archivo .env
 
@@ -66,11 +65,14 @@ from server_flask.endpoints.empleados import bp as empleados_bp
 from server_flask.endpoints.login_register import bp as usuarios_bp
 from server_flask.endpoints.productos import bp as productos_bp
 from server_flask.endpoints.promociones import bp as promociones_bp
-from server_flask.endpoints.registro_productos import bp as registro_productos_bp
-from server_flask.endpoints.tickets import bp as ticket_bp
+from proyecto.server_flask.endpoints.inventario import bp as inventario_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
+<<<<<<< HEAD
 from server_flask.endpoints.detalle_compra import bp as info_bp
+=======
+from server_flask.endpoints.ventas import bp as ventas_bp
+>>>>>>> b7aee32338eeedb367909f1f18ce6ff716ed8068
 
 from server_flask.extensions import mail
 
@@ -85,12 +87,11 @@ def create_app(test_config = None):
     app.register_blueprint(productos_bp)
     app.register_blueprint(clientes_bp)
     app.register_blueprint(empleados_bp)
-    app.register_blueprint(ticket_bp)
     app.register_blueprint(tiendas_bp)
-    app.register_blueprint(registro_productos_bp)
+    app.register_blueprint(inventario_bp)
     app.register_blueprint(promociones_bp)
     app.register_blueprint(info_bp)
-
+    app.register_blueprint(ventas_bp)
 
     mail.init_app(app)
     return app

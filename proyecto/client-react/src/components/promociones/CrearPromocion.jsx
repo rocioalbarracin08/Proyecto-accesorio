@@ -1,4 +1,3 @@
-// src/components/promociones/CrearPromocion.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import { usePromociones } from '../../contexts/PromocionesContext';  // Importa el contexto
@@ -27,10 +26,11 @@ const CrearPromocion = ({ onCerrar }) => {
       alert('Error al crear');
     }
   };
-
+//El Mapa se esta Mostrando en otra seccion RAROOOOOOOOOO
+//HAY CAMPOS que admiten disccionario (verificar con estructura de db)
   return (
-    <div className="modal-overlay">  {/* Fondo oscuro que cubre toda la pantalla */}
-      <div className="modal-content">  {/* Caja del modal centrada */}
+    <div className="modal-overlay"> 
+      <div className="modal-content"> 
         <h2>Crear Promoción</h2>
         <form className="promocion-form" onSubmit={handleSubmit}>
 

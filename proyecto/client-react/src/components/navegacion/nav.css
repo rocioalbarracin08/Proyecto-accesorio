@@ -1,12 +1,26 @@
-.encabezado{
+.encabezado {
   background-color: rosybrown;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
+  position: relative;
+  transition: 0.3s ease;
+  padding: 10px 20px;  /* Agregué padding para más espacio */
 }
 
-.perfil{
+/* Opacidad cuando la búsqueda está activa */
+.encabezado.search-active {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* Excepción: Mantén interacciones en el buscador */
+.encabezado.search-active .buscador-container {
+  pointer-events: auto;
+}
+
+.perfil {
   width: 40px;
   height: 40px;
   object-fit: cover;
@@ -17,20 +31,22 @@
 .perfil:hover {
   transform: scale(1.1);
 }
-.user img{
+
+.user img {
   width: 50px;
   height: 50px;
   object-fit: cover;
   display: block;
-  transition: transform 0.2s;
+  transition: 0.2s;
 }
 .user img:hover {
   transform: scale(1.1);
 }
+
 .carrito {
   position: relative;
-  border: none;  /* Elimina el borde del botón */
-  outline: none; /* Elimina cualquier contorno al hacer foco */
+  border: none;
+  outline: none;
   padding: 0%;
 }
 
@@ -39,22 +55,24 @@
   height: 50px;
   object-fit: contain;
   display: block;
-  border: none;  /* Elimina cualquier borde */
-  outline: none;  /* Elimina cualquier contorno por defecto */
+  border: none;
+  outline: none;
 }
 
-.direccionamiento{
+.direccionamiento {
   gap: 1rem;
 }
-.direccionamiento:hover{
+.direccionamiento:hover {
   color: rgb(238, 204, 204);
-  overflow: hidden;  /* Evita desborde en hover */
+  overflow: hidden;
 }
-.miLogo{
+
+.miLogo {
   width: 90px;
   border-radius: 10px;
 }
-.buscador{
+
+.buscador {
   background-color: rgb(250, 219, 219);
   border: none;
   color: black;
@@ -62,22 +80,24 @@
   height: 25px;
   text-align: center;
 }
+
 .carrito-count {
   position: absolute;
   top: -6px;
   right: -10px;
-  background-color: red;  /* Fondo rojo */
+  background-color: red;
   color: white;
   border-radius: 50%;
-  width: 25px;  /* Tamaño fijo */
-  height: 20px;  /* Tamaño fijo */
+  width: 25px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: bold;
 }
-.btn-cerrarSesion{
+
+.btn-cerrarSesion {
   background-color: white;
   color: rosybrown;
   border: 1px solid rosybrown;
@@ -86,7 +106,7 @@
   font-weight: bold;
   margin-left: 18px;
   margin-right: 8px;
-  transition: 0.2s, color 0.2s, border 0.2s; /*Suaviza la transicion*/
+  transition: 0.2s, color 0.2s, border 0.2s;
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
 .btn-cerrarSesion:hover {
@@ -98,48 +118,210 @@
 .iconosUser {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;  /* Aumenté gap para evitar apretado */
   height: 55px;
-}
-/* Dropdown de búsqueda */
-.buscador-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 1000;
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  flex-wrap: wrap;  /* Permite wrap si es necesario */
 }
 
-.buscador-item {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.buscador-link {
-  text-decoration: none;
-  color: black;
+/* Nuevo: Saludo del usuario */
+.saludo-usuario {
   display: flex;
   align-items: center;
 }
 
+.saludo-texto {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin-right: 10px;  /* Espacio entre saludo e ícono */
+  white-space: nowrap;  /* Evita que se rompa */
+}
+
+/* Contenedor del buscador */
+.buscador-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Ícono del buscador */
+.buscador-icono {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+.buscador-icono:hover {
+  transform: scale(1.1);
+}
+
+/* Formulario del buscador: Ahora fixed para superponerse completamente */
+.buscador-form {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease;
+}
+
+/* Animación para el buscador */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.buscador-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+}
+
+.buscador {
+  flex: 1;
+  background-color: rgb(250, 219, 219);
+  border: none;
+  color: black;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.buscador-cerrar {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #a05252;
+  transition: color 0.2s;
+}
+.buscador-cerrar:hover {
+  color: black;
+}
+
+.buscador-dropdown {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.buscador-item {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  transition: 0.2s ease;
+}
+.buscador-item:hover {
+  background: rgb(250, 219, 219);
+}
+
+.buscador-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+}
+
 .buscador-img {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   margin-right: 10px;
   object-fit: cover;
 }
 
 .buscador-loading {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  color: gray;
+  padding: 10px;
+  text-align: center;
+  color: #a05252;
+}
+
+/* Responsive: Para móviles y tablets */
+@media (max-width: 768px) {
+  .encabezado {
+    justify-content: space-between;
+    padding: 0 10px;
+    flex-wrap: wrap;  /* Permite wrap en móviles */
+  }
+
+  .miLogo {
+    width: 70px;
+  }
+
+  .direccionamiento {
+    display: none;
+  }
+
+  .buscador-form {
+    width: 90%;
+    max-width: 300px;
+    top: 60px;
+  }
+
+  .buscador {
+    width: 100%;
+  }
+
+  .iconosUser {
+    gap: 15px;  /* Menos gap en móviles */
+    flex-wrap: wrap;
+  }
+
+  .saludo-texto {
+    font-size: 14px;  /* Texto más pequeño en móviles */
+    margin-right: 5px;
+  }
+
+  .perfil, .carrito img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .user img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-cerrarSesion {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .buscador-form {
+    width: 95%;
+    top: 55px;
+  }
+
+  .buscador-header {
+    padding: 6px;
+  }
+
+  .buscador {
+    height: 28px;
+  }
+
+  .buscador-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .saludo-texto {
+    font-size: 12px;
+  }
+
+  .iconosUser {
+    gap: 10px;
+  }
 }

@@ -12,7 +12,7 @@ from flask import make_response
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
-from server_flask.config import SECRET_KEY
+from proyecto.server_flask.utils.config import SECRET_KEY
 
 @bp.route('/register', methods=['POST'])
 def register():
@@ -82,6 +82,9 @@ def login():
             return jsonify({"error": "El email no está registrado"}), 401
         if not check_password_hash(user["password"], password):  #Rompía por usar el índice de la lista y no la clave del objeto
             return jsonify({"error": "La contraseña es incorrecta"}), 401
+        # Verificar si está activo
+        if user.get("activo", 1) == 0:
+            return jsonify({"error": "Cuenta desactivada"}), 403
 
         # Creo un token JWT, que es un texto cifrado
         token = jwt.encode({ 

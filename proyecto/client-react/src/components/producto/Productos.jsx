@@ -1,40 +1,49 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { usePromociones } from "../../contexts/PromocionesContext";
-import { useCarrito } from "../../contexts/CarritoContext"; 
+import { useCarrito } from "../../contexts/CarritoContext";
+import { useAuthContext } from "../../contexts/AuthContext";
+import GestionProductos from './GestionProductos';  // Para empleados
 import axios from "axios";
 import "./producto.css";
 
 export function Productos() {
-  const { idCategoria } = useParams();
+  const { idCategoria } = useParams();  // Opcional: si hay, filtra por categoría
   const { promociones } = usePromociones();
+  const { addItem, openCarrito } = useCarrito();
+  const { userRole } = useAuthContext();
 
   const [productos, setProductos] = useState([]);
-  const [categoriaNombre, setCategoriaNombre] = useState("Cargando...");
+  const [categoriaNombre, setCategoriaNombre] = useState("Todos los Productos");
   const [loading, setLoading] = useState(true);
-  const {addItem, openCarrito } = useCarrito();  // Para carrito
-
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Promoción activa
+  // Estados para empleados (de ProductoGrid)
+  const [showModal, setShowModal] = useState(false);
+  const [productoEditar, setProductoEditar] = useState(null);
+
+  // Promoción activa (para la categoría actual o general)
   const promocionActiva = promociones.find(
-    p => p.id_categoria == idCategoria && p.activo
+    p => (!idCategoria || p.id_categoria == idCategoria) && p.activo && new Date() >= new Date(p.fecha_inicio) && new Date() <= new Date(p.fecha_fin)
   );
 
   const cargarProductos = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`,
-        { withCredentials: true }
-      );
+      let url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=10`;
+      if (idCategoria) {
+        url = `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`;
+      }
+      const res = await axios.get(url, { withCredentials: true });
       const data = res.data;
       setProductos(data.productos || []);
       setTotalPages(data.total_pages || 1);
       setPage(data.page || 1);
-      if (data.productos && data.productos.length > 0) {
-        setCategoriaNombre(data.productos[0].categoria || "");
+      if (idCategoria && data.productos && data.productos.length > 0) {
+        setCategoriaNombre(data.productos[0].categoria || "Categoría");
+      } else {
+        setCategoriaNombre("Todos los Productos");
       }
     } catch (err) {
       console.error("Error cargando productos:", err);
@@ -57,11 +66,49 @@ export function Productos() {
   const handlePrev = () => goToPage(page - 1);
   const handleNext = () => goToPage(page + 1);
 
+  // Funciones para empleados (de ProductoGrid)
+  const handleEdit = (producto) => {
+    setProductoEditar(producto);
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Desactivar producto?')) {
+      await fetch(`http://localhost:5000/productos/desactivar/${id}`, {
+        method: 'PATCH',
+        credentials: 'include'
+      });
+      cargarProductos();
+    }
+  };
+
+  const handleUpdateStock = async (id, currentStock) => {
+    const newStock = prompt('Nuevo stock:', currentStock);
+    if (newStock !== null && !isNaN(newStock)) {
+      await fetch(`http://localhost:5000/productos/actualizar_stock/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ stock: parseInt(newStock) })
+      });
+      cargarProductos();
+    }
+  };
+
+  const handleAdd = () => {
+    setProductoEditar(null);
+    setShowModal(true);
+  };
+
+  const handleSave = () => {
+    cargarProductos();
+  };
+
   return (
     <div className="productos-page">
-      <h2 className="tituloProducts">Productos de {categoriaNombre}</h2>
+      <h2 className="tituloProducts">{categoriaNombre}</h2>
 
-      {/* Banner de promoción */}
+      {/* Banner de promoción (si aplica) */}
       {promocionActiva && (
         <div className="promocion-banner">
           <h3>¡Promoción Especial!</h3>
@@ -69,7 +116,7 @@ export function Productos() {
             {promocionActiva.descripcion} - Descuento:{" "}
             {promocionActiva.tipo_descuento === "porcentaje"
               ? `${promocionActiva.descuento * 100}% OFF`
-              : `${promocionActiva.descuento} OFF`}
+              : `$${promocionActiva.descuento} OFF`}
           </p>
           <p>Válido hasta: {new Date(promocionActiva.fecha_fin).toLocaleDateString()}</p>
         </div>
@@ -77,16 +124,18 @@ export function Productos() {
 
       <div className="producto-grid">
         {productos.length === 0 ? (
-          <p>No hay productos en esta categoría.</p>
+          <p>No hay productos disponibles.</p>
         ) : (
           productos.map((producto) => {
             let precioFinal = producto.precio;
+            let precioOriginal = producto.precio;
             if (promocionActiva) {
               if (promocionActiva.tipo_descuento === "porcentaje") {
-                precioFinal = precioFinal * (1 - promocionActiva.descuento);
+                precioFinal = producto.precio * (1 - promocionActiva.descuento);
               } else {
-                precioFinal = Math.max(precioFinal - promocionActiva.descuento, 0);
+                precioFinal = producto.precio - promocionActiva.descuento;
               }
+              precioFinal = Math.max(precioFinal, 0);  // Evita negativos
             }
 
             return (
@@ -103,21 +152,55 @@ export function Productos() {
                   alt={producto.name}
                 />
                 <h3>{producto.name}</h3>
-                <p className="producto-precio">${precioFinal.toFixed(2)}</p>
-                <button
-                  className="agregar-carrito"
-                  onClick={() => {
-                    addItem({ ...producto, precio: precioFinal });
-                    openCarrito();  // Abre el carrito al agregar (opcional, quítalo si no lo quieres)
-                  }}
-                >
-                  Agregar al Carrito
-                </button>
+                <p className="producto-precio">
+                  {promocionActiva ? (
+                    <>
+                      <span style={{ textDecoration: 'line-through', color: '#888' }}>${precioOriginal.toFixed(2)}</span>
+                      <br />
+                      <span style={{ color: 'red', fontWeight: 'bold' }}>${precioFinal.toFixed(2)}</span>
+                    </>
+                  ) : (
+                    `$${precioFinal.toFixed(2)}`
+                  )}
+                </p>
+                {userRole === 'cliente' && (
+                  <button
+                    className="agregar-carrito"
+                    onClick={() => {
+                      addItem({ ...producto, precio: precioFinal });
+                      openCarrito();
+                    }}
+                  >
+                    Agregar al Carrito
+                  </button>
+                )}
+                {userRole === 'empleado' && (
+                  <>
+                    <p>Stock: {producto.stock || 0}</p>
+                    <button className='btn-empleado' onClick={() => handleEdit(producto)}>Editar</button>
+                    <button className='btn-empleado' onClick={() => handleDelete(getId(producto))}>Desactivar</button>
+                    <button className='btn-empleado' onClick={() => handleUpdateStock(getId(producto), producto.stock)}>Actualizar Stock</button>
+                  </>
+                )}
               </div>
             );
           })
         )}
       </div>
+
+      {/* Botón flotante para empleados */}
+      {userRole === 'empleado' && (
+        <button className="btn-agregar-global" onClick={handleAdd}>+</button>
+      )}
+
+      {/* Modal para empleados */}
+      {showModal && (
+        <GestionProductos 
+          onClose={() => setShowModal(false)} 
+          productoEditar={productoEditar} 
+          onSave={handleSave} 
+        />
+      )}
 
       {/* Paginación */}
       {totalPages > 1 && (

@@ -167,3 +167,207 @@ h1 {
     font-size: 0.9rem;
   }
 }
+
+/* Sección de registro (para organizar) */
+.registro-section {
+  width: 100%;
+}
+
+.registro-section h2 {
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* Sección de lista */
+.lista-section {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.lista-section h2 {
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* Lista de empleados */
+.empleados-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.empleado-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.empleado-item div:first-child {
+  flex: 1;
+  color: #333;
+}
+
+.empleado-item div:last-child {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Empleado inactivo */
+.empleado-item.inactivo {
+  background: rgba(255, 0, 0, 0.1);  /* Rojo bajito */
+  opacity: 0.6;  /* Más bajo */
+  border: 1px solid red;
+}
+
+/* Botones de editar y toggle */
+.btn-edit, .btn-toggle {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-edit {
+  background-color: rosybrown;
+  color: white;
+}
+
+.btn-edit:hover:not(:disabled) {
+  background-color: white;
+  color: rosybrown;
+  transform: scale(1.05);
+}
+
+.btn-edit:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-toggle {
+  background-color: #28a745;  /* Verde para activar */
+  color: white;
+}
+
+.btn-toggle:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.empleado-item.inactivo .btn-toggle {
+  background-color: #dc3545;  /* Rojo para desactivar */
+}
+
+.empleado-item.inactivo .btn-toggle:hover {
+  background-color: #c82333;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: rosybrown;
+  margin-bottom: 1rem;
+}
+
+/* Botones del modal */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn-submit {
+  background-color: rosybrown;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: white;
+  color: rosybrown;
+  transform: scale(1.05);
+}
+
+.btn-cancel {
+  background-color: #ccc;
+  border: none;
+  border-radius: 25px;
+  color: #333;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #999;
+}
+
+/* Responsive para modal */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-submit, .btn-cancel {
+    width: 100%;
+  }
+
+  .empleado-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .empleado-item div:last-child {
+    margin-top: 0.5rem;
+  }
+}

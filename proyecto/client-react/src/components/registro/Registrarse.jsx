@@ -1,7 +1,7 @@
 import useAuth from "../../hooks/useAuth";
 import "./register.css";
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";  // Ícono para errores
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -21,48 +21,58 @@ export function Registrarse() {
     setUsuarioApellido,
     email,
     setEmail,
-  } = useAuth(); // La lógica del programa va en el hook
+  } = useAuth();
 
   const [genero, setGenero] = useState("F");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
 
+  // Función para validar email
+  const validarEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Función para validar contraseña
+  const validarPassword = (pwd) => {
+    if (pwd.length < 8) return "La contraseña debe tener al menos 8 caracteres.";
+    if (!/[A-Z]/.test(pwd)) return "Debe incluir al menos una letra mayúscula.";
+    if (!/[a-z]/.test(pwd)) return "Debe incluir al menos una letra minúscula.";
+    if (!/\d/.test(pwd)) return "Debe incluir al menos un número.";
+    if (!/[!@#$%^&*]/.test(pwd)) return "Debe incluir al menos un símbolo especial (!@#$%^&*).";
+    return null;
+  };
+
+  // Calcular fortaleza de contraseña
+  const calcularFortaleza = (pwd) => {
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[!@#$%^&*]/.test(pwd)) score++;
+    if (score <= 2) return "Débil";
+    if (score <= 4) return "Media";
+    return "Fuerte";
+  };
+
   const handleClick = async (event) => {
     event.preventDefault();
-
-    // Resetear error antes de validar
     setError("");
 
-    // Validaciones personalizadas
-    if (!usuarioName.trim()) {
-      return setError("El nombre es obligatorio.");
-    }
-    if (!usuarioApellido.trim()) {
-      return setError("El apellido es obligatorio.");
-    }
-    if (!email.trim()) {
-      return setError("El email es obligatorio.");
-    }
+    // Validaciones
+    if (!usuarioName.trim()) return setError("El nombre es obligatorio.");
+    if (!usuarioApellido.trim()) return setError("El apellido es obligatorio.");
+    if (!email.trim()) return setError("El email es obligatorio.");
+    if (!validarEmail(email)) return setError("Ingresa un email válido (ej: usuario@dominio.com).");
+    if (!contraseña.trim()) return setError("La contraseña es obligatoria.");
+    const errorPwd = validarPassword(contraseña);
+    if (errorPwd) return setError(errorPwd);
+    if (!repetirContraseña.trim()) return setError("Debes confirmar la contraseña.");
+    if (contraseña !== repetirContraseña) return setError("Las contraseñas no coinciden.");
+    if (!genero) return setError("Selecciona tu género.");
 
-    if (!email.includes("@") || !email.includes(".")) {
-      return setError("Por favor, ingresa un email válido.");
-    }
-    if (!contraseña.trim()) {
-      return setError("La contraseña es obligatoria.");
-    }
-    if (contraseña.length < 6) {
-      return setError("La contraseña debe tener al menos 6 caracteres.");
-    }
-    if (!repetirContraseña.trim()) {
-      return setError("Debes repetir la contraseña.");
-    }
-    if (contraseña !== repetirContraseña) {
-      return setError("Las contraseñas no coinciden.");
-    }
-    if (!genero) {
-      return setError("Debes seleccionar un género.");
-    }
     setLoading(true);
 
     try {
@@ -90,16 +100,21 @@ export function Registrarse() {
     }
   };
 
-  // Evento para el input de nombre
   const handleInputUsuario = (event) => {
     setUsuarioName(event.target.value);
   };
+
+  const fortaleza = calcularFortaleza(contraseña);
 
   return (
     <>
       <section className="section-register">
         <h1>Registrarse</h1>
-        {error && <h5 style={{ color: "red" }}>{error}</h5>} {/* Mostrar mensaje solo si hay error */}
+        {error && (
+          <div className="error-message">
+            <FaExclamationTriangle /> {error}
+          </div>
+        )}
         <form className="formularioRegister">
           <input
             type="text"
@@ -114,7 +129,7 @@ export function Registrarse() {
             value={usuarioApellido}
           />
           <input
-            type="text"
+            type="email"
             placeholder="Email"
             onChange={(event) => setEmail(event.target.value)}
             value={email}
@@ -126,12 +141,14 @@ export function Registrarse() {
               onChange={(event) => setContraseña(event.target.value)}
               value={contraseña}
             />
-            <span
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="span-eye"
-            >
+            <span onClick={() => setShowPassword((prev) => !prev)} className="span-eye">
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
+            {contraseña && (
+              <div className={`fortaleza ${fortaleza.toLowerCase()}`}>
+                Fortaleza: {fortaleza}
+              </div>
+            )}
           </div>
 
           <div className="input-password">
@@ -141,19 +158,24 @@ export function Registrarse() {
               onChange={(event) => setRepetirContraseña(event.target.value)}
               value={repetirContraseña}
             />
-            <span
-              onClick={() => setShowRepeatPassword((prev) => !prev)}
-              className="span-eye"
-            >
+            <span onClick={() => setShowRepeatPassword((prev) => !prev)} className="span-eye">
               {showRepeatPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
           <h5 className="generoH">Indique su género</h5>
           <div className="genero">
-            <button type="button" className="M" onClick={() => setGenero("M")}>
+            <button
+              type="button"
+              className={`M ${genero === "M" ? "active" : ""}`}
+              onClick={() => setGenero("M")}
+            >
               Masculino
             </button>
-            <button type="button" className="F" onClick={() => setGenero("F")}>
+            <button
+              type="button"
+              className={`F ${genero === "F" ? "active" : ""}`}
+              onClick={() => setGenero("F")}
+            >
               Femenino
             </button>
           </div>
@@ -163,9 +185,7 @@ export function Registrarse() {
           {loading ? "Registrando..." : "Registrarse"}
         </button>
 
-        <Link to="/login">
-          ¿Ya tenés una cuenta?
-        </Link>
+        <Link to="/login">¿Ya tenés una cuenta?</Link>
         <Link to="/" className="ultLink">Volver</Link>
       </section>
     </>

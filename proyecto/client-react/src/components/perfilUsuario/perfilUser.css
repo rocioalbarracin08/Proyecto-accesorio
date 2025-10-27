@@ -15,6 +15,7 @@
 }
 .linkPromos:hover{
   font-size: 20px;
+  color: rgb(134, 106, 106);
 }
 .datos-cliente-nav {
   display: flex;
