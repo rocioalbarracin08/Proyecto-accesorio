@@ -5,13 +5,13 @@ import { PiePagina } from "./components/piePagina/PiePag";
 import { Destacados } from "./components/productosDestacados/Destacado";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
-import { Categorizados } from "./components/categorias/Categorizados"; 
-import { Productos } from "./components/producto/Productos"; 
+import { Categorizados } from "./components/categorias/Categorizados";
+import { Productos } from "./components/producto/Productos";
 import Nosotros from "./components/infoCompany/Nosotros";
 import PerfilUser from "./components/perfilUsuario/PerfilUser";
-import RegistrarEmpleado from "./components/empleados/RegistrarEmpleados"; 
+import RegistrarEmpleado from "./components/empleados/RegistrarEmpleados";
 import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
-import CarruselPromociones from './components/promociones/CarruselPromociones';
+import CarruselPromociones from "./components/promociones/CarruselPromociones";
 import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena";
 import ResetearContrasenaToken from "./components/resetear-contrasena/ResetearContrasenaToken";
 import CrearPromocion from "./components/promociones/CrearPromocion";
@@ -25,22 +25,25 @@ function App() {
   return (
     <Routes>
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
-      <Route path="/resetear-contrasena" element={<ResetearContrasenaToken/>}/>
-      <Route path="/cambiar-contrasena" element={<CambiarContrasena/>}/> {/*Cuando ya estan logueados */}
-      <Route path="/crear-promocion" element={<CrearPromocion/>}/>
-      <Route path="/promociones" element={<Promociones/>}/>
-      <Route path="/editarPromociones" element={<EditarPromocion/>}/>
-      <Route path="/factura" element={<Factura/>}/>
+      <Route
+        path="/resetear-contrasena"
+        element={<ResetearContrasenaToken />}
+      />
+      <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />{" "}
+      {/*Cuando ya estan logueados */}
+      <Route path="/crear-promocion" element={<CrearPromocion />} />
+      <Route path="/promociones" element={<Promociones />} />
+      <Route path="/editarPromociones" element={<EditarPromocion />} />
+      <Route path="/factura" element={<Factura />} />
       <Route
         path="/"
         element={
           <>
             <BarraNavegacion />
-            <CarruselPromociones /> 
-            <productosDestacados/>
+            <CarruselPromociones />
             <Destacados />
-            <Categorizados />  {/* Muestra categorías en home */}
-            <DiseñoMain/>
+            <Categorizados /> {/* Muestra categorías en home */}
+            <DiseñoMain />
             <PiePagina />
           </>
         }
@@ -50,41 +53,61 @@ function App() {
         element={
           <>
             <BarraNavegacion />
-            <Productos /> 
+            <Productos />
             <PiePagina />
           </>
         }
       />
-      <Route path="/nosotros" element={
-        <>
-        <BarraNavegacion/>
-        <Nosotros/>
-        <PiePagina/>
-        </>
-        }></Route>
-      <Route path="/login" element={<Login />} />
-      <Route path="/perfil" element={
+      <Route path="/productos/:idCategoria" element={
         <>
         <BarraNavegacion />
-        <PerfilUser />
+        <Productos />
         <PiePagina />
-        </>
-      } />
+        </>} 
+        />
+      <Route
+        path="/nosotros"
+        element={
+          <>
+            <BarraNavegacion />
+            <Nosotros />
+            <PiePagina />
+          </>
+        }
+      ></Route>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/perfil"
+        element={
+          <>
+            <BarraNavegacion />
+            <PerfilUser />
+            <PiePagina />
+          </>
+        }
+      />
       <Route path="/registro" element={<Registrarse />} />
       {/* Ruta para registrar empleados (protegida, solo dueño) */}
-      <Route path="/registrar-empleado" element={
-        <> 
-        <BarraNavegacion /> 
-        <RegistrarEmpleado /> 
-        <PiePagina /> 
-      </>} />
-      <Route path="/dashboard-empleado" element={
-        <>
-          <BarraNavegacion />
-          <DashboardEmpleado />
-          <PiePagina />
-        </>
-      } />
+      <Route
+        path="/registrar-empleado"
+        element={
+          <>
+            <BarraNavegacion />
+            <RegistrarEmpleado />
+            <PiePagina />
+          </>
+        }
+      />
+      <Route
+        path="/dashboard-empleado"
+        element={
+          <>
+            <BarraNavegacion />
+            <DashboardEmpleado />
+            <PiePagina />
+          </>
+        }
+      />
     </Routes>
   );
 }

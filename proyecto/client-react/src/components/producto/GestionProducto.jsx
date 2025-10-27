@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
-import './GestionProductos.css';
+import './gestionProducto.css';
 
 export default function GestionProductos({ onClose, productoEditar = null, onSave }) {
   const { userRole } = useAuthContext();

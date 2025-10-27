@@ -62,7 +62,7 @@ def productosXcategoria(id_categoria):
             LIMIT %s OFFSET %s
         """, (id_categoria, per_page, offset))
         productos_list = g.db_cursor.fetchall()
-
+        print(productos_list)
         total_pages = (total_productos + per_page - 1) // per_page
         return jsonify({
             'productos': productos_list,
