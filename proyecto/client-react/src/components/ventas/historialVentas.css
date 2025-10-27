@@ -1,0 +1,121 @@
+/* Contenedor principal */
+.historial-ventas {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Título */
+  .historial-ventas h2 {
+    text-align: center;
+    color: rosybrown;
+    margin-bottom: 2rem;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  /* Loading y error */
+  .historial-loading, .historial-error {
+    text-align: center;
+    padding: 2rem;
+    color: rosybrown;
+    font-size: 18px;
+  }
+  
+  .historial-error {
+    color: #c0392b;
+  }
+  
+  /* Lista de ventas */
+  .ventas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .venta-item {
+    border: 1px solid #ecf0f1;
+    border-radius: 10px;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    transition: 0.3s ease;
+  }
+  
+  .venta-item:hover {
+    background: #fff7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .venta-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    color: #2c3e50;
+  }
+  
+  .venta-detalles p {
+    margin: 0.5rem 0;
+    color: #34495e;
+    font-size: 14px;
+  }
+  
+  .venta-detalles strong {
+    color: rosybrown;
+  }
+  
+  /* Paginación */
+  .paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .btn-paginacion {
+    padding: 0.8rem 1.5rem;
+    background: rosybrown;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .btn-paginacion:hover:not(:disabled) {
+    background: #a55a5a;
+    transform: scale(1.05);
+  }
+  
+  .btn-paginacion:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .historial-ventas {
+      padding: 1rem;
+      margin: 1rem;
+    }
+  
+    .venta-header {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .paginacion {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }

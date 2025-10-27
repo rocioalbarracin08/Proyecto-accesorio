@@ -11,8 +11,21 @@ export function BarraNavegacion() {
   const [busqueda, setBusqueda] = useState("");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false); // Nuevo estado para controlar si el input está abierto
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { state, toggleCarrito, closeCarrito } = useCarrito();
+  const [perfil, setPerfil] = useState({}); 
+
+  // Obtener perfil al loguearse
+  useEffect(() => {
+    if (isLogged) {
+      fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" })
+        .then(res => res.json())
+        .then(data => setPerfil(data))
+        .catch(err => console.error("Error obteniendo perfil:", err));
+    } else {
+      setPerfil({});  // Limpiar si no esta logueado
+    }
+  }, [isLogged]);
 
   const handleLogout = async () => {
     await fetch("http://localhost:5000/usuarios/logout", {
@@ -42,11 +55,11 @@ export function BarraNavegacion() {
   };
 
   useEffect(() => {
-    if (isSearchOpen && busqueda) { // Solo buscar si el input está abierto y hay búsqueda
+    if (isSearchOpen && busqueda) {
       const timeout = setTimeout(() => handleBuscar(busqueda), 300);
       return () => clearTimeout(timeout);
     } else {
-      setResultados([]); // Limpiar resultados si no hay búsqueda
+      setResultados([]);
     }
   }, [busqueda, isSearchOpen]);
 
@@ -67,7 +80,7 @@ export function BarraNavegacion() {
 
   return (
     <>
-      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}> {/*Clase condicional*/}
+      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
         <Link to="/">
           <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
         </Link>
@@ -140,9 +153,14 @@ export function BarraNavegacion() {
             </form>
           )}
         </div>
+
         <div className="iconosUser">
           {isLogged ? (
             <>
+              {/* Saludo personalizado */}
+              <div className="saludo-usuario">
+                <span className="saludo-texto">Hola, {perfil.nombre || "Usuario"}!</span>
+              </div>
               <Link to="/perfil">
                 <img src="/logos/vectorUsuario.png" alt="Perfil" className="perfil" />
               </Link>

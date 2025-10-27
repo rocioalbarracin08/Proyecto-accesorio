@@ -1,96 +1,125 @@
 .resetear-container {
-    background-color: rgba(250, 134, 134, 0.61);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 480px;
-    height: auto;
-    padding: 2rem;
-    gap: 1rem;
-    border-radius: 10px;
-    margin: 2rem auto;
-  }
-  .linkInicio:hover{
-    font-size: 20px;
+  background-color: rgba(250, 134, 134, 0.61);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 480px;
+  height: auto;
+  padding: 2rem;
+  gap: 1rem;
+  border-radius: 10px;
+  margin: 2rem auto;
+}
+
+.linkInicio:hover {
+  font-size: 20px;
+}
+
+.resetear-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 60%;
+  text-align: center;
+  gap: 1rem;
+}
+
+.resetear-input {
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  border: none;
+  padding: 0.8rem;
+  text-align: center;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.resetear-input:focus {
+  border-color: #ff69b4;
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+}
+
+.resetear-btn {
+  background-color: rgb(197, 119, 119);
+  border: none;
+  border-radius: 10px;
+  color: aliceblue;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.resetear-btn:hover {
+  background-color: #d2691e;
+}
+
+.resetear-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.resetear-link {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.resetear-link:hover {
+  color: #ff69b4;
+}
+
+.resetear-title {
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.resetear-message {
+  color: green;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.resetear-error {
+  color: red;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+/* Nuevo: Contenedor para input con ícono */
+.input-password {
+  position: relative;
+  width: 100%;
+}
+
+.span-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.span-eye:hover {
+  color: rosybrown;
+}
+
+@media (max-width: 600px) {
+  .resetear-container {
+    max-width: 90%;
+    padding: 1.5rem;
   }
   .resetear-form {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    width: 60%;
-    text-align: center;
-    gap: 1rem;
+    width: 80%;
   }
-  
-  .resetear-input {
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    border: none;
-    padding: 0.8rem;
-    text-align: center;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  
-  .resetear-input:focus {
-    border-color: #ff69b4;
-    outline: none;
-    box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
-  }
-  
-  .resetear-btn {
-    background-color: rgb(197, 119, 119);
-    border: none;
-    border-radius: 10px;
-    color: aliceblue;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .resetear-btn:hover {
-    background-color: #d2691e;
-  }
-  
-  .resetear-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .resetear-link {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .resetear-link:hover {
-    color: #ff69b4;
-  }
-  
-  .resetear-title {
-    margin-bottom: 1rem;
-    color: white;
-  }
-  
-  .resetear-message {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .resetear-error {
-    color: red;
-    font-weight: bold;
-  }
-  
-  @media (max-width: 600px) {
-    .resetear-container {
-      max-width: 90%;
-      padding: 1.5rem;
-    }
-    .resetear-form {
-      width: 80%;
-    }
-  }
+}

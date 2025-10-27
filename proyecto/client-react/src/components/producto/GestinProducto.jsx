@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
-import './GestionProductos.css';  // Importa los estilos
+import './GestionProductos.css';
 
 export default function GestionProductos({ onClose, productoEditar = null, onSave }) {
   const { userRole } = useAuthContext();
@@ -11,11 +11,11 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
     imagen_url: '',
     stock: 0
   });
-  const [categorias, setCategorias] = useState([]);  // Para cargar categorías dinámicamente
+  const [categorias, setCategorias] = useState([]);
 
   // Carga categorías al montar
   useEffect(() => {
-    fetch('http://localhost:5000/categorias', { credentials: 'include' })  // Asume que tienes una ruta /categorias en backend
+    fetch('http://localhost:5000/categoria/', { credentials: 'include' })
       .then(res => res.json())
       .then(data => setCategorias(data || []))
       .catch(err => console.error('Error cargando categorías:', err));
@@ -34,7 +34,7 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
     }
   }, [productoEditar]);
 
-  if (userRole !== 'empleado') return null;  // Solo empleados pueden ver esto
+  if (userRole !== 'empleado') return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,11 +48,11 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
         method,
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(form)
+        body: JSON.stringify(form) 
       });
       if (response.ok) {
-        onSave();  // Llama a la función para recargar productos
-        onClose();  // Cierra el modal
+        onSave();
+        onClose();
       } else {
         alert('Error al guardar producto');
       }

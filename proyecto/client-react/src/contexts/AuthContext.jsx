@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
 
         // Redirección automática para empleados
         if (data?.id_empleado) {
-          window.location.href = '/registrar-venta';
+          window.location.href = '/dashboard-empleado';
         }
       })
       .catch(() => {

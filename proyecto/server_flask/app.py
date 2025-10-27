@@ -65,7 +65,7 @@ from server_flask.endpoints.empleados import bp as empleados_bp
 from server_flask.endpoints.login_register import bp as usuarios_bp
 from server_flask.endpoints.productos import bp as productos_bp
 from server_flask.endpoints.promociones import bp as promociones_bp
-from server_flask.endpoints.registro_productos import bp as registro_productos_bp
+from proyecto.server_flask.endpoints.inventario import bp as inventario_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
 from server_flask.endpoints.ventas import bp as ventas_bp
@@ -84,7 +84,7 @@ def create_app(test_config = None):
     app.register_blueprint(clientes_bp)
     app.register_blueprint(empleados_bp)
     app.register_blueprint(tiendas_bp)
-    app.register_blueprint(registro_productos_bp)
+    app.register_blueprint(inventario_bp)
     app.register_blueprint(promociones_bp)
     app.register_blueprint(info_bp)
     app.register_blueprint(ventas_bp)

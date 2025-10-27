@@ -5,14 +5,12 @@ import { PiePagina } from "./components/piePagina/PiePag";
 import { Destacados } from "./components/productosDestacados/Destacado";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
-import { ProductoGrid } from "./components/producto/ProductoGrid";
 import { Categorizados } from "./components/categorias/Categorizados"; 
 import { Productos } from "./components/producto/Productos"; 
 import Nosotros from "./components/infoCompany/Nosotros";
 import PerfilUser from "./components/perfilUsuario/PerfilUser";
 import RegistrarEmpleado from "./components/empleados/RegistrarEmpleados"; 
 import RecuperarContrasena from "./components/recuperar-contrasena/RecuperarContrasena";
-import ResetearContrasena from "./components/resetear-contrasena/ResetearContrasenaToken";
 import CarruselPromociones from './components/promociones/CarruselPromociones';
 import CambiarContrasena from "./components/cambiar-contrasena/CambiarContrasena";
 import ResetearContrasenaToken from "./components/resetear-contrasena/ResetearContrasenaToken";
@@ -21,7 +19,7 @@ import Promociones from "./components/promociones/Promociones";
 import EditarPromocion from "./components/promociones/EditarPromocion";
 import { Factura } from "./components/factura/factura";
 import DiseñoMain from "./components/diseño-main/DiseñoMain";
-import RegistrarVenta from "./components/ventas/RegistrarVenta";
+import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 
 function App() {
   return (
@@ -52,17 +50,7 @@ function App() {
         element={
           <>
             <BarraNavegacion />
-            <ProductoGrid />  {/* Productos generales */}
-            <PiePagina />
-          </>
-        }
-      />
-      <Route
-        path="/productos/:idCategoria"
-        element={
-          <>
-            <BarraNavegacion />
-            <Productos />  {/* Componente para productos FILTRADOS */}
+            <Productos /> 
             <PiePagina />
           </>
         }
@@ -90,10 +78,10 @@ function App() {
         <RegistrarEmpleado /> 
         <PiePagina /> 
       </>} />
-      <Route path="/registrar-venta" element={
+      <Route path="/dashboard-empleado" element={
         <>
           <BarraNavegacion />
-          <RegistrarVenta />
+          <DashboardEmpleado />
           <PiePagina />
         </>
       } />

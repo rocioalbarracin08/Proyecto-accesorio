@@ -140,7 +140,7 @@ function RegistrarVenta() {
                   type="number"
                   min="1"
                   placeholder="Cant."
-                  onChange={e => agregarProducto(p.id.id_producto, e.target.value)}
+                  onChange={e => agregarProducto(p.id_producto, e.target.value)}
                 />
               </div>
             ))}

@@ -4,14 +4,15 @@
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  position: relative; /* Para posicionar el buscador relativo al header */
-  transition: 0.3s ease; /* Transición suave para opacidad */
+  position: relative;
+  transition: 0.3s ease;
+  padding: 10px 20px;  /* Agregué padding para más espacio */
 }
 
 /* Opacidad cuando la búsqueda está activa */
 .encabezado.search-active {
-  opacity: 0.85; /* Opacidad ligera para indicar búsqueda activa */
-  pointer-events: none; /* Desactiva interacciones en el header, excepto el buscador */
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 /* Excepción: Mantén interacciones en el buscador */
@@ -117,8 +118,25 @@
 .iconosUser {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;  /* Aumenté gap para evitar apretado */
   height: 55px;
+  flex-wrap: wrap;  /* Permite wrap si es necesario */
+}
+
+/* Nuevo: Saludo del usuario */
+.saludo-usuario {
+  display: flex;
+  align-items: center;
+}
+
+.saludo-texto {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin-right: 10px;  /* Espacio entre saludo e ícono */
+  white-space: nowrap;  /* Evita que se rompa */
 }
 
 /* Contenedor del buscador */
@@ -142,17 +160,17 @@
 
 /* Formulario del buscador: Ahora fixed para superponerse completamente */
 .buscador-form {
-  position: fixed; /* Cambiado a fixed para superponerse sobre todo */
-  top: 70px; /* Ajusta para que esté justo debajo del header */
-  left: 50%; /* Centra horizontalmente */
-  transform: translateX(-50%); /* Centra perfectamente */
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 320px;
   background: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  z-index: 1000; /* Alto z-index para superponerse */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
-  animation: slideDown 0.3s ease; /* Animación de deslizamiento */
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease;
 }
 
 /* Animación para el buscador */
@@ -205,7 +223,7 @@
   transition: 0.2s ease;
 }
 .buscador-item:hover {
-  background: rgb(250, 219, 219); /* Hover rosado */
+  background: rgb(250, 219, 219);
 }
 
 .buscador-link {
@@ -231,34 +249,41 @@
 /* Responsive: Para móviles y tablets */
 @media (max-width: 768px) {
   .encabezado {
-    justify-content: space-between; /* Ajusta distribución en móviles */
-    padding: 0 10px; /* Padding lateral */
+    justify-content: space-between;
+    padding: 0 10px;
+    flex-wrap: wrap;  /* Permite wrap en móviles */
   }
 
   .miLogo {
-    width: 70px; /* Logo más pequeño */
+    width: 70px;
   }
 
   .direccionamiento {
-    display: none; /* Oculta enlaces en móviles para espacio (puedes usar un menú hamburguesa si quieres) */
+    display: none;
   }
 
   .buscador-form {
-    width: 90%; /* Ancho casi completo en móviles */
-    max-width: 300px; /* Máximo ancho */
-    top: 60px; /* Ajusta posición */
+    width: 90%;
+    max-width: 300px;
+    top: 60px;
   }
 
   .buscador {
-    width: 100%; /* Input ocupa todo el ancho disponible */
+    width: 100%;
   }
 
   .iconosUser {
-    gap: 8px; /* Menos gap */
+    gap: 15px;  /* Menos gap en móviles */
+    flex-wrap: wrap;
+  }
+
+  .saludo-texto {
+    font-size: 14px;  /* Texto más pequeño en móviles */
+    margin-right: 5px;
   }
 
   .perfil, .carrito img {
-    width: 35px; /* Íconos más pequeños */
+    width: 35px;
     height: 35px;
   }
 
@@ -268,7 +293,7 @@
   }
 
   .btn-cerrarSesion {
-    padding: 6px 12px; /* Botón más pequeño */
+    padding: 6px 12px;
     font-size: 0.9rem;
   }
 }
@@ -290,5 +315,13 @@
   .buscador-img {
     width: 40px;
     height: 40px;
+  }
+
+  .saludo-texto {
+    font-size: 12px;
+  }
+
+  .iconosUser {
+    gap: 10px;
   }
 }

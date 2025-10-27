@@ -133,6 +133,16 @@
     padding: 10px;
   }
 }
+.descuento-etiqueta {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
 
 /* Nuevos estilos para botones de empleados */
 .btn-empleado {
