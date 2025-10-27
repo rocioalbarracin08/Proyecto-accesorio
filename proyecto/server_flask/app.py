@@ -68,11 +68,7 @@ from server_flask.endpoints.promociones import bp as promociones_bp
 from server_flask.endpoints.inventario import bp as inventario_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
-<<<<<<< HEAD
-from server_flask.endpoints.detalle_compra import bp as info_bp
-=======
 from server_flask.endpoints.ventas import bp as ventas_bp
->>>>>>> b7aee32338eeedb367909f1f18ce6ff716ed8068
 
 from server_flask.extensions import mail
 

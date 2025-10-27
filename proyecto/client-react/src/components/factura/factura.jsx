@@ -17,10 +17,10 @@ export function Factura() {
   const [provincia, setProvincia] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
 
-  useEffect(() => {
-    console.log("User from context:", user); 
-    console.log("isLogged set to:", isLogged);
-  }, [user]);
+ // useEffect(() => {
+ //   console.log("User from context:", user); 
+   // console.log("isLogged set to:", isLogged);
+  //}, [user]);
 
   // Actualizar email cuando user cambie
   useEffect(() => {
@@ -72,7 +72,7 @@ export function Factura() {
       mail: email,
       nombre,
       apellido,
-      
+
       // Enviamos los datos de dirección sólo si el usuario seleccionó envío
       direccion: entrega === "envio" ? direccion : null,
       ciudad: entrega === "envio" ? ciudad : null,
