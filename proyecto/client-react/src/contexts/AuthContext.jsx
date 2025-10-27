@@ -8,12 +8,12 @@ export function AuthProvider({ children }) {
   const [isOwner, setIsOwner] = useState(false);    // Estado: ¿Es dueño?
   const [userRole, setUserRole] = useState(null);   // Estado: Rol ('cliente', 'empleado', 'dueño')
 
-  //utilizar el authcontext para utilizar los datos del cliente en cualquier pagina, para no crear el get devuelta
+  // Utilizar el authcontext para utilizar los datos del cliente en cualquier pagina, para no crear el get devuelta
   
   const location = useLocation();  // Detecta cambios de página
 
   useEffect(() => {
-    // Se ejecuta al cambiar de página para mantener estados actualizados
+    // Se ejecuta solo al montar el componente (una vez), no en cada cambio de location
     fetch("http://localhost:5000/usuarios/perfil", {
       method: "GET",
       credentials: "include",  // Envía cookies con token
@@ -38,8 +38,8 @@ export function AuthProvider({ children }) {
         else if (data?.id_empleado) setUserRole('empleado');
         else setUserRole('dueño');
 
-        // Redirección automática para empleados
-        if (data?.id_empleado) {
+        // Redirección automática para empleados (solo si no estás ya en dashboard)
+        if (data?.id_empleado && location.pathname !== '/dashboard-empleado') {
           window.location.href = '/dashboard-empleado';
         }
       })
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
         setIsOwner(false);
         setUserRole(null);
       });
-  }, [location]);  // Dependencia: se ejecuta al cambiar location
+  }, []);  // Cambia a [] para ejecutar solo una vez al montar
 
   // Función para marcar logueado
   const login = () => setIsLogged(true);  
@@ -78,3 +78,7 @@ export function AuthProvider({ children }) {
 export function useAuthContext() {
   return useContext(AuthContext);
 }
+//Testing
+// if (data?.id_empleado && location.pathname !== '/dashboard-empleado') {
+//   window.location.href = '/dashboard-empleado';
+// }

@@ -15,7 +15,7 @@
   flex-direction: column;  /* Columna: imagen arriba, texto abajo */
   align-items: center;  /* Centra horizontalmente */
   justify-content: space-between;  /* Distribuye espacio */
-  height: 300px;  /* Altura fija para uniformidad (ajusta según necesites) */
+  min-height: 300px;  /* Cambia a min-height para permitir crecimiento si el contenido es largo */
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* Sombra sutil */
   transition: 0.3s ease;
 }
@@ -36,7 +36,9 @@
   text-align: center;  /* Centra texto */
   overflow: hidden;  /* Oculta texto largo */
   text-overflow: ellipsis;  /* Agrega "..." si es largo */
-  white-space: nowrap;  /* Evita saltos de línea */
+  /* Quita white-space: nowrap para permitir saltos de línea */
+  word-wrap: break-word;  /* Permite romper palabras largas */
+  line-height: 1.2;  /* Mejora legibilidad */
 }
 
 /* Estilos para el precio del producto */
