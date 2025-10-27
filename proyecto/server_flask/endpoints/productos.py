@@ -15,7 +15,7 @@ def productos():
 
         # Filtra productos activos y une con inventario para stock
         g.db_cursor.execute("""
-            SELECT p.id_producto, p.name, p.precio, p.imagen_url, i.stock_actual AS stock
+            SELECT p.id_producto, p.name, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock
             FROM productos p
             LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = 1
             WHERE p.activo = 1

@@ -1,134 +1,95 @@
-/* Fondo con gradiente para un look más moderno */
+
 .section-registrar-empleado {
-  background: linear-gradient(135deg, rosybrown, rgba(255, 182, 193, 0.6)); /* Gradiente rosado */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 500px;
-  min-height: 70vh;
-  padding: 2rem;
-  gap: 1.5rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
   margin: 2rem auto;
-}
-
-.formRegistrarEmpleado {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  width: 80%;
-  text-align: center;
-  gap: 1rem; /* Espacio entre elementos */
-}
-
-.error-message {
-  color: #ff4444;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 0.5rem;
-  border-radius: 5px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.btnRegist {
-  background-color: rosybrown;
-  border: none;
-  border-radius: 25px;
-  color: aliceblue;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  transition: 0.3s ease 0.2s ease;
-  cursor: pointer;
-}
-
-.btnRegist:hover {
-  background-color: white;
-  color: rosybrown;
-  transform: scale(1.05);
-}
-
-.btnRegist:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-input, .select-tienda {
-  background-color: white;
-  color: black;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  padding: 0.8rem;
-  text-align: center;
-  font-size: 1rem;
-  transition: 0.3s ease 0.3s ease;
-  width: 100%;
-}
-
-input:focus, .select-tienda:focus {
-  border-color: rosybrown;
-  box-shadow: 0 0 5px rgba(188, 143, 143, 0.5);
-  outline: none;
-}
-
-.select-tienda {
-  cursor: pointer;
-}
-
-.volver-link {
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-  transition: color 0.3s ease;
-  margin-top: 1rem;
-}
-
-.volver-link:hover {
-  color: rosybrown;
+  gap: 2rem;
 }
 
 h1 {
-  margin: 0 0 20px 0;
-  color: white;
-  font-size: 2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  color: rosybrown;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: #e74c3c;
+  background: #f8d7da;
+  padding: 0.75rem;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Sección de registro */
+.registro-section h2 {
+  color: rosybrown;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.formRegistrarEmpleado {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+.formRegistrarEmpleado input,
+.formRegistrarEmpleado select {
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition:0.3s;
+}
+
+.formRegistrarEmpleado input:focus,
+.formRegistrarEmpleado select:focus {
+  border-color: rosybrown;
+  outline: none;
+}
+
+.generoH {
+  grid-column: 2;
+  text-align: center;
+  color: rosybrown;
+  font-weight: bold;
+  margin: 0.5rem 0;
 }
 
 .genero {
+  grid-column: 2;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: center;
   gap: 1rem;
 }
 
 .genero button {
-  background-color: transparent;
-  border: 2px solid white;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.genero button:hover {
-  background-color: white;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid rosybrown;
+  background: transparent;
   color: rosybrown;
-  font-weight: bold;
-  transform: scale(1.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
 }
 
-.generoH {
-  margin: 10px 0;
+.genero button.active,
+.genero button:hover {
+  background: rosybrown;
   color: white;
-  font-weight: bold;
 }
 
 .input-password {
   position: relative;
-  width: 100%;
 }
 
 .span-eye {
@@ -138,64 +99,39 @@ h1 {
   transform: translateY(-50%);
   cursor: pointer;
   color: #888;
-  font-size: 1.2rem;
-  transition: color 0.3s ease;
 }
 
-.span-eye:hover {
-  color: rosybrown;
-}
-
-/* Responsive: Para dispositivos de ancho max 600px */
-@media (max-width: 600px) {
-  .section-registrar-empleado {
-    max-width: 90%;
-    padding: 1.5rem;
-    min-height: 60vh;
-  }
-
-  .formRegistrarEmpleado {
-    width: 100%;
-    gap: 1rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  input, .select-tienda, button {
-    font-size: 0.9rem;
-  }
-}
-
-/* Sección de registro (para organizar) */
-.registro-section {
-  width: 100%;
-}
-
-.registro-section h2 {
+.btnRegist {
+  grid-column: span 2;
+  padding: 0.75rem;
+  background: rosybrown;
   color: white;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btnRegist:hover:not(:disabled) {
+  background: #a55a5a; /* Tono más oscuro de rosybrown */
+}
+
+.btnRegist:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 /* Sección de lista */
-.lista-section {
-  width: 100%;
-  margin-top: 2rem;
-}
-
 .lista-section h2 {
-  color: white;
+  color: rosybrown;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
 }
 
-/* Lista de empleados */
 .empleados-lista {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
 .empleado-item {
@@ -203,75 +139,58 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border: 1px solid #ddd;
+  background: #f9f9f9;
   border-radius: 10px;
   margin-bottom: 0.5rem;
-  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.empleado-item div:first-child {
-  flex: 1;
-  color: #333;
-}
-
-.empleado-item div:last-child {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* Empleado inactivo */
 .empleado-item.inactivo {
-  background: rgba(255, 0, 0, 0.1);  /* Rojo bajito */
-  opacity: 0.6;  /* Más bajo */
-  border: 1px solid red;
+  background: #ffeaea;
+  border-left: 5px solid #e74c3c;
 }
 
-/* Botones de editar y toggle */
-.btn-edit, .btn-toggle {
+.btn-edit,
+.btn-toggle {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 20px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: all 0.3s;
 }
 
 .btn-edit {
-  background-color: rosybrown;
+  background: rosybrown;
   color: white;
 }
 
 .btn-edit:hover:not(:disabled) {
-  background-color: white;
-  color: rosybrown;
-  transform: scale(1.05);
+  background: #a55a5a;
 }
 
 .btn-edit:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background: #ccc;
 }
 
 .btn-toggle {
-  background-color: #28a745;  /* Verde para activar */
+  background: #28a745;
   color: white;
 }
 
 .btn-toggle:hover {
-  background-color: #218838;
-  transform: scale(1.05);
+  background: #218838;
 }
 
 .empleado-item.inactivo .btn-toggle {
-  background-color: #dc3545;  /* Rojo para desactivar */
+  background: #e74c3c;
 }
 
 .empleado-item.inactivo .btn-toggle:hover {
-  background-color: #c82333;
+  background: #c82333;
 }
 
-/* Modal overlay */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -282,84 +201,82 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
-/* Modal content */
 .modal-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: white;
   padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
   max-width: 500px;
   width: 90%;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h2 {
-  text-align: center;
   color: rosybrown;
+  text-align: center;
   margin-bottom: 1rem;
 }
 
-/* Botones del modal */
 .form-buttons {
   display: flex;
   justify-content: space-between;
   margin-top: 1rem;
 }
 
-.btn-submit {
-  background-color: rosybrown;
+.btn-submit,
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 25px;
-  color: white;
-  padding: 0.8rem 1.5rem;
+  border-radius: 20px;
   font-size: 1rem;
   cursor: pointer;
-  transition: 0.3s ease;
+}
+
+.btn-submit {
+  background: rosybrown;
+  color: white;
 }
 
 .btn-submit:hover {
-  background-color: white;
-  color: rosybrown;
-  transform: scale(1.05);
+  background: #a55a5a;
 }
 
 .btn-cancel {
-  background-color: #ccc;
-  border: none;
-  border-radius: 25px;
+  background: #ccc;
   color: #333;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
 }
 
 .btn-cancel:hover {
-  background-color: #999;
+  background: #999;
 }
 
-/* Responsive para modal */
-@media (max-width: 600px) {
-  .modal-content {
-    padding: 1.5rem;
-    width: 95%;
+.volver-link {
+  text-align: center;
+  margin-top: 1rem;
+  color: rosybrown;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.volver-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-registrar-empleado {
+    margin: 1rem;
+    padding: 1rem;
   }
 
-  .form-buttons {
+  .formRegistrarEmpleado {
+    grid-template-columns: 1fr;
+  }
+
+  .genero {
     flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .btn-submit, .btn-cancel {
-    width: 100%;
+    align-items: center;
   }
 
   .empleado-item {
@@ -367,7 +284,13 @@ h1 {
     align-items: flex-start;
   }
 
-  .empleado-item div:last-child {
-    margin-top: 0.5rem;
+  .form-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
   }
 }
