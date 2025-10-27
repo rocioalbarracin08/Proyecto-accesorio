@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, g
 import jwt
 from datetime import datetime
-from proyecto.server_flask.utils.config import SECRET_KEY
+from server_flask.utils.config import SECRET_KEY
 
 bp = Blueprint('ventas', __name__, url_prefix='/ventas')
 

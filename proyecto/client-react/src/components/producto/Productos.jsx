@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { usePromociones } from "../../contexts/PromocionesContext";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
-import GestionProductos from './GestionProductos';  // Para empleados
+import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import "./producto.css";
 
@@ -27,6 +27,7 @@ export function Productos() {
   const promocionActiva = promociones.find(
     p => (!idCategoria || p.id_categoria == idCategoria) && p.activo && new Date() >= new Date(p.fecha_inicio) && new Date() <= new Date(p.fecha_fin)
   );
+  console.log("UserRole actual:", userRole);  // Verifica en la consola 
 
   const cargarProductos = async () => {
     setLoading(true);

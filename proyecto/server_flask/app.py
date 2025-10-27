@@ -65,7 +65,7 @@ from server_flask.endpoints.empleados import bp as empleados_bp
 from server_flask.endpoints.login_register import bp as usuarios_bp
 from server_flask.endpoints.productos import bp as productos_bp
 from server_flask.endpoints.promociones import bp as promociones_bp
-from proyecto.server_flask.endpoints.inventario import bp as inventario_bp
+from server_flask.endpoints.inventario import bp as inventario_bp
 from server_flask.endpoints.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
 <<<<<<< HEAD
@@ -97,3 +97,6 @@ def create_app(test_config = None):
     return app
 
 app = create_app()
+import logging
+logging.basicConfig(level=logging.DEBUG)
+app.logger.setLevel(logging.DEBUG)

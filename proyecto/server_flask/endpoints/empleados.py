@@ -6,8 +6,8 @@ from flask import make_response
 
 bp = Blueprint('empleados', __name__, url_prefix='/empleados')
 
-from proyecto.server_flask.utils.config import SECRET_KEY
-from proyecto.server_flask.utils.auth import solo_dueno
+from server_flask.utils.config import SECRET_KEY
+from server_flask.utils.auth import solo_dueno
 
 @bp.route('/listar')
 @solo_dueno

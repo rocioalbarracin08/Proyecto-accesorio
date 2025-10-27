@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import './registrarVenta.css';
 
 function RegistrarVenta() {

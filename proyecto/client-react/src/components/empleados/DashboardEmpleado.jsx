@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
-import Productos from "../producto/Productos";  // Componente unificado para productos
+import { Productos } from "../producto/Productos";// Componente unificado para productos
 import RegistrarVenta from "../ventas/RegistrarVenta";  // Para registrar ventas
 import HistorialVentas from '../ventas/HistorialVentas';
 import './dashboardEmpleado.css';  // Estilos
