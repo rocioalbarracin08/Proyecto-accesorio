@@ -16,7 +16,6 @@ export function Factura() {
   const [ciudad, setCiudad] = useState("");
   const [provincia, setProvincia] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
-  const [telefono, setTelefono] = useState("");
 
   useEffect(() => {
     console.log("User from context:", user); 
@@ -36,12 +35,11 @@ export function Factura() {
     if (!email.trim()) return false;
     if (!entrega) return false;
     if (!nombre.trim() || !apellido.trim()) return false;
-    if (!telefono.trim()) return false;
     if (entrega === "envio" && (!direccion.trim() || !ciudad.trim() || !provincia.trim() || !codigoPostal.trim())) {
       return false;
     }
     return true;
-  }, [user, isLogged, email, entrega, nombre, apellido, telefono, direccion, ciudad, provincia, codigoPostal]);
+  }, [user, isLogged, email, entrega, nombre, apellido, direccion, ciudad, provincia, codigoPostal]);
 
   const handleFinalizar = () => {
     if (!user) {
@@ -65,10 +63,7 @@ export function Factura() {
       alert("Por favor complete todos los campos de dirección para envío a domicilio.");
       return;
     }
-    if (!telefono) {
-      alert("Por favor ingrese su teléfono.");
-      return;
-    }
+ 
     
     // Construir payload para enviar al backend
     const payload = {
@@ -77,7 +72,7 @@ export function Factura() {
       mail: email,
       nombre,
       apellido,
-      telefono,
+      
       // Enviamos los datos de dirección sólo si el usuario seleccionó envío
       direccion: entrega === "envio" ? direccion : null,
       ciudad: entrega === "envio" ? ciudad : null,
