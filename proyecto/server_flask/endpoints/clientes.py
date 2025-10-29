@@ -2,8 +2,7 @@ from flask import Blueprint, request, jsonify, g
 
 bp = Blueprint('clientes', __name__, url_prefix='/clientes')
 
-#/clientes devuelve todos, pero /clientes?busqueda=Juan filtra clientes que coincidan.
-@bp.route('/')
+@bp.route('/', methods=['GET'])
 def obtener_clientes():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -11,23 +10,22 @@ def obtener_clientes():
         busqueda = request.args.get('busqueda', '').strip()  # Obtener parámetro 'busqueda' de la URL
         
         if busqueda:
-            # Filtrar por nombre, apellido o email
+            # Filtrar por name, apellido o email (corregido a 'name')
             query = """
-                SELECT id_cliente, nombre, apellido, email 
+                SELECT id_cliente, name, apellido, email 
                 FROM clientes 
-                WHERE nombre LIKE %s OR apellido LIKE %s OR email LIKE %s
+                WHERE name LIKE %s OR apellido LIKE %s OR email LIKE %s
             """
             search_term = f'%{busqueda}%'
             g.db_cursor.execute(query, (search_term, search_term, search_term))
         else:
             # Sin búsqueda, devolver todos
-            g.db_cursor.execute("SELECT id_cliente, nombre, apellido, email FROM clientes")
+            g.db_cursor.execute("SELECT id_cliente, name, apellido, email FROM clientes")
         
         clientes = g.db_cursor.fetchall()
         return jsonify(clientes)
     except Exception as e:
         return jsonify({"error": f"Error al obtener clientes: {e}"}), 500
-
 
 @bp.route("/borrar", methods=['DELETE'])
 def borrar_cliente():
@@ -67,7 +65,7 @@ def modificarCliente():
         idCliente = data.get('id_cliente')
         if not nombre or not apellido or not idCliente:
             return jsonify({"error": "Datos incompletos"}), 400
-        g.db_cursor.execute("UPDATE clientes SET nombre = %s, apellido = %s WHERE id_cliente = %s", (nombre, apellido, idCliente))
+        g.db_cursor.execute("UPDATE clientes SET name = %s, apellido = %s WHERE id_cliente = %s", (nombre, apellido, idCliente))  # Corregido a 'name'
         g.db.commit()
         return jsonify({"mensaje": "Cliente modificado"}), 200
     except Exception as err:
