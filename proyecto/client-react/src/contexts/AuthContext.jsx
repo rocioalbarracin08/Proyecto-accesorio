@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -7,11 +7,13 @@ export function AuthProvider({ children }) {
   const [isLogged, setIsLogged] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [loginTrigger, setLoginTrigger] = useState(0); // Nuevo estado para forzar recarga del useEffect después del login
 
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Se ejecuta al montar y en cambios de ruta
+    // Se ejecuta al montar, en cambios de ruta, y cuando loginTrigger cambia (después del login)
     fetch("http://localhost:5000/usuarios/perfil", {
       method: "GET",
       credentials: "include",
@@ -33,11 +35,9 @@ export function AuthProvider({ children }) {
         else if (data?.id_empleado) setUserRole('empleado');
         else setUserRole('dueño');
 
-        console.log("UserRole cargado:", userRole);  // Log para depurar
-
-        // Redirección automática para empleados (descomentada)
+        // Redirección automática solo para empleados (si no están ya en /dashboard-empleado)
         if (data?.id_empleado && location.pathname !== '/dashboard-empleado') {
-          window.location.href = '/dashboard-empleado';
+          navigate('/dashboard-empleado');
         }
       })
       .catch(() => {
@@ -45,9 +45,19 @@ export function AuthProvider({ children }) {
         setIsOwner(false);
         setUserRole(null);
       });
-  }, [location.pathname]);  // Ejecuta en cambios de ruta
+  }, [loginTrigger]); // Agregado loginTrigger para que se ejecute después del login
+  //location.pathname -> Hacia que cuando se cambiaba de ruta, se vuelva a recargar la direccion al dashboard-empleado si es empleado 
 
-  const login = () => setIsLogged(true);
+  // useEffect separado para loggear cambios en userRole (evita el bug del console.log inmediato)
+  useEffect(() => {
+    console.log("UserRole actualizado:", userRole);
+  }, [userRole]);
+
+  const login = () => {
+    setIsLogged(true);
+    setLoginTrigger(prev => prev + 1); // Incrementa el trigger para forzar el useEffect
+  };
+
   const logout = () => {
     fetch("http://localhost:5000/usuarios/logout", {
       method: "POST",
@@ -57,6 +67,7 @@ export function AuthProvider({ children }) {
       setIsLogged(false);
       setIsOwner(false);
       setUserRole(null);
+      setLoginTrigger(0); // Resetea el trigger al logout
     });
   };
 

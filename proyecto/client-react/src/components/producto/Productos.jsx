@@ -134,7 +134,7 @@ export function Productos() {
             }
 
             return (
-              <div className="producto-item" key={getId(producto)} style={{ position: "relative" }}>
+              <div className="producto-itemP" key={getId(producto)} style={{ position: "relative" }}>
                 {promocionProducto && (
                   <span className="descuento-etiqueta">
                     {promocionProducto.tipo_descuento === "porcentaje"

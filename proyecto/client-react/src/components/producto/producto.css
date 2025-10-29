@@ -7,7 +7,7 @@
 }
 
 /* Estilos para cada item de producto */
-.producto-item {
+.productoP-item {
   background-color: #fff7f7;  
   border-radius: 8px; 
   padding: 15px;  /* Agrega padding para espacio interno */
@@ -21,7 +21,7 @@
 }
 
 /* Estilos para la imagen del producto */
-.producto-item img {
+.producto-itemP img {
   width: 100%;  /* Ocupa todo el ancho */
   height: 150px;  /* Altura fija para uniformidad */
   border-radius: 4px;
@@ -29,7 +29,7 @@
 }
 
 /* Estilos para el título del producto */
-.producto-item h3 {
+.producto-itemP h3 {
   font-size: 1rem; 
   margin: 10px 0;
   color: black;
@@ -49,7 +49,6 @@
   text-align: center;
 }
 
-/* Estilos para el botón de agregar al carrito */
 /* Estilos para el botón de agregar al carrito */
 .agregar-carrito {
   margin-top: 10px;
@@ -86,7 +85,6 @@
   flex-wrap: wrap;
   gap: 10px;
   padding: 20px;
-  background-color: #f9f9f9;  /* Fondo claro */
   border-radius: 8px;
   margin-top: 20px;
   border-top: 1px solid #e0e0e0;  /* Separador visual */

@@ -33,7 +33,8 @@ def crear_promocion():
     fecha_inicio = datos.get("fecha_inicio")
     fecha_fin = datos.get("fecha_fin")
     id_categoria = datos.get("id_categoria")
-    id_metodo_pago = datos.get("id_metodo_pago")  # Nuevo campo
+    id_metodo_pago = datos.get("id_metodo_pago")
+    id_producto = datos.get("id_producto")  # Nuevo campo
     activo = datos.get("activo", True)
     
     if not all([descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin]):
@@ -43,9 +44,9 @@ def crear_promocion():
     
     try:
         g.db_cursor.execute("""
-            INSERT INTO promociones (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, activo)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, activo))
+            INSERT INTO promociones (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, id_producto, activo)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, id_producto, activo))
         g.db.commit()
         return jsonify({"mensaje": "Promoción creada exitosamente"}), 201
     except Exception as err:
@@ -60,13 +61,15 @@ def listar_promociones():
     try:
         activas = request.args.get('activas', 'false').lower() == 'true'
         id_categoria = request.args.get('categoria')
-        id_metodo_pago = request.args.get('metodo_pago')  # Nuevo filtro opcional
+        id_metodo_pago = request.args.get('metodo_pago')
+        id_producto = request.args.get('producto')  # Nuevo filtro opcional
         
         query = """
-            SELECT p.*, c.categoria, mp.name AS metodo_pago, p.img_url 
+            SELECT p.*, c.categoria, mp.name AS metodo_pago, pr.name AS producto
             FROM promociones p
             LEFT JOIN categoria c ON p.id_categoria = c.id_category
             LEFT JOIN metodos_pagos mp ON p.id_metodo_pago = mp.id_metodo_pago
+            LEFT JOIN productos pr ON p.id_producto = pr.id_producto
             WHERE 1=1
         """
         params = []
@@ -78,6 +81,9 @@ def listar_promociones():
         if id_metodo_pago:
             query += " AND p.id_metodo_pago = %s"
             params.append(id_metodo_pago)
+        if id_producto:
+            query += " AND p.id_producto = %s"
+            params.append(id_producto)
         
         g.db_cursor.execute(query, params)
         promociones = g.db_cursor.fetchall()
@@ -92,10 +98,11 @@ def obtener_promocion(id_promocion):
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
         g.db_cursor.execute("""
-            SELECT p.*, c.categoria, mp.name AS metodo_pago
+            SELECT p.*, c.categoria, mp.name AS metodo_pago, pr.name AS producto
             FROM promociones p
             LEFT JOIN categoria c ON p.id_categoria = c.id_category
             LEFT JOIN metodos_pagos mp ON p.id_metodo_pago = mp.id_metodo_pago
+            LEFT JOIN productos pr ON p.id_producto = pr.id_producto
             WHERE p.id_promocion = %s
         """, (id_promocion,))
         promocion = g.db_cursor.fetchone()
@@ -121,14 +128,15 @@ def actualizar_promocion(id_promocion):
     fecha_inicio = datos.get("fecha_inicio")
     fecha_fin = datos.get("fecha_fin")
     id_categoria = datos.get("id_categoria")
-    id_metodo_pago = datos.get("id_metodo_pago")  # Nuevo campo
+    id_metodo_pago = datos.get("id_metodo_pago")
+    id_producto = datos.get("id_producto")  # Nuevo campo
     activo = datos.get("activo")
     
     try:
         g.db_cursor.execute("""
-            UPDATE promociones SET descripcion = %s, descuento = %s, tipo_descuento = %s, fecha_inicio = %s, fecha_fin = %s, id_categoria = %s, id_metodo_pago = %s, activo = %s
+            UPDATE promociones SET descripcion = %s, descuento = %s, tipo_descuento = %s, fecha_inicio = %s, fecha_fin = %s, id_categoria = %s, id_metodo_pago = %s, id_producto = %s, activo = %s
             WHERE id_promocion = %s
-        """, (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, activo, id_promocion))
+        """, (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, id_producto, activo, id_promocion))
         g.db.commit()
         return jsonify({"mensaje": "Promoción actualizada"}), 200
     except Exception as err:

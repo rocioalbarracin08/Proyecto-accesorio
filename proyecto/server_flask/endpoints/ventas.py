@@ -26,6 +26,24 @@ def verificar_usuario():
     except:
         return None, jsonify({"error": "Token inválido"}), 401
 
+# Función auxiliar para calcular descuento aplicable a un producto
+def calcular_descuento(id_producto, id_metodo_pago):
+    g.db_cursor.execute("""
+        SELECT p.descuento, p.tipo_descuento
+        FROM promociones p
+        INNER JOIN productos pr ON (p.id_producto = pr.id_producto OR p.id_categoria = pr.id_categoria)
+        WHERE p.activo = TRUE AND CURDATE() BETWEEN p.fecha_inicio AND p.fecha_fin
+        AND (p.id_metodo_pago IS NULL OR p.id_metodo_pago = %s)
+        AND pr.id_producto = %s
+        ORDER BY p.descuento DESC LIMIT 1  -- Toma la de mayor descuento
+    """, (id_metodo_pago, id_producto))
+    promo = g.db_cursor.fetchone()
+    if promo:
+        descuento = promo['descuento']
+        tipo = promo['tipo_descuento']
+        return descuento, tipo
+    return 0, None
+
 @bp.route('/registrar_venta', methods=['POST'])
 def registrar_venta():
     if g.db_cursor is None:
@@ -72,7 +90,7 @@ def registrar_venta():
         if es_venta_fisica:
             id_tienda_para_stock = id_tienda_empleado  # Tienda del empleado
         elif es_venta_online:
-            id_tienda_para_stock = 1  # Tienda default para online (cambia si necesitas otra)
+            id_tienda_para_stock = 1  # Tienda 1 para online
         
         # Obtener datos de la tienda (solo para física)
         if es_venta_fisica:
@@ -88,7 +106,7 @@ def registrar_venta():
         else:
             tienda = {'nombre': 'Online', 'direccion': 'N/A', 'telefono': 'N/A'}
         
-        # Calcular total y validar productos
+        # Calcular total y validar productos (MODIFICADO PARA APLICAR DESCUENTOS)
         costo_total = 0
         detalles_validos = []
         for det in detalles:
@@ -103,13 +121,21 @@ def registrar_venta():
                 return jsonify({"error": f"Producto {id_prod} no encontrado"}), 404
             
             precio_unitario = prod['precio']
-            subtotal = precio_unitario * cantidad
+            descuento, tipo_descuento = calcular_descuento(id_prod, metodo_pago)  # Aplicar descuento
+            if tipo_descuento == 'porcentaje':
+                precio_con_descuento = precio_unitario * (1 - descuento)
+            elif tipo_descuento == 'fijo':
+                precio_con_descuento = max(0, precio_unitario - descuento)
+            else:
+                precio_con_descuento = precio_unitario
+            
+            subtotal = precio_con_descuento * cantidad
             costo_total += subtotal
             detalles_validos.append({
                 'id_producto': id_prod,
                 'nombre_producto': prod['name'],
                 'cantidad': cantidad,
-                'precio_unitario': precio_unitario
+                'precio_unitario': precio_con_descuento  # Precio con descuento aplicado
             })
         
         # Restar stock (para física y online)

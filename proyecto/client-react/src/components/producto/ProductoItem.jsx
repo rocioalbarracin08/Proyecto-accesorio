@@ -45,17 +45,15 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
         )}
       </p>
 
-      {userRole === "cliente" && (
-        <button
-          className="agregar-carrito"
-          onClick={() => {
-            addItem({ ...producto, precio: precioFinal });
-            openCarrito();
-          }}
-        >
-          Agregar al Carrito
-        </button>
-      )}
+      <button
+        className="agregar-carrito"
+        onClick={() => {
+          addItem({ ...producto, precio: precioFinal });
+          openCarrito();
+        }}
+      >
+        Agregar al Carrito
+      </button>
 
       {userRole === "empleado" && (
         <>

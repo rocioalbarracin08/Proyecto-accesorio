@@ -181,7 +181,7 @@ def desactivar_producto(id_producto):
         return jsonify({"error": f"Error al desactivar producto: {e}"}), 500
 
 # ACTUALIZAR STOCK (solo empleados)
-@bp.route("/actualizar_stock/<int:id_producto>", methods=["PATCH"])
+@bp.route("/actualizar_stock/<int:id_producto>", methods=["PATCH"])# PATCH porque no se debe insertar lo mismo en la tabla
 @solo_empleado
 def actualizar_stock(id_producto):
     if g.db_cursor is None:
@@ -189,12 +189,22 @@ def actualizar_stock(id_producto):
     try:
         datos = request.get_json()
         stock = datos.get("stock")
-        id_tienda = datos.get("id_tienda", 1)
+        id_tienda = datos.get("id_tienda", 1)  # Default a tienda online
         if stock is None:
             return jsonify({"error": "Stock requerido"}), 400
+        
+        # Primero, intenta actualizar
         g.db_cursor.execute("""
             UPDATE inventario SET stock_actual = %s WHERE id_producto = %s AND id_tienda = %s
         """, (stock, id_producto, id_tienda))
+        
+        if g.db_cursor.rowcount == 0:
+            # Si no se actualizó nada, inserta una nueva fila
+            g.db_cursor.execute("""
+                INSERT INTO inventario (id_producto, id_tienda, stock_actual, stock_minimo) 
+                VALUES (%s, %s, %s, 3)
+            """, (id_producto, id_tienda, stock))
+        
         g.db.commit()
         return jsonify({"mensaje": "Stock actualizado"}), 200
     except Exception as e:

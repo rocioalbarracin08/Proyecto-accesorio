@@ -14,15 +14,13 @@ export function Login(){
 
     const handleClick = async (event) => {
         event.preventDefault();
-
         if (email === "" || contraseña === "") {
             setError(true);
-            setLoginError(""); // Limpiar el error si los campos están vacíos
+            setLoginError("");
             return;
         }
         setError(false);
-        setLoginError(""); // Limpiar cualquier error anterior
-
+        setLoginError("");
         try {
             const response = await fetch("http://localhost:5000/usuarios/login", {
                 method: "POST",
@@ -33,11 +31,10 @@ export function Login(){
                 }),
                 credentials: "include"
             });
-
             if (response.ok) {
-                navigate("/");
-                login(); // Loguea al usuario
-            } else {
+                login(); // Llama a login() del contexto (ahora incrementa el trigger)
+                navigate("/"); // Navega a home (el useEffect se ejecutará por el trigger y redirigirá si es empleado)
+                        } else {
                 const data = await response.json();
                 if (data && data.error === "La contraseña es incorrecta") {
                     setLoginError("Contraseña incorrecta. Intenta nuevamente.");
