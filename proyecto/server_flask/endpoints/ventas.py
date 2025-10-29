@@ -84,7 +84,6 @@ def registrar_venta():
                 g.db_cursor.execute("SELECT id_cliente FROM clientes WHERE id_cliente = %s", (id_cliente,))
                 if not g.db_cursor.fetchone():
                     return jsonify({"error": "Cliente no encontrado"}), 404
-            # id_cliente puede ser NULL
         
         # Determinar id_tienda para restar stock y almacenar en factura
         if es_venta_fisica:
@@ -122,8 +121,8 @@ def registrar_venta():
                 'nombre_producto': prod['name'],
                 'cantidad': cantidad,
                 'precio_unitario': precio_con_descuento,  # Precio con descuento aplicado
-                'subtotal': subtotal  # Agregar esto
-            })  # <-- COMA AGREGADA AQUÍ
+                'subtotal': subtotal 
+            })
         
         # Restar stock (para física y online)
         for det in detalles_validos:
@@ -155,7 +154,7 @@ def registrar_venta():
         g.db.rollback()
         return jsonify({"error": f"Error al registrar venta: {err}"}), 500
 
-# Listar ventas del empleado (paginado) - ACTUALIZADO PARA HACER JOIN CON TIENDAS
+# Listar ventas del empleado (paginado) - ACTUALIZADO PARA HACER JOIN CON TIENDAS Y MÉTODOS DE PAGO
 @bp.route('/', methods=['GET'])
 def listar_ventas():
     if g.db_cursor is None:
@@ -177,9 +176,15 @@ def listar_ventas():
         return jsonify({"error": "Token inválido"}), 401
     
     try:
-        # Paginación
-        page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('per_page', 10))
+        # Paginación con manejo de error
+        page_str = request.args.get('page', '1')
+        per_page_str = request.args.get('per_page', '10')
+        try:
+            page = int(page_str)
+            per_page = int(per_page_str)
+        except ValueError:
+            return jsonify({"error": "Parámetros de paginación inválidos"}), 400
+        
         offset = (page - 1) * per_page
         
         # Total de ventas
@@ -187,12 +192,13 @@ def listar_ventas():
         total_result = g.db_cursor.fetchone()
         total_ventas = total_result['total'] if total_result else 0
         
-        # Ventas paginadas con detalles - AHORA CON JOIN PARA OBTENER NOMBRE DE TIENDA
+        # Ventas paginadas con detalles - AHORA CON LEFT JOIN PARA EVITAR ERRORES SI FALTA TIENDA O MÉTODO
         g.db_cursor.execute("""
-            SELECT f.id_factura, f.fecha, f.hora, t.nombre AS nombre_tienda, f.id_metodo_pago, f.costo_total,  # Cambiado a id_metodo_pago
+            SELECT f.id_factura, f.fecha, f.hora, t.nombre AS nombre_tienda, mp.name AS metodo_pago, f.costo_total,
                    GROUP_CONCAT(CONCAT(df.nombre_producto, ' (', df.cantidad, ' x ', df.precio_unitario, ')') SEPARATOR '; ') AS productos
             FROM factura f
             LEFT JOIN tiendas t ON f.id_tienda = t.id_tienda
+            LEFT JOIN metodos_pagos mp ON f.id_metodo_pago = mp.id_metodo_pago
             LEFT JOIN detalle_factura df ON f.id_factura = df.id_factura
             WHERE f.id_empleado = %s
             GROUP BY f.id_factura

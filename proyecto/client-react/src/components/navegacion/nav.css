@@ -9,13 +9,16 @@
   padding: 10px 20px;  /* Agregué padding para más espacio */
 }
 
-/* Opacidad cuando la búsqueda está activa */
+/* Opacidad cuando la búsqueda está activa: Cambié a 0.95 para que sea muy poco opaco */
 .encabezado.search-active {
-  opacity: 0.85;
+  opacity: 0.95;
   pointer-events: none;
 }
+.buscador-icono{
+  padding: 0%;
+}
 
-/* Excepción: Mantén interacciones en el buscador */
+/*interacciones en el buscador */
 .encabezado.search-active .buscador-container {
   pointer-events: auto;
 }
@@ -146,48 +149,44 @@
   align-items: center;
 }
 
-/* Ícono del buscador */
+/* Wrapper del buscador: Ancho fijo para evitar mover el header */
+.buscador-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 40px;  /* Ancho mínimo: solo el ícono */
+  transition: 0.3s ease;
+  overflow: hidden;  /* Evita que el contenido se salga */
+  margin: 0%;
+  padding: 0%;
+}
+
+/* Cuando abierto, expande el ancho */
+.buscador-wrapper.open {
+  width: 300px;  /* Ancho total cuando abierto */
+}
+
+/* Ícono del buscador: Oculto cuando abierto */
 .buscador-icono {
   background: none;
   border: none;
   cursor: pointer;
   padding: 5px;
-  transition: transform 0.2s ease;
+  transition: 0.2s ease;
+  z-index: 2;
+  flex-shrink: 0;  /* No se encoja */
 }
 .buscador-icono:hover {
   transform: scale(1.1);
 }
-
-/* Formulario del buscador: Ahora fixed para superponerse completamente */
-.buscador-form {
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: slideDown 0.3s ease;
+.buscador-wrapper.open .buscador-icono {
+  opacity: 0;  /* Desaparece cuando abierto */
 }
 
-/* Animación para el buscador */
-@keyframes slideDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-.buscador-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px;
-}
-
+/* Input del buscador: Inicialmente oculto, se expande al abrir */
 .buscador {
-  flex: 1;
+  width: 0;
+  opacity: 0;
   background-color: rgb(250, 219, 219);
   border: none;
   color: black;
@@ -195,8 +194,19 @@
   padding: 0 8px;
   border-radius: 6px;
   outline: none;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  position: absolute;
+  left: 40px;  /* Empieza después del ícono */
+  z-index: 1;
 }
 
+/* Cuando abierto, expande el input */
+.buscador-wrapper.open .buscador {
+  width: 240px;  /* Ancho del input: deja espacio para cerrar */
+  opacity: 1;
+}
+
+/* Botón de cerrar */
 .buscador-cerrar {
   background: none;
   border: none;
@@ -204,17 +214,30 @@
   cursor: pointer;
   color: #a05252;
   transition: color 0.2s;
+  margin-left: 5px;
+  z-index: 2;
+  flex-shrink: 0;
 }
 .buscador-cerrar:hover {
   color: black;
 }
 
+/* Dropdown del buscador */
 .buscador-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;  /* Ancho del dropdown */
   list-style: none;
   padding: 0;
   margin: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-height: 200px;
   overflow-y: auto;
+  z-index: 1000;
 }
 
 .buscador-item {
@@ -241,9 +264,17 @@
 }
 
 .buscador-loading {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;
   padding: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   text-align: center;
   color: #a05252;
+  z-index: 1000;
 }
 
 /* Responsive: Para móviles y tablets */
@@ -262,14 +293,16 @@
     display: none;
   }
 
-  .buscador-form {
-    width: 90%;
-    max-width: 300px;
-    top: 60px;
+  .buscador-wrapper.open {
+    width: 250px;  /* Menos ancho en móviles */
   }
 
-  .buscador {
-    width: 100%;
+  .buscador-wrapper.open .buscador {
+    width: 190px;
+  }
+
+  .buscador-dropdown, .buscador-loading {
+    width: 250px;
   }
 
   .iconosUser {
@@ -299,17 +332,16 @@
 }
 
 @media (max-width: 480px) {
-  .buscador-form {
-    width: 95%;
-    top: 55px;
+  .buscador-wrapper.open {
+    width: 200px;
   }
 
-  .buscador-header {
-    padding: 6px;
+  .buscador-wrapper.open .buscador {
+    width: 140px;
   }
 
-  .buscador {
-    height: 28px;
+  .buscador-dropdown, .buscador-loading {
+    width: 200px;
   }
 
   .buscador-img {

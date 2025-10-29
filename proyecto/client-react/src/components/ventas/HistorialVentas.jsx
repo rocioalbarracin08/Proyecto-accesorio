@@ -22,7 +22,7 @@ export default function HistorialVentas() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`http://localhost:5000/ventas/?page=${page}&per_page=10`, {
+      const response = await fetch(`http://localhost:5000/ventas/?page=${page}&per_page=2`, {
         credentials: "include"
       });
       if (!response.ok) throw new Error("Error al cargar ventas");
