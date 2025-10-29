@@ -9,16 +9,24 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
     id_categoria: '',
     precio: '',
     imagen_url: '',
-    stock: 0
+    id_tienda: 1  // Default a 1 (online), pero se actualiza con el perfil
   });
   const [categorias, setCategorias] = useState([]);
 
-  // Carga categorías al montar
+  // Carga categorías y id_tienda del perfil al montar
   useEffect(() => {
     fetch('http://localhost:5000/categoria/', { credentials: 'include' })
       .then(res => res.json())
       .then(data => setCategorias(data || []))
       .catch(err => console.error('Error cargando categorías:', err));
+
+    // Obtener id_tienda del perfil (para empleados)
+    fetch('http://localhost:5000/usuarios/perfil', { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.id_tienda) setForm(prev => ({ ...prev, id_tienda: data.id_tienda }));
+      })
+      .catch(err => console.error('Error obteniendo perfil:', err));
   }, []);
 
   // Si hay producto para editar, llena el form
@@ -29,10 +37,10 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
         id_categoria: productoEditar.id_categoria || '',
         precio: productoEditar.precio || '',
         imagen_url: productoEditar.imagen_url || '',
-        stock: productoEditar.stock || 0
+        id_tienda: productoEditar.id_tienda || form.id_tienda  // Mantén el id_tienda actual
       });
     }
-  }, [productoEditar]);
+  }, [productoEditar, form.id_tienda]);
 
   if (userRole !== 'empleado') return null;
 
@@ -48,17 +56,18 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
         method,
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(form) 
+        body: JSON.stringify(form)  // Ahora incluye id_tienda
       });
       if (response.ok) {
         onSave();
         onClose();
       } else {
-        alert('Error al guardar producto');
+        const errorData = await response.json();
+        alert(`Error al guardar producto: ${errorData.error || 'Desconocido'}`);
       }
     } catch (err) {
       console.error('Error:', err);
-      alert('Error al guardar');
+      alert('Error de conexión al guardar');
     }
   };
 
@@ -108,13 +117,6 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
             />
           </label>
           <label>
-            Stock:
-            <input 
-              type="number" 
-              value={form.stock} 
-              onChange={(e) => setForm({...form, stock: e.target.value})} 
-              required 
-            />
           </label>
           <div className="modal-buttons">
             <button type="submit">Guardar</button>

@@ -6,7 +6,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #fff7f7, #f8d7da);  /* Gradiente rosado claro */
   padding: 20px;
-  animation: fadeInPage 0.5s ease;
+  animation: 0.5s ease;
 }
 
 /* Animación de entrada */
@@ -146,7 +146,7 @@
 
 /* Sección de productos */
 .productos-seccion {
-  margin-top: 20px;
+  margin-top: 1rem;
 }
 
 .productos-seccion h3 {
@@ -157,29 +157,73 @@
 
 .producto-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  border: 1px solid #ecf0f1;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  padding: 0.5rem; /* Reduje padding para menos espacio */
+  margin-bottom: 0.5rem; /* Reduje margen entre items para compactar */
   background: #f9f9f9;
-  transition: 0.3s ease;
+  border-radius: 10px; /* Bordes redondeados para look más lindo */
+  border: 1px solid #ddd;
+  transition: 0.3s;
+  height: auto;
 }
 
 .producto-item:hover {
-  background: #fff7f7;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #ffeaea; /* Hover sutil con tono rosado de la paleta */
+  border-color: rosybrown;
+}
+.producto-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* Espacio compacto entre líneas */
 }
 
 .producto-item input {
-  width: 80px;
-  margin-left: 10px;
-  padding: 8px;
-  border-radius: 5px;
+  width: 70px; /* Hice el input más pequeño para alineación horizontal */
+  padding: 0.25rem;
   border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  margin-left: 0.5rem;
 }
 
+.producto-item input:focus {
+  border-color: rosybrown;
+  outline: none;
+}
+.producto-item input:disabled {
+  background: #eee;
+  cursor: not-allowed;
+}
+
+.productos-seccion h3 {
+  color: rosybrown;
+  margin-bottom: 0.5rem; /* Reduje margen inferior para compactar */
+}
+.producto-nombre {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9rem; /* Más pequeño para compactar */
+}
+.producto-precio {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 0.5rem;
+}
+.precio-descuento {
+  color: red;
+  font-weight: bold;
+}
+.producto-stock {
+  font-size: 0.8rem;
+  color: rosybrown;
+}
 /* Total de la venta */
 .venta-total {
   text-align: center;
@@ -217,6 +261,36 @@
   box-shadow: 0 6px 15px rgba(188, 143, 143, 0.5);
 }
 
+.productos-agregados {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+.productos-agregados ul {
+  list-style: none;
+  padding: 0;
+}
+.productos-agregados li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.productos-agregados button {
+  background: rosybrown;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+.productos-agregados button:hover {
+  background: #a55a5a;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .venta-content {
@@ -233,6 +307,6 @@
   .producto-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 0.5rem;
   }
 }

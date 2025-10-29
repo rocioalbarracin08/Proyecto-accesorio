@@ -116,8 +116,13 @@ def perfil():
     try:
         data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         user_id = data['id_usuario']
-        # Buscar datos completos del usuario
-        g.db_cursor.execute("SELECT nombre, apellido, genero, email FROM usuarios WHERE id_usuario = %s", (user_id,))
+        # Buscar datos completos del usuario, incluyendo id_tienda si es empleado
+        g.db_cursor.execute("""
+            SELECT u.nombre, u.apellido, u.genero, u.email, u.id_cliente, u.id_empleado, e.id_tienda 
+            FROM usuarios u 
+            LEFT JOIN empleados e ON u.id_empleado = e.id_empleado 
+            WHERE u.id_usuario = %s
+        """, (user_id,))
         user = g.db_cursor.fetchone()
         if not user:
             return jsonify({"error": "Usuario no encontrado"}), 404

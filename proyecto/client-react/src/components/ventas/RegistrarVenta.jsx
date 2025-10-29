@@ -5,6 +5,7 @@ import './registrarVenta.css';
 function RegistrarVenta() {
   const { isLogged, userRole } = useAuthContext();
   const [productos, setProductos] = useState([]);
+  const [metodosPago, setMetodosPago] = useState([]);  // Nuevo: métodos de pago
   const [clientes, setClientes] = useState([]);
   const [venta, setVenta] = useState({
     id_cliente: null,
@@ -15,23 +16,38 @@ function RegistrarVenta() {
   const [clienteEncontrado, setClienteEncontrado] = useState(null);
   const [mensaje, setMensaje] = useState("");
 
-  // Calcular total dinámico
+  // Función auxiliar para calcular descuento (MOVIDA ANTES del cálculo del total para evitar error de inicialización)
+  const calcularDescuento = (producto) => {
+    // Simular lógica de descuento (puedes hacer fetch a /promociones/ si quieres más precisión)
+    // Por simplicidad, asumimos descuento si hay promoción activa para la categoría
+    // En producción, integra con el backend
+    return 0;  // Cambia a lógica real si tienes promociones
+  };
+
+  // Calcular total dinámico con descuentos aplicados (AHORA después de declarar calcularDescuento)
   const total = venta.detalles.reduce((sum, det) => {
     const prod = productos.find(p => p.id_producto === det.id_producto);
-    return sum + (prod ? prod.precio * det.cantidad : 0);
+    if (!prod) return sum;
+    const descuento = calcularDescuento(prod);  // Ahora funciona sin error
+    const precioFinal = prod.precio * (1 - descuento);
+    return sum + (precioFinal * det.cantidad);
   }, 0);
 
   useEffect(() => {
     if (!isLogged || userRole !== 'empleado') {
       window.location.href = '/login';
+    } else {
+      // Cargar productos con stock
+      fetch("http://localhost:5000/productos/mostrar?page=1&per_page=100", { credentials: "include" })
+        .then(res => res.json())
+        .then(data => setProductos(data.productos || []));
+      
+      // Cargar métodos de pago
+      fetch("http://localhost:5000/metodos_pagos/", { credentials: "include" })
+        .then(res => res.json())
+        .then(data => setMetodosPago(data || []));
     }
   }, [isLogged, userRole]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/productos/mostrar?page=1&per_page=100")
-      .then(res => res.json())
-      .then(data => setProductos(data.productos || []));
-  }, []);
 
   useEffect(() => {
     if (busquedaCliente.trim().length > 2) {
@@ -57,11 +73,19 @@ function RegistrarVenta() {
     setClientes([]);
   };
 
+  // MODIFICADO: Ahora remueve si cantidad <= 0 para evitar bugs al disminuir
   const agregarProducto = (id_producto, cantidad) => {
-    if (cantidad > 0) {
+    const cant = parseInt(cantidad) || 0;
+    if (cant > 0) {
       setVenta(prev => ({
         ...prev,
-        detalles: [...prev.detalles.filter(d => d.id_producto !== parseInt(id_producto)), { id_producto: parseInt(id_producto), cantidad: parseInt(cantidad) }]
+        detalles: [...prev.detalles.filter(d => d.id_producto !== parseInt(id_producto)), { id_producto: parseInt(id_producto), cantidad: cant }]
+      }));
+    } else {
+      // Remueve si cantidad es 0 o negativa
+      setVenta(prev => ({
+        ...prev,
+        detalles: prev.detalles.filter(d => d.id_producto !== parseInt(id_producto))
       }));
     }
   };
@@ -95,7 +119,7 @@ function RegistrarVenta() {
   return (
     <div className="registrar-venta-container">
       <div className="venta-content">
-        <h2>Registrar Venta (Física)</h2>
+        <h2>Registrar Venta</h2>
         {mensaje && (
           <div className={`venta-mensaje ${mensaje.type}`}>
             {mensaje.text}
@@ -127,32 +151,58 @@ function RegistrarVenta() {
             <label>Método de Pago:</label>
             <select value={venta.metodo_pago} onChange={e => setVenta({...venta, metodo_pago: e.target.value})} required>
               <option value="">Seleccionar</option>
-              <option value="efectivo">Efectivo</option>
-              <option value="tarjeta">Tarjeta</option>
+              {metodosPago.map(mp => (
+                <option key={mp.id_metodo_pago} value={mp.id_metodo_pago}>
+                  {mp.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="productos-seccion">
             <h3>Productos</h3>
-            {productos.map(p => (
-              <div key={p.id_producto} className="producto-item">
-                <span>{p.name} - ${p.precio}</span>
-                <input
-                  type="number"
-                  min="1"
-                  placeholder="Cant."
-                  onChange={e => agregarProducto(p.id_producto, e.target.value)}
-                />
-              </div>
-            ))}
+            {productos.map(p => {
+              const descuento = calcularDescuento(p);
+              const precioFinal = p.precio * (1 - descuento);
+              const stock = p.stock || 0;  // Asume que viene de la query (agrega LEFT JOIN inventario en backend si no)
+              return (
+                <div key={p.id_producto} className="producto-item">
+                  <div className="producto-info">
+                    <span className="producto-nombre">{p.name}</span>
+                    <span className="producto-precio">
+                      {descuento > 0 ? (
+                        <>
+                          <span className="precio-original">${p.precio.toFixed(2)}</span>
+                          <span className="precio-descuento">${precioFinal.toFixed(2)} ({(descuento * 100).toFixed(0)}% off)</span>
+                        </>
+                      ) : (
+                        `$${p.precio.toFixed(2)}`
+                      )}
+                    </span>
+                    <span className="producto-stock">Stock: {stock}</span>
+                  </div>
+                  <input
+                    type="number"
+                    min="0"  // Permite 0 para remover
+                    max={stock}
+                    placeholder="Cant."
+                    onChange={e => agregarProducto(p.id_producto, e.target.value)}
+                    disabled={stock === 0}
+                  />
+                </div>
+              );
+            })}
             {venta.detalles.length > 0 && (
-              <div>
+              <div className="productos-agregados">
                 <h4>Productos Agregados:</h4>
                 <ul>
                   {venta.detalles.map(d => {
                     const prod = productos.find(p => p.id_producto === d.id_producto);
+                    if (!prod) return null;
+                    const descuento = calcularDescuento(prod);
+                    const precioFinal = prod.precio * (1 - descuento);
                     return (
                       <li key={d.id_producto}>
-                        {prod?.name} x {d.cantidad} = ${prod ? prod.precio * d.cantidad : 0}
+                        {prod.name} x {d.cantidad} = ${precioFinal.toFixed(2)}
                         <button onClick={() => removerProducto(d.id_producto)}>Remover</button>
                       </li>
                     );

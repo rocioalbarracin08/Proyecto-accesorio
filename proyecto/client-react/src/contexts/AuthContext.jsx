@@ -1,70 +1,74 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [isLogged, setIsLogged] = useState(false);  // Estado: ¿Usuario logueado?
-  const [isOwner, setIsOwner] = useState(false);    // Estado: ¿Es dueño?
-  const [userRole, setUserRole] = useState(null);   // Estado: Rol ('cliente', 'empleado', 'dueño')
+  const [isLogged, setIsLogged] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [loginTrigger, setLoginTrigger] = useState(0); // Nuevo estado para forzar recarga del useEffect después del login
 
-  //utilizar el authcontext para utilizar los datos del cliente en cualquier pagina, para no crear el get devuelta
-  
-  const location = useLocation();  // Detecta cambios de página
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Se ejecuta al cambiar de página para mantener estados actualizados
+    // Se ejecuta al montar, en cambios de ruta, y cuando loginTrigger cambia (después del login)
     fetch("http://localhost:5000/usuarios/perfil", {
       method: "GET",
-      credentials: "include",  // Envía cookies con token
+      credentials: "include",
     })
       .then((res) => {
-        setIsLogged(res.ok);  // Actualiza si está logueado
+        setIsLogged(res.ok);
         if (res.ok) {
-          // Si logueado, verifica si es dueño
           return fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" });
         }
       })
       .then((res) => res ? res.json() : null)
       .then((data) => {
         setIsOwner(data?.es_dueno || false);
-        // Obtiene rol del perfil
         return fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" });
       })
       .then((res) => res ? res.json() : null)
       .then((data) => {
-        // Deduce rol basado en IDs
         if (data?.id_cliente) setUserRole('cliente');
         else if (data?.id_empleado) setUserRole('empleado');
         else setUserRole('dueño');
 
-        // Redirección automática para empleados
-        if (data?.id_empleado) {
-          window.location.href = '/dashboard-empleado';
+        // Redirección automática solo para empleados (si no están ya en /dashboard-empleado)
+        if (data?.id_empleado && location.pathname !== '/dashboard-empleado') {
+          navigate('/dashboard-empleado');
         }
       })
       .catch(() => {
-        // Resetea si hay error (e.g., token expirado)
         setIsLogged(false);
         setIsOwner(false);
         setUserRole(null);
       });
-  }, [location]);  // Dependencia: se ejecuta al cambiar location
+  }, [loginTrigger]); // Agregado loginTrigger para que se ejecute después del login
+  //location.pathname -> Hacia que cuando se cambiaba de ruta, se vuelva a recargar la direccion al dashboard-empleado si es empleado 
 
-  // Función para marcar logueado
-  const login = () => setIsLogged(true);  
+  // useEffect separado para loggear cambios en userRole (evita el bug del console.log inmediato)
+  useEffect(() => {
+    console.log("UserRole actualizado:", userRole);
+  }, [userRole]);
 
-  // Función para marcar no logueado y resetear
-  const logout = () => {  
+  const login = () => {
+    setIsLogged(true);
+    setLoginTrigger(prev => prev + 1); // Incrementa el trigger para forzar el useEffect
+  };
+
+  const logout = () => {
     fetch("http://localhost:5000/usuarios/logout", {
-    method: "POST",
-    credentials: "include",
+      method: "POST",
+      credentials: "include",
     })
     .finally(() => {
       setIsLogged(false);
       setIsOwner(false);
       setUserRole(null);
-    });                 
+      setLoginTrigger(0); // Resetea el trigger al logout
+    });
   };
 
   return (
@@ -74,7 +78,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Hook personalizado para acceder a los valores del contexto
 export function useAuthContext() {
   return useContext(AuthContext);
 }

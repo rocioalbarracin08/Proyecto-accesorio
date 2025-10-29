@@ -7,7 +7,7 @@
 }
 
 /* Estilos para cada item de producto */
-.producto-item {
+.productoP-item {
   background-color: #fff7f7;  
   border-radius: 8px; 
   padding: 15px;  /* Agrega padding para espacio interno */
@@ -15,13 +15,13 @@
   flex-direction: column;  /* Columna: imagen arriba, texto abajo */
   align-items: center;  /* Centra horizontalmente */
   justify-content: space-between;  /* Distribuye espacio */
-  height: 300px;  /* Altura fija para uniformidad (ajusta según necesites) */
+  min-height: 300px;  /* Cambia a min-height para permitir crecimiento si el contenido es largo */
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* Sombra sutil */
   transition: 0.3s ease;
 }
 
 /* Estilos para la imagen del producto */
-.producto-item img {
+.producto-itemP img {
   width: 100%;  /* Ocupa todo el ancho */
   height: 150px;  /* Altura fija para uniformidad */
   border-radius: 4px;
@@ -29,14 +29,16 @@
 }
 
 /* Estilos para el título del producto */
-.producto-item h3 {
+.producto-itemP h3 {
   font-size: 1rem; 
   margin: 10px 0;
   color: black;
   text-align: center;  /* Centra texto */
   overflow: hidden;  /* Oculta texto largo */
   text-overflow: ellipsis;  /* Agrega "..." si es largo */
-  white-space: nowrap;  /* Evita saltos de línea */
+  /* Quita white-space: nowrap para permitir saltos de línea */
+  word-wrap: break-word;  /* Permite romper palabras largas */
+  line-height: 1.2;  /* Mejora legibilidad */
 }
 
 /* Estilos para el precio del producto */
@@ -47,7 +49,6 @@
   text-align: center;
 }
 
-/* Estilos para el botón de agregar al carrito */
 /* Estilos para el botón de agregar al carrito */
 .agregar-carrito {
   margin-top: 10px;
@@ -73,6 +74,7 @@
 .tituloProducts {
   margin-top: 20px;
   color: #333;
+  text-transform: uppercase; /*Hacer que todo se vea en mayuscula*/
 }
 
 /* Paginación */
@@ -83,7 +85,6 @@
   flex-wrap: wrap;
   gap: 10px;
   padding: 20px;
-  background-color: #f9f9f9;  /* Fondo claro */
   border-radius: 8px;
   margin-top: 20px;
   border-top: 1px solid #e0e0e0;  /* Separador visual */

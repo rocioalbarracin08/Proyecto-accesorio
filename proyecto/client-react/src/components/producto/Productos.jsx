@@ -23,10 +23,6 @@ export function Productos() {
   const [showModal, setShowModal] = useState(false);
   const [productoEditar, setProductoEditar] = useState(null);
 
-  // Promoción activa (para la categoría actual o general)
-  const promocionActiva = promociones.find(
-    p => (!idCategoria || p.id_categoria == idCategoria) && p.activo && new Date() >= new Date(p.fecha_inicio) && new Date() <= new Date(p.fecha_fin)
-  );
   console.log("UserRole actual:", userRole);  // Verifica en la consola 
 
   const cargarProductos = async () => {
@@ -44,7 +40,7 @@ export function Productos() {
       if (idCategoria && data.productos && data.productos.length > 0) {
         setCategoriaNombre(data.productos[0].categoria || "Categoría");
       } else {
-        setCategoriaNombre("Todos los Productos");
+        setCategoriaNombre("Productos");
       }
     } catch (err) {
       console.error("Error cargando productos:", err);
@@ -55,7 +51,7 @@ export function Productos() {
 
   useEffect(() => {
     cargarProductos();
-  }, [idCategoria, page, promociones]);
+  }, [idCategoria, page, promociones]);  // promociones incluido para recargar si cambia
 
   if (loading) return <div className="producto-grid">Cargando productos...</div>;
 
@@ -105,47 +101,45 @@ export function Productos() {
     cargarProductos();
   };
 
+  // Función auxiliar para encontrar la promoción activa de un producto
+  const getPromocionForProducto = (producto) => {
+    if (!promociones || !producto.id_categoria) return null;
+    return promociones.find(
+      p => p.id_categoria == producto.id_categoria &&  // Compara con el id_categoria del producto
+           p.activo &&
+           new Date() >= new Date(p.fecha_inicio) &&
+           new Date() <= new Date(p.fecha_fin)
+    );
+  };
+
   return (
     <div className="productos-page">
       <h2 className="tituloProducts">{categoriaNombre}</h2>
-
-      {/* Banner de promoción (si aplica) */}
-      {promocionActiva && (
-        <div className="promocion-banner">
-          <h3>¡Promoción Especial!</h3>
-          <p>
-            {promocionActiva.descripcion} - Descuento:{" "}
-            {promocionActiva.tipo_descuento === "porcentaje"
-              ? `${promocionActiva.descuento * 100}% OFF`
-              : `$${promocionActiva.descuento} OFF`}
-          </p>
-          <p>Válido hasta: {new Date(promocionActiva.fecha_fin).toLocaleDateString()}</p>
-        </div>
-      )}
 
       <div className="producto-grid">
         {productos.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
           productos.map((producto) => {
+            const promocionProducto = getPromocionForProducto(producto);  // Promoción específica del producto
             let precioFinal = producto.precio;
             let precioOriginal = producto.precio;
-            if (promocionActiva) {
-              if (promocionActiva.tipo_descuento === "porcentaje") {
-                precioFinal = producto.precio * (1 - promocionActiva.descuento);
+            if (promocionProducto) {
+              if (promocionProducto.tipo_descuento === "porcentaje") {
+                precioFinal = producto.precio * (1 - promocionProducto.descuento);
               } else {
-                precioFinal = producto.precio - promocionActiva.descuento;
+                precioFinal = producto.precio - promocionProducto.descuento;
               }
               precioFinal = Math.max(precioFinal, 0);  // Evita negativos
             }
 
             return (
-              <div className="producto-item" key={getId(producto)} style={{ position: "relative" }}>
-                {promocionActiva && (
+              <div className="producto-itemP" key={getId(producto)} style={{ position: "relative" }}>
+                {promocionProducto && (
                   <span className="descuento-etiqueta">
-                    {promocionActiva.tipo_descuento === "porcentaje"
-                      ? `${promocionActiva.descuento * 100}% OFF`
-                      : `$${promocionActiva.descuento} OFF`}
+                    {promocionProducto.tipo_descuento === "porcentaje"
+                      ? `${promocionProducto.descuento * 100}% OFF`
+                      : `$${promocionProducto.descuento} OFF`}
                   </span>
                 )}
                 <img
@@ -154,7 +148,7 @@ export function Productos() {
                 />
                 <h3>{producto.name}</h3>
                 <p className="producto-precio">
-                  {promocionActiva ? (
+                  {promocionProducto ? (
                     <>
                       <span style={{ textDecoration: 'line-through', color: '#888' }}>${precioOriginal.toFixed(2)}</span>
                       <br />
@@ -209,9 +203,10 @@ export function Productos() {
           <button onClick={handlePrev} disabled={page === 1} className="btn-paginacion">
             Anterior
           </button>
-          {[...Array(Math.min(5, totalPages))].map((_, i) => {
-            const pageNum = Math.max(1, Math.min(totalPages, page - 2 + i));
-            return (
+          {(() => {
+            const startPage = Math.max(1, page - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+            return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(pageNum => (
               <button
                 key={pageNum}
                 onClick={() => goToPage(pageNum)}
@@ -219,8 +214,8 @@ export function Productos() {
               >
                 {pageNum}
               </button>
-            );
-          })}
+            ));
+          })()}
           <button onClick={handleNext} disabled={page === totalPages} className="btn-paginacion">
             Siguiente
           </button>

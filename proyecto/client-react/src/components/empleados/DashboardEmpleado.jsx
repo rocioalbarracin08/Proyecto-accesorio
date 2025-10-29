@@ -10,17 +10,24 @@ export default function DashboardEmpleado() {
   const { isLogged, userRole, logout } = useAuthContext();
   const [seccionActiva, setSeccionActiva] = useState('productos');  // 'productos', 'ventas', 'historial'
   const [perfil, setPerfil] = useState({});
+  const [nombreTienda, setNombreTienda] = useState('Asignada'); 
 
   useEffect(() => {
-    if (!isLogged || userRole !== 'empleado') {
-      window.location.href = '/login';
-    } else {
-      // Obtener perfil para mostrar nombre y tienda
-      fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" })
-        .then(res => res.json())
-        .then(data => setPerfil(data));
-    }
-  }, [isLogged, userRole]);
+    fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        setPerfil(data);
+        if (data.id_tienda) {
+          fetch("http://localhost:5000/tienda/", { credentials: "include" })
+            .then(res => res.json())
+            .then(tiendas => {
+              const tienda = tiendas.find(t => t.id_tienda === data.id_tienda);
+              setNombreTienda(tienda ? tienda.nombre : 'Asignada');
+            })
+            .catch(err => console.error('Error obteniendo tienda:', err));
+        }
+      });
+  }, []);
 
   const renderSeccion = () => {
     switch (seccionActiva) {
@@ -37,14 +44,12 @@ export default function DashboardEmpleado() {
 
   return (
     <div className="dashboard-empleado">
-      <header className="dashboard-header">
-        <h1>Panel de Empleado</h1>
-        <div className="header-info">
-          <span>Hola, {perfil.nombre} {perfil.apellido}</span>
-          <span>Tienda: {perfil.tienda || 'Asignada'}</span>  {/* Asume que agregas tienda al perfil */}
-          <button onClick={logout} className="btn-logout">Cerrar Sesión</button>
-        </div>
-      </header>
+      <h1>Panel de Empleado</h1>
+      <div className="perfil-info">
+        <span className="tienda">Tienda: {nombreTienda || 'Asignada'}</span>  
+        <button onClick={logout} className="btn-cerrarS">Cerrar Sesión</button>
+      </div>
+      
 
       <nav className="dashboard-nav">
         <button 
@@ -71,9 +76,7 @@ export default function DashboardEmpleado() {
         {renderSeccion()}
       </main>
 
-      <footer className="dashboard-footer">
-        <Link to="/">Volver a Inicio</Link>
-      </footer>
+      <Link to="/" className="volver">Volver a Inicio</Link>
     </div>
   );
 }
