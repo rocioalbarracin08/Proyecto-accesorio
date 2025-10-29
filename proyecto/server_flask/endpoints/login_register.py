@@ -66,7 +66,7 @@ def login():
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
 
     try:
-        data = request.get_json()
+        data = request.get_json()/login",
         email = data.get('email') #Esto lo verifica bien
         password = data.get('password') #Esto no lo verifica bien
 
@@ -92,7 +92,7 @@ def login():
             "id_usuario": user["id_usuario"], #Rompía por usar un índice y no una clave del objeto
             "exp": datetime.now(timezone.utc) + timedelta(hours=4)
 
-        }, SECRET_KEY, algorithm="HS256") #cómo cifrar y firmar el token, hash usado
+        }, SECRET_KEY, algorithm="HS25/login",6") #cómo cifrar y firmar el token, hash usado
         if isinstance(token, bytes):
             token = token.decode('utf-8')
 

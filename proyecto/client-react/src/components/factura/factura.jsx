@@ -6,7 +6,7 @@ import "./factura.css";
 
 export function Factura() {
   const { state } = useCarrito();
-  const { isLogged, user } = useAuthContext();
+  const { isLogged } = useAuthContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [entrega, setEntrega] = useState("");
@@ -14,6 +14,8 @@ export function Factura() {
   const [apellido, setApellido] = useState("");
   const [direccion, setDireccion] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [provincia, setProvincia] = useState("");
 
   // useEffect(() => {
   //   console.log("User from context:", user);
@@ -21,24 +23,43 @@ export function Factura() {
   // }, [user]);
 
   // Actualizar email cuando user cambie (aunque ahora lo obtendremos del backend)
-  useEffect(() => {
-    if (user?.email) setEmail(user.email);
-  }, [user]);
+  useEffect(() => {}, []);
 
   const handleEntregaClick = (opcion) => setEntrega(opcion);
 
   // Función para validar si el formulario está completo (simplificada, sin dirección por ahora)
   const isFormValid = useMemo(() => {
-    if (!user || !isLogged) return false;
+    if (!isLogged) return false;
     if (!email.trim()) return false;
     if (!entrega) return false;
     if (!nombre.trim() || !apellido.trim()) return false;
+    if (
+      entrega === "envio" &&
+      (!direccion.trim() ||
+        !ciudad.trim() ||
+        !provincia.trim() ||
+        !codigoPostal.trim())
+    ) {
+      return false;
+    }
     // Quitar validaciones de dirección por ahora
     return true;
-  }, [user, isLogged, email, entrega, nombre, apellido]);
+  }, [
+    isLogged,
+    email,
+    entrega,
+    nombre,
+    apellido,
+    direccion,
+    ciudad,
+    provincia,
+    codigoPostal,
+  ]);
 
-  const handleFinalizar = async () => {
-    if (!user) {
+  const handleFinalizar = async (e) => {
+    e.preventDefault();
+    console.log("capute el envio");
+    if (!isLogged) {
       alert("Debes iniciar sesión para finalizar la compra.");
       navigate("/login");
       return;
@@ -56,8 +77,17 @@ export function Factura() {
       return;
     }
 
+    //
+    if (
+      entrega === "envio" &&
+      (!direccion || !ciudad || !provincia || !codigoPostal)
+    ) {
+      alert("Por favor complete todos los campos para envío a domicilio.");
+      return;
+    }
+
     // Obtener datos del usuario logueado desde el backend para comparar
-    let userData;
+
     try {
       const res = await fetch("http://localhost:5000/usuarios/perfil", {
         method: "GET",
@@ -66,13 +96,15 @@ export function Factura() {
       if (!res.ok) {
         throw new Error("No se pudo obtener los datos del usuario");
       }
-      userData = await res.json();
+      const userData = await res.json();
+      console.log("Datos del usuario obtenidos:", userData);
     } catch (err) {
       console.error("Error al obtener perfil:", err);
       alert("Error al verificar datos del usuario: " + err.message);
       return;
     }
 
+    /*
     // Validar que los datos coincidan con los de la BD
     if (email.trim().toLowerCase() !== userData.email.trim().toLowerCase()) {
       alert("email no identificado");
@@ -100,6 +132,10 @@ export function Factura() {
       mail: email,
       nombre,
       apellido,
+      direccion: entrega === "envio" ? direccion : null,
+      ciudad: entrega === "envio" ? ciudad : null,
+      provincia: entrega === "envio" ? provincia : null,
+      codigo_postal: entrega === "envio" ? codigoPostal : null,
       // Quitar dirección por ahora
       total: state.totalPrice,
       items: Object.entries(state.items).map(([id, item]) => ({
@@ -135,7 +171,7 @@ export function Factura() {
       .catch((err) => {
         console.error("Error al enviar factura:", err);
         alert("Ocurrió un error al procesar la compra: " + err.message);
-      });
+      });*/
   };
 
   return (
@@ -198,7 +234,7 @@ export function Factura() {
               </div>
 
               {/* Formulario completo solo si se seleccionó un método de entrega */}
-              {entrega && (
+              {entrega /* Si se seleccionó entrega */ && (
                 <>
                   <label>
                     <input
@@ -227,12 +263,51 @@ export function Factura() {
                     />
                   </label>
 
-                  {/* Quitar sección de dirección por ahora */}
+                  {/* Campos adicionales solo para envío a domicilio */}
+                  {entrega === "envio" && (
+                    <>
+                      <label>
+                        <input
+                          placeholder="Dirección"
+                          type="text"
+                          value={direccion}
+                          onChange={(e) => setDireccion(e.target.value)}
+                        />
+                      </label>
+
+                      <label>
+                        <input
+                          placeholder="Ciudad"
+                          type="text"
+                          value={ciudad}
+                          onChange={(e) => setCiudad(e.target.value)}
+                        />
+                      </label>
+
+                      <label>
+                        <input
+                          placeholder="Provincia"
+                          type="text"
+                          value={provincia}
+                          onChange={(e) => setProvincia(e.target.value)}
+                        />
+                      </label>
+
+                      <label>
+                        <input
+                          placeholder="Código Postal"
+                          type="text"
+                          value={codigoPostal}
+                          onChange={(e) => setCodigoPostal(e.target.value)}
+                        />
+                      </label>
+                    </>
+                  )}
 
                   <button
                     className="btn-finalizar"
                     onClick={handleFinalizar}
-                    disabled={!isFormValid}
+                    disabled={isFormValid}
                   >
                     Finalizar Compra
                   </button>
