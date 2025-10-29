@@ -13,35 +13,31 @@ export function Factura() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [direccion, setDireccion] = useState("");
-  const [ciudad, setCiudad] = useState("");
-  const [provincia, setProvincia] = useState("");
   const [codigoPostal, setCodigoPostal] = useState("");
 
- // useEffect(() => {
- //   console.log("User from context:", user); 
-   // console.log("isLogged set to:", isLogged);
-  //}, [user]);
+  // useEffect(() => {
+  //   console.log("User from context:", user);
+  //   console.log("isLogged set to:", isLogged);
+  // }, [user]);
 
-  // Actualizar email cuando user cambie
+  // Actualizar email cuando user cambie (aunque ahora lo obtendremos del backend)
   useEffect(() => {
     if (user?.email) setEmail(user.email);
   }, [user]);
 
   const handleEntregaClick = (opcion) => setEntrega(opcion);
 
-  // Función para validar si el formulario está completo
+  // Función para validar si el formulario está completo (simplificada, sin dirección por ahora)
   const isFormValid = useMemo(() => {
     if (!user || !isLogged) return false;
     if (!email.trim()) return false;
     if (!entrega) return false;
     if (!nombre.trim() || !apellido.trim()) return false;
-    if (entrega === "envio" && (!direccion.trim() || !ciudad.trim() || !provincia.trim() || !codigoPostal.trim())) {
-      return false;
-    }
+    // Quitar validaciones de dirección por ahora
     return true;
-  }, [user, isLogged, email, entrega, nombre, apellido, direccion, ciudad, provincia, codigoPostal]);
+  }, [user, isLogged, email, entrega, nombre, apellido]);
 
-  const handleFinalizar = () => {
+  const handleFinalizar = async () => {
     if (!user) {
       alert("Debes iniciar sesión para finalizar la compra.");
       navigate("/login");
@@ -59,37 +55,63 @@ export function Factura() {
       alert("Por favor complete nombre y apellido.");
       return;
     }
-    if (entrega === "envio" && (!direccion || !ciudad || !provincia || !codigoPostal)) {
-      alert("Por favor complete todos los campos de dirección para envío a domicilio.");
+
+    // Obtener datos del usuario logueado desde el backend para comparar
+    let userData;
+    try {
+      const res = await fetch("http://localhost:5000/usuarios/perfil", {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        throw new Error("No se pudo obtener los datos del usuario");
+      }
+      userData = await res.json();
+    } catch (err) {
+      console.error("Error al obtener perfil:", err);
+      alert("Error al verificar datos del usuario: " + err.message);
       return;
     }
- 
-    
-    // Construir payload para enviar al backend
+
+    // Validar que los datos coincidan con los de la BD
+    if (email.trim().toLowerCase() !== userData.email.trim().toLowerCase()) {
+      alert("email no identificado");
+      return;
+    }
+    if (nombre.trim().toLowerCase() !== userData.nombre.trim().toLowerCase()) {
+      alert(
+        "El nombre ingresado no coincide con el nombre registrado en la cuenta."
+      );
+      return;
+    }
+    if (
+      apellido.trim().toLowerCase() !== userData.apellido.trim().toLowerCase()
+    ) {
+      alert(
+        "El apellido ingresado no coincide con el apellido registrado en la cuenta."
+      );
+      return;
+    }
+
+    // Si todo coincide, construir payload y enviar
     const payload = {
       id_factura: Date.now().toString(), // temporal: usar timestamp como id de factura; idealmente el backend debe generar el id
       entrega, // Indicamos la opción seleccionada para que el backend decida qué guardar
       mail: email,
       nombre,
       apellido,
-
-      // Enviamos los datos de dirección sólo si el usuario seleccionó envío
-      direccion: entrega === "envio" ? direccion : null,
-      ciudad: entrega === "envio" ? ciudad : null,
-      provincia: entrega === "envio" ? provincia : null,
-      codigo_postal: entrega === "envio" ? codigoPostal : null,
+      // Quitar dirección por ahora
       total: state.totalPrice,
       items: Object.entries(state.items).map(([id, item]) => ({
         producto_id: item.producto.id || id,
         nombre_producto: item.producto.nombre || item.producto.name,
         cantidad: item.cantidad,
         precio_unitario: item.producto.precio,
-        subtotal: (item.cantidad * item.producto.precio),
+        subtotal: item.cantidad * item.producto.precio,
       })),
     };
 
-    // Enviar al endpoint; el backend actual espera un solo detalle por petición,
-    // pero aquí enviamos un lote. Si el backend no acepta lote, puede ajustarse.
+    // Enviar al endpoint
     fetch("http://localhost:5000/detalle_factura/insertar/compra", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,7 +126,9 @@ export function Factura() {
         return res.json();
       })
       .then((data) => {
-        alert(data.mensaje || `Pedido enviado a ${email} con entrega: ${entrega}`);
+        alert(
+          data.mensaje || `Pedido enviado a ${email} con entrega: ${entrega}`
+        );
         // Aquí podríamos limpiar el carrito o redirigir
         navigate("/");
       })
@@ -117,7 +141,7 @@ export function Factura() {
   return (
     <div className="factura-page">
       <h2>Factura de Compra</h2>
-      
+
       {/* Contenedor principal con layout lateral */}
       <div className="factura-container">
         {/* Columna izquierda: Tabla de la factura */}
@@ -156,7 +180,8 @@ export function Factura() {
                   type="button"
                   onClick={() => handleEntregaClick("sucursal")}
                   style={{
-                    backgroundColor: entrega === "sucursal" ? "#f0b6c1" : "#fff",
+                    backgroundColor:
+                      entrega === "sucursal" ? "#f0b6c1" : "#fff",
                   }}
                 >
                   Retiro en Sucursal
@@ -177,7 +202,7 @@ export function Factura() {
                 <>
                   <label>
                     <input
-                    placeholder="Email"
+                      placeholder="Email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -185,8 +210,8 @@ export function Factura() {
                   </label>
 
                   <label>
-                    <input 
-                    placeholder="Nombre"
+                    <input
+                      placeholder="Nombre"
                       type="text"
                       value={nombre}
                       onChange={(e) => setNombre(e.target.value)}
@@ -194,56 +219,18 @@ export function Factura() {
                   </label>
 
                   <label>
-                    <input 
-                    placeholder="Apellido"
+                    <input
+                      placeholder="Apellido"
                       type="text"
                       value={apellido}
                       onChange={(e) => setApellido(e.target.value)}
                     />
                   </label>
 
-               
+                  {/* Quitar sección de dirección por ahora */}
 
-                  {/* Campos adicionales si selecciona envío */}
-                  {entrega === "envio" && (
-                    <div className="direccion-section">
-                      <label>
-                        <input
-                        placeholder="Direccion"
-                          type="text"
-                          value={direccion}
-                          onChange={(e) => setDireccion(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        <input
-                        placeholder="Ciudad"
-                          type="text"
-                          value={ciudad}
-                          onChange={(e) => setCiudad(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        <input
-                        placeholder="Provincia"
-                          type="text"
-                          value={provincia}
-                          onChange={(e) => setProvincia(e.target.value)}
-                        />
-                      </label>
-                      <label>
-                        <input
-                        placeholder="Codigo postal"
-                          type="text"
-                          value={codigoPostal}
-                          onChange={(e) => setCodigoPostal(e.target.value)}
-                        />
-                      </label>
-                    </div>
-                  )}
-
-                  <button 
-                    className="btn-finalizar" 
+                  <button
+                    className="btn-finalizar"
                     onClick={handleFinalizar}
                     disabled={!isFormValid}
                   >
