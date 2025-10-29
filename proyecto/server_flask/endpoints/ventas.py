@@ -68,11 +68,11 @@ def registrar_venta():
     try:
         data = request.get_json()
         id_cliente = data.get('id_cliente')  # Opcional para física, obligatorio para online
-        metodo_pago = data.get('metodo_pago')
+        id_metodo_pago = data.get('id_metodo_pago')  # Cambiado a id_metodo_pago
         detalles = data.get('detalles')  # Lista de dicts: [{'id_producto': int, 'cantidad': int}, ...]
         
-        if not all([metodo_pago, detalles]) or not detalles:
-            return jsonify({"error": "Faltan datos obligatorios: metodo_pago, detalles"}), 400
+        if not all([id_metodo_pago, detalles]) or not detalles:
+            return jsonify({"error": "Faltan datos obligatorios: id_metodo_pago, detalles"}), 400
         
         # Validar id_cliente según tipo de venta
         if es_venta_online:
@@ -86,25 +86,11 @@ def registrar_venta():
                     return jsonify({"error": "Cliente no encontrado"}), 404
             # id_cliente puede ser NULL
         
-        # Determinar id_tienda para restar stock
+        # Determinar id_tienda para restar stock y almacenar en factura
         if es_venta_fisica:
-            id_tienda_para_stock = id_tienda_empleado  # Tienda del empleado
+            id_tienda_factura = id_tienda_empleado  # Tienda del empleado
         elif es_venta_online:
-            id_tienda_para_stock = 1  # Tienda 1 para online
-        
-        # Obtener datos de la tienda (solo para física)
-        if es_venta_fisica:
-            tienda_query = """
-                SELECT nombre, direccion, telefono 
-                FROM tiendas 
-                WHERE id_tienda = %s
-            """
-            g.db_cursor.execute(tienda_query, (id_tienda_empleado,))
-            tienda = g.db_cursor.fetchone()
-            if not tienda:
-                return jsonify({"error": "Tienda del empleado no encontrada"}), 500
-        else:
-            tienda = {'nombre': 'Online', 'direccion': 'N/A', 'telefono': 'N/A'}
+            id_tienda_factura = 1  # Tienda 1 para online
         
         # Calcular total y validar productos (MODIFICADO PARA APLICAR DESCUENTOS)
         costo_total = 0
@@ -121,7 +107,7 @@ def registrar_venta():
                 return jsonify({"error": f"Producto {id_prod} no encontrado"}), 404
             
             precio_unitario = prod['precio']
-            descuento, tipo_descuento = calcular_descuento(id_prod, metodo_pago)  # Aplicar descuento
+            descuento, tipo_descuento = calcular_descuento(id_prod, id_metodo_pago)  # Aplicar descuento
             if tipo_descuento == 'porcentaje':
                 precio_con_descuento = precio_unitario * (1 - descuento)
             elif tipo_descuento == 'fijo':
@@ -135,31 +121,32 @@ def registrar_venta():
                 'id_producto': id_prod,
                 'nombre_producto': prod['name'],
                 'cantidad': cantidad,
-                'precio_unitario': precio_con_descuento  # Precio con descuento aplicado
-            })
+                'precio_unitario': precio_con_descuento,  # Precio con descuento aplicado
+                'subtotal': subtotal  # Agregar esto
+            })  # <-- COMA AGREGADA AQUÍ
         
         # Restar stock (para física y online)
         for det in detalles_validos:
             g.db_cursor.execute("""
                 UPDATE inventario SET stock_actual = stock_actual - %s 
                 WHERE id_producto = %s AND id_tienda = %s
-            """, (det['cantidad'], det['id_producto'], id_tienda_para_stock))
+            """, (det['cantidad'], det['id_producto'], id_tienda_factura))
         
-        # Insertar factura
+        # Insertar factura (AHORA CON id_tienda EN LUGAR DE CAMPOS DIRECTOS)
         fecha = datetime.now().date()
         hora = datetime.now().time()
         g.db_cursor.execute("""
-            INSERT INTO factura (fecha, hora, nombre_tienda, direccion_tienda, telefono_tienda, id_cliente, id_empleado, metodo_pago, costo_total)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (fecha, hora, tienda['nombre'], tienda['direccion'], tienda['telefono'], id_cliente, id_empleado, metodo_pago, costo_total))
+            INSERT INTO factura (fecha, hora, id_tienda, id_cliente, id_empleado, id_metodo_pago, costo_total)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (fecha, hora, id_tienda_factura, id_cliente, id_empleado, id_metodo_pago, costo_total))
         id_factura = g.db_cursor.lastrowid
         
         # Insertar detalles
         for det in detalles_validos:
             g.db_cursor.execute("""
-                INSERT INTO detalle_factura (id_factura, id_producto, nombre_producto, cantidad, precio_unitario)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (id_factura, det['id_producto'], det['nombre_producto'], det['cantidad'], det['precio_unitario']))
+                INSERT INTO detalle_factura (id_factura, id_producto, nombre_producto, cantidad, precio_unitario, subtotal)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (id_factura, det['id_producto'], det['nombre_producto'], det['cantidad'], det['precio_unitario'], det['subtotal']))
         
         g.db.commit()
         return jsonify({"mensaje": "Venta registrada exitosamente", "id_factura": id_factura}), 201
@@ -168,7 +155,7 @@ def registrar_venta():
         g.db.rollback()
         return jsonify({"error": f"Error al registrar venta: {err}"}), 500
 
-# Listar ventas del empleado (paginado)
+# Listar ventas del empleado (paginado) - ACTUALIZADO PARA HACER JOIN CON TIENDAS
 @bp.route('/', methods=['GET'])
 def listar_ventas():
     if g.db_cursor is None:
@@ -200,11 +187,12 @@ def listar_ventas():
         total_result = g.db_cursor.fetchone()
         total_ventas = total_result['total'] if total_result else 0
         
-        # Ventas paginadas con detalles
+        # Ventas paginadas con detalles - AHORA CON JOIN PARA OBTENER NOMBRE DE TIENDA
         g.db_cursor.execute("""
-            SELECT f.id_factura, f.fecha, f.hora, f.nombre_tienda, f.metodo_pago, f.costo_total,
+            SELECT f.id_factura, f.fecha, f.hora, t.nombre AS nombre_tienda, f.id_metodo_pago, f.costo_total,  # Cambiado a id_metodo_pago
                    GROUP_CONCAT(CONCAT(df.nombre_producto, ' (', df.cantidad, ' x ', df.precio_unitario, ')') SEPARATOR '; ') AS productos
             FROM factura f
+            LEFT JOIN tiendas t ON f.id_tienda = t.id_tienda
             LEFT JOIN detalle_factura df ON f.id_factura = df.id_factura
             WHERE f.id_empleado = %s
             GROUP BY f.id_factura
