@@ -19,7 +19,7 @@ export function Destacados() {
         <section className="seccion-img">
             {destacados.length > 0 ? (
                 destacados.map(prod => (
-                    <Link key={prod.id_producto} to={`/productos/${prod.id_categoria}`}> {/* Enlaza a la categoría o producto */}
+                    <Link key={prod.id_producto} to={`/producto/${prod.id_producto}`}> 
                         <img src={prod.imagen_url} alt={prod.name} title={`${prod.name} - $${prod.precio}`} />
                     </Link>
                 ))

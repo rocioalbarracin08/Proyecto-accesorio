@@ -21,10 +21,12 @@ import { Factura } from "./components/factura/factura";
 import DiseñoMain from "./components/diseño-main/DiseñoMain";
 import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 import EditarDestacados from './components/productosDestacados/EditarDestacados';
+import ProductoDetalle from './components/ProductoDetalle';
 
 function App() {
   return (
     <Routes>
+      <Route path="/producto/:id_producto" element={<ProductoDetalle />} />
       <Route path="/admin/destacados" element={<EditarDestacados />} />
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
       <Route
@@ -46,6 +48,7 @@ function App() {
             <Destacados />
             <Categorizados /> {/* Muestra categorías en home */}
             <DiseñoMain />
+            <EditarDestacados />
             <PiePagina />
           </>
         }

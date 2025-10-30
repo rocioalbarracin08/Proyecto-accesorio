@@ -1,0 +1,154 @@
+/* Precio con promoción */
+.precio-section {
+  margin: 20px 0;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 10px;
+}
+
+.precio-final {
+  color: red;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.descuento-etiqueta {
+  background: red;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  margin-left: 10px;
+}
+
+.precio {
+  font-size: 1.2rem;
+  color: rosybrown;
+  font-weight: bold;
+}
+
+/* Oferta con método de pago */
+.oferta-metodo {
+  background: #fffacd;
+  padding: 10px;
+  border-radius: 5px;
+  color: #333;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Carrusel de productos relacionados */
+.carrusel-relacionados {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.carrusel-relacionados h2 {
+  color: rosybrown;
+  margin-bottom: 20px;
+}
+
+.carrusel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.carrusel-btn {
+  background: rosybrown;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.carrusel-btn:hover {
+  background: #bc8f8f;
+}
+
+.carrusel-slides {
+  display: flex;
+  gap: 15px;
+  overflow: hidden;
+  width: 60%; /* Ajusta según necesidad */
+}
+
+.relacionado-item {
+  text-decoration: none;
+  color: black;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+  min-width: 150px;
+}
+
+.relacionado-item:hover {
+  transform: scale(1.05);
+}
+
+.relacionado-item img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.relacionado-item p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+/* Cartelitos de promociones */
+.cartelito-verde {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cartelito-violeta {
+  background-color: purple;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cartelito-naranja {
+  background-color: orange;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carrusel-slides {
+    width: 80%;
+  }
+  .relacionado-item {
+    min-width: 120px;
+  }
+}

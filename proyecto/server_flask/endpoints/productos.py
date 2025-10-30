@@ -9,7 +9,7 @@ from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
 bp = Blueprint('productos', __name__, url_prefix='/productos')
 
 @bp.route('/destacados', methods=['GET'])
-@solo_dueno
+#@solo_dueno
 def get_destacados():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
@@ -18,6 +18,46 @@ def get_destacados():
         destacados = g.db_cursor.fetchall()
         return jsonify({"destacados": destacados})
     except Exception as err:
+        return jsonify({"error": f"Error: {err}"}), 500
+    
+# Obtener productos con estado destacado (solo dueño)
+@bp.route('/destacados/editar', methods=['GET'])
+@solo_dueno
+def get_productos_para_destacados():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        # Obtener todos los productos activos con su estado destacado y stock (de tienda 1 por defecto, o ajusta si el dueño tiene tienda específica)
+        g.db_cursor.execute("""
+            SELECT p.id_producto, p.name, p.precio, p.imagen_url, p.destacado, i.stock_actual AS stock
+            FROM productos p
+            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = 1  # Ajusta id_tienda si el dueño tiene una específica
+            WHERE p.activo = 1
+        """)
+        productos = g.db_cursor.fetchall()
+        return jsonify({"productos": productos}), 200
+    except Exception as err:
+        return jsonify({"error": f"Error: {err}"}), 500
+
+# Actualizar estado destacado de productos (solo dueño)
+@bp.route('/destacados/actualizar', methods=['PUT'])
+@solo_dueno
+def actualizar_destacados():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        datos = request.get_json()
+        productos_a_actualizar = datos.get('productos', [])  # Lista de {id_producto, destacado}
+        
+        for prod in productos_a_actualizar:
+            g.db_cursor.execute("""
+                UPDATE productos SET destacado = %s WHERE id_producto = %s
+            """, (prod['destacado'], prod['id_producto']))
+        
+        g.db.commit()
+        return jsonify({"mensaje": "Destacados actualizados exitosamente"}), 200
+    except Exception as err:
+        g.db.rollback()
         return jsonify({"error": f"Error: {err}"}), 500
 
 # MOSTRAR (público, filtra activos y stock por tienda del usuario)
