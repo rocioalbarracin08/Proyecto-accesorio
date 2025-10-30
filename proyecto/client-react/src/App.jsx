@@ -20,10 +20,12 @@ import EditarPromocion from "./components/promociones/EditarPromocion";
 import { Factura } from "./components/factura/factura";
 import DiseñoMain from "./components/diseño-main/DiseñoMain";
 import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
+import EditarDestacados from './components/productosDestacados/EditarDestacados';
 
 function App() {
   return (
     <Routes>
+      <Route path="/admin/destacados" element={<EditarDestacados />} />
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
       <Route
         path="/resetear-contrasena"

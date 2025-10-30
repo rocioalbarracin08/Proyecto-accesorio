@@ -102,7 +102,7 @@ export default function ResetearContrasenaToken() {
         <div className="input-password">
           <input
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirmar Nueva Contraseña"
+            placeholder="Confirmar Contraseña"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required

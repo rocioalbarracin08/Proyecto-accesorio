@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../contexts/AuthContext";
 import "./perfilUser.css";
 
 export default function PerfilUser() {
@@ -52,13 +53,14 @@ export default function PerfilUser() {
           </button>
         </div>
       )}
-            {/* Apartado condicional para dueño */}
+      {/* Apartado condicional para dueño */}
       {isOwner && (
         <div className="apartado-dueno">
           <h2>Opciones de Dueño</h2>
           <Link to="/registrar-empleado" className="linkPromos"> Registrar Nuevo Empleado
           </Link>
           <Link to="/promociones" className="linkPromos">Eliminar | Editar promociones | Crear promociones</Link>
+          <Link to="/admin/destacados" className='direccionamiento'>Editar Destacados</Link>
         </div>
       )}
     </div>

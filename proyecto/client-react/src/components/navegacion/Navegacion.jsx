@@ -88,13 +88,20 @@ export function BarraNavegacion() {
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 
         <Link to="/productos" className='direccionamiento'>Tienda</Link>
-        <Link to="/nosotros" className='direccionamiento'>Nosotros</Link>  
+        
+        {/* Submenu para "Nosotros" */}
+        <div className="nosotros-submenu-container">
+          <Link to="/nosotros" className='direccionamiento nosotros-link'>Nosotros</Link>
+          <div className="nosotros-submenu">
+            <Link to="/nosotros" className="submenu-item">Nosotros</Link>
+            <Link to="/nosotros/preguntas" className="submenu-item">Preguntas de clientes</Link>
+          </div>
+        </div>
 
         {/* Contenedor del buscador desplegable */}
         <div className="buscador-container">
           <div className={`buscador-wrapper ${isSearchOpen ? 'open' : ''}`}>
-
-              <FaSearch color="#a05252" size={20} onClick={() => setIsSearchOpen(true)}
+            <FaSearch color="#a05252" size={20} onClick={() => setIsSearchOpen(true)}
               className="buscador-icono"
               aria-label="Abrir búsqueda"/>  {/* Ícono de React en color similar a la paleta */}
             <input

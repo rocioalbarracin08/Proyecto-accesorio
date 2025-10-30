@@ -10,6 +10,23 @@
   color: #333;
   text-align: center;
 }
+.respuesta {
+  background-color: #fafafa;
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.5s ease /* Animación suave */
+}
+
+.pregunta-item.open .respuesta {
+  opacity: 1;
+  max-height: 500px; /* Ajusta según necesidad */
+}
 
 /* Header: Título centrado con estilo elegante */
 .nosotros-header {
@@ -91,7 +108,7 @@
   font-size: 1rem;
   cursor: pointer;
   margin: 10px 5px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: 0.3s ease 0.2s ease; /*DUDOSOOO*/
 }
 
 .nosotros-save-btn:hover {

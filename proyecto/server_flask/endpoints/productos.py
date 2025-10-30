@@ -3,8 +3,22 @@ from server_flask.utils.auth import solo_empleado  # Si lo tienes, sino quítalo
 
 # Importar la función de ventas.py para verificar usuario y obtener tienda
 from server_flask.endpoints.ventas import verificar_usuario  # Asegúrate de que la ruta sea correcta
+from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
+
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
+
+@bp.route('/destacados', methods=['GET'])
+@solo_dueno
+def get_destacados():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        g.db_cursor.execute("SELECT id_producto, name, precio, imagen_url FROM productos WHERE destacado = 1 AND activo = 1")
+        destacados = g.db_cursor.fetchall()
+        return jsonify({"destacados": destacados})
+    except Exception as err:
+        return jsonify({"error": f"Error: {err}"}), 500
 
 # MOSTRAR (público, filtra activos y stock por tienda del usuario)
 @bp.route("/mostrar")

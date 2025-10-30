@@ -68,7 +68,7 @@ def actualizar_metodo_pago(id_metodo_pago):
 
 # ------------------- E L I M I N A R (Solo Dueño) -------------------
 @bp.route("/<int:id_metodo_pago>", methods=["DELETE"])
-@solo_dueno
+@solo_dueno # Modificar a solo desactivar o activar
 def eliminar_metodo_pago(id_metodo_pago):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500

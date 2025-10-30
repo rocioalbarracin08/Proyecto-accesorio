@@ -276,8 +276,42 @@
   color: #a05252;
   z-index: 1000;
 }
+/* Submenu para "Nosotros" */
+.nosotros-submenu-container {
+  position: relative;
+}
 
-/* Responsive: Para móviles y tablets */
+.nosotros-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: rgba(188, 143, 143, 0.9); /* Rosybrown semitransparente */
+  border-radius: 10px;
+  padding: 10px;
+  display: none; /* Oculto por defecto */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.nosotros-submenu-container:hover .nosotros-submenu {
+  display: block;
+}
+
+.submenu-item {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.submenu-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* Responsive*/
 @media (max-width: 768px) {
   .encabezado {
     justify-content: space-between;
