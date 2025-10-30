@@ -59,6 +59,37 @@
   background-color: #d2691e;  /* Color más oscuro al pasar el mouse */
 }
 
+/* Estilos para el botón de reset (animado) */
+.reset-link-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: rgb(197, 119, 119);  /* Mismo color que el botón principal */
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;  /* Bordes redondeados consistentes */
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;  /* Animación suave para hover y aparición */
+  transform: scale(0);  /* Empieza oculto (escala 0) */
+  opacity: 0;
+  animation: 0.5s ease-in forwards;  /* Animación de aparición */
+}
+
+/* Estilos para el botón de reset al pasar el mouse */
+.reset-link-btn:hover {
+  background-color: #d2691e;  /* Mismo hover que el botón */
+  transform: scale(1.05);  /* Ligero aumento de escala en hover */
+}
+
+/* Animación de aparición para el botón */
+@keyframes appear {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Estilos para el enlace de volver a login */
 .recuperar-link {
   text-decoration: none;  /* Sin subrayado */
@@ -68,7 +99,7 @@
 
 /* Estilos para el enlace al pasar el mouse */
 .recuperar-link:hover {
-  color: #ff69b4;  /* Color rosado al pasar el mouse */
+  color: rgb(158, 122, 122); 
 }
 
 /* Estilos para el título */
@@ -81,21 +112,35 @@
 .recuperar-message {
   color: green;  /* Texto verde para mensajes de éxito */
   font-weight: bold;  /* Negrita */
+  animation:  0.5s ease-in;  /* Animación sutil */
 }
 
 /* Estilos para mensajes de error */
 .recuperar-error {
   color: red;  /* Texto rojo para mensajes de error */
   font-weight: bold;  /* Negrita */
+  animation: 0.5s ease-in;  /* Animación sutil */
 }
 
-/* Responsive: Ajustes para móviles */
+/* Animación de fade-in para mensajes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive: Ajustes para pantalla pequeñas */
 @media (max-width: 600px) {
   .recuperar-container {
-      max-width: 90%;  /* Ancho máximo en móviles */
-      padding: 1.5rem;  /* Menos padding en móviles */
+    max-width: 90%;  /* Ancho máximo en móviles */
+    padding: 1.5rem;  /* Menos padding en móviles */
   }
   .recuperar-form {
-      width: 80%;  /* Ancho del formulario en móviles */
+    width: 80%;  /* Ancho del formulario en móviles */
   }
 }

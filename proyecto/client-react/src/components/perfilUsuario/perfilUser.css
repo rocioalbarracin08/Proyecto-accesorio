@@ -3,87 +3,122 @@
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+  background-color: #fafafa; /* Fondo sutil para resaltar */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra ligera para profesionalismo */
 }
-.linkPromos{
-  color: rosybrown;
-  padding: 0.5%;
-}
-.apartado-dueno{
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-.linkPromos:hover{
-  font-size: 20px;
-  color: rgb(134, 106, 106);
-}
+
 .datos-cliente-nav {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px; /* Más espacio */
   margin-bottom: 30px;
+  padding: 20px;
+  background-color: white; /* Fondo blanco para destacar */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
 }
 
 .perfilIG {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+  border: 2px solid rosybrown; /* Borde rosybrown para acentuar */
 }
 
 .info-cliente {
   text-align: left;
+  font-size: 1.1rem; /* Un poco más grande para legibilidad */
+}
+
+.info-cliente div {
+  margin-bottom: 5px;
 }
 
 .cambiar-contrasena-section {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #ddd; /* Línea sutil */
   padding-top: 20px;
+  margin-bottom: 30px;
 }
 
-.cambiar-contrasena-section form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 300px;
-  margin: 0 auto;
-}
-
-input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.btnPerfil {
-  padding: 10px;
-  background-color: #007bff;
+.btn-cambiar-contra {
+  padding: 12px 24px; /* Más padding para que se vea grande */
+  background-color: rosybrown;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px; /* Bordes redondeados */
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  transition:0.3s ease 0.2s ease; /* Transición suave */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para profundidad */
 }
 
-.btnPerfil:hover {
-  background-color: #0056b3;
+.btn-cambiar-contra:hover {
+  background-color: #bc8f8f; /* Tono más oscuro */
+  transform: translateY(-2px); /* Efecto de elevación sutil */
 }
 
-.btnPerfil:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+/* Apartado condicional para dueño */
+.apartado-dueno {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.apartado-dueno h2 {
+  color: rosybrown;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.linkPromos {
+  display: inline-block; /* Para que se comporte como botón. El layout se mantiene intacto*/
+  padding: 12px 20px;
+  margin: 10px 0; /* Espaciado vertical */
+  background-color: rgba(188, 143, 143, 0.1); /* Fondo rosybrown muy claro */
+  color: rosybrown;
+  text-decoration: none;
+  border-radius: 20px; /* Bordes redondeados */
+  font-weight: bold;
+  transition: 0.3s ease 0.3s ease; /* Transición suave */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+}
+
+.linkPromos:hover {
+  background-color: rosybrown; /* Fondo sólido al hover */
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+  transform: translateY(-1px); /* Elevación sutil */
 }
 
 /* Ajustes para cuando se ve en dispositivos móviles */
 @media (max-width: 768px) {
-  .datos-cliente-nav {
-    width: 90%;
+  .perfil-page {
     padding: 15px;
   }
 
-  .datos-cliente-nav img {
-    width: 50px;
-    height: 50px;
+  .datos-cliente-nav {
+    flex-direction: column; /* Apilar en móviles */
+    gap: 15px;
+    padding: 15px;
   }
 
-  .datos-cliente-nav > div {
-    font-size: 0.9rem;
+  .perfilIG {
+    width: 60px;
+    height: 60px;
+  }
+
+  .info-cliente {
+    text-align: center; /* Centrar en móviles */
+    font-size: 1rem;
+  }
+
+  .btn-cambiar-contra {
+    width: 100%; /* Full width en móviles */
+  }
+
+  .linkPromos {
+    width: 100%; /* Full width para links en móviles */
+    box-sizing: border-box;
   }
 }

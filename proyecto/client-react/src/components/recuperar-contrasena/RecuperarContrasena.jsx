@@ -1,62 +1,74 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";  // Agrega useNavigate para redirección
-import "./recuperarContrasena.css";  // Importa el CSS
-
+import { Link } from "react-router-dom";
+import "./recuperarContrasena.css";
 
 export default function RecuperarContrasena() {
-  const [email, setEmail] = useState(""); 
-  const [mensaje, setMensaje] = useState(""); 
-  const [error, setError] = useState("");  
-  const [loading, setLoading] = useState(false); 
-  const navigate = useNavigate(); 
+  const [email, setEmail] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resetUrl, setResetUrl] = useState("");  // Para almacenar la URL del backend
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  // Evita la recarga de la página
-    setError("");  // Resetea el error
-    setMensaje("");  // Resetea el mensaje
-    setLoading(true);  // Activa el estado de carga
+    e.preventDefault();
+    setError("");
+    setMensaje("");
+    setResetUrl("");
+
+    // Validación básica adicional (opcional, ya que tienes required)
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setError("Por favor, ingresa un email válido.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/usuarios/recuperar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),  // Envía el email como JSON al backend
+        body: JSON.stringify({ email }),
       });
-      const data = await res.json();  // Convierte la respuesta a JSON
+      const data = await res.json();
       if (res.ok) {
-        setMensaje("Email enviado. Revisa tu bandeja de entrada.");  // Muestra mensaje de éxito
-        // Redirige a login después de 2 segundos para que el usuario vea el mensaje
-        //setTimeout(() => navigate("/login"), 2000);  // Redirección automática tras éxito
+        setMensaje("Email enviado. Revisa tu bandeja de entrada.");
+        setResetUrl(data.reset_url);  // Recibe la URL del backend
       } else {
-        setError(data.error);  // Muestra el error si ocurre (e.g., email no registrado)
+        setError(data.error || "Error al solicitar recuperación.");
       }
     } catch (err) {
-      setError("Error de conexión con el servidor.");  // Maneja errores de conexión
+      setError("Error de conexión. Verifica tu internet e intenta nuevamente.");
     } finally {
-      setLoading(false);  // Desactiva el estado de carga
+      setLoading(false);
     }
   };
 
   return (
-    <div className="recuperar-container"> 
+    <div className="recuperar-container">
       <h1 className="recuperar-title">Recuperar Contraseña</h1>
       <p>Ingresa tu email para recibir un enlace de recuperación</p>
-      {mensaje && <p className="recuperar-message">{mensaje}</p>}  {/* Mensaje de éxito */}
-      {error && <p className="recuperar-error">{error}</p>}  {/* Mensaje de error */}
-      <form onSubmit={handleSubmit} className="recuperar-form"> 
+      {mensaje && <p className="recuperar-message">{mensaje}</p>}
+      {error && <p className="recuperar-error">{error}</p>}
+      <form onSubmit={handleSubmit} className="recuperar-form">
         <input
           type="email"
           placeholder="Tu email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} 
+          onChange={(e) => setEmail(e.target.value)}
           required
           className="recuperar-input"
         />
-        <button type="submit" disabled={loading} className="recuperar-btn"> 
-          {loading ? "Enviando..." : "Enviar Email"} 
+        <button type="submit" disabled={loading} className="recuperar-btn">
+          {loading ? "Enviando..." : "Enviar Email"}
         </button>
       </form>
-      <Link to="/login" className="recuperar-link">Volver a Login</Link>  {/* Enlace manual a login (opcional, ya que ahora hay redirección automática) */}
+      <Link to="/login" className="recuperar-link">Volver a Login</Link>
+      {/* Botón animado que aparece si hay resetUrl */}
+      {resetUrl && (
+        <a href={resetUrl} className="reset-link-btn">
+          Ir a Resetear Contraseña
+        </a>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import "./destacados.css"
 
 export function Destacados(){
-
+    //Mover fotos a productos
     return(
         <section className="seccion-img">
             <img src="/accesorios.jpg" alt="broche" />

@@ -4,6 +4,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
+import { FaSearch } from "react-icons/fa";  // Importar ícono de búsqueda de React Icons
 
 export function BarraNavegacion() {
   const { isLogged, logout } = useAuthContext();
@@ -87,71 +88,71 @@ export function BarraNavegacion() {
 
         <Link to="/" className='direccionamiento'>Inicio</Link> 
         <Link to="/productos" className='direccionamiento'>Tienda</Link>
-        <Link to="/nosotros" className='direccionamiento'>Nosotros</Link>  
+        
+        {/* Submenu para "Nosotros" */}
+        <div className="nosotros-submenu-container">
+          <Link to="/nosotros" className='direccionamiento nosotros-link'>Nosotros</Link>
+          <div className="nosotros-submenu">
+            <Link to="/nosotros" className="submenu-item">Nosotros</Link>
+            <Link to="/nosotros/preguntas" className="submenu-item">Preguntas de clientes</Link>
+          </div>
+        </div>
 
         {/* Contenedor del buscador desplegable */}
         <div className="buscador-container">
-          {!isSearchOpen ? (
-            <button
+          <div className={`buscador-wrapper ${isSearchOpen ? 'open' : ''}`}>
+            <FaSearch color="#a05252" size={20} onClick={() => setIsSearchOpen(true)}
               className="buscador-icono"
-              aria-label="Abrir búsqueda"
-              onClick={() => setIsSearchOpen(true)}
-            >
-              <img src="/logos/lupa.png" alt="Buscar" />
-            </button>
-          ) : (
-            <form onSubmit={handleSubmit} className="buscador-form">
-              <div className="buscador-header">
-                <input
-                  className="buscador"
-                  type="text"
-                  placeholder="Buscar producto o categoría"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  className="buscador-cerrar"
-                  onClick={() => {
-                    setIsSearchOpen(false);
-                    setBusqueda("");
-                    setResultados([]);
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-
-              {resultados.length > 0 && (
-                <ul className="buscador-dropdown">
-                  {resultados.map((prod) => (
-                    <li key={prod.id_producto} className="buscador-item">
-                      <Link
-                        to={`/productos/${prod.id_categoria}`}
-                        onClick={() => {
-                          setBusqueda("");
-                          setResultados([]);
-                          setIsSearchOpen(false);
-                        }}
-                        className="buscador-link"
-                      >
-                        <img
-                          src={prod.imagen_url || "/default.jpg"}
-                          alt={prod.name}
-                          className="buscador-img"
-                        />
-                        <div>
-                          <strong>CATEGORIA: {prod.categoria}</strong>: {prod.name}
-                        </div>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {loading && <p className="buscador-loading">Buscando...</p>}
-            </form>
+              aria-label="Abrir búsqueda"/>  {/* Ícono de React en color similar a la paleta */}
+            <input
+              className="buscador"
+              type="text"
+              placeholder="Buscar producto o categoría"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              autoFocus={isSearchOpen}
+            />
+            {isSearchOpen && (
+              <button
+                type="button"
+                className="buscador-cerrar"
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setBusqueda("");
+                  setResultados([]);
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {isSearchOpen && resultados.length > 0 && (
+            <ul className="buscador-dropdown">
+              {resultados.map((prod) => (
+                <li key={prod.id_producto} className="buscador-item">
+                  <Link
+                    to={`/productos/${prod.id_categoria}`}
+                    onClick={() => {
+                      setBusqueda("");
+                      setResultados([]);
+                      setIsSearchOpen(false);
+                    }}
+                    className="buscador-link"
+                  >
+                    <img
+                      src={prod.imagen_url || "/default.jpg"}
+                      alt={prod.name}
+                      className="buscador-img"
+                    />
+                    <div>
+                      <strong>CATEGORIA: {prod.categoria}</strong>: {prod.name}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
+          {isSearchOpen && loading && <p className="buscador-loading">Buscando...</p>}
         </div>
 
         <div className="iconosUser">
