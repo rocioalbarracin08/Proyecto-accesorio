@@ -5,7 +5,7 @@ import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
-import "./producto.css";
+import "./productos.css";
 
 export function Productos() {
   const { idCategoria } = useParams();  // Opcional: si hay, filtra por categoría

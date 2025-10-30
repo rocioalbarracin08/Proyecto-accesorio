@@ -2,7 +2,8 @@ import "./App.css";
 import { Login } from "./components/login/Login";
 import { BarraNavegacion } from "./components/navegacion/Navegacion";
 import { PiePagina } from "./components/piePagina/PiePag";
-import { Destacados } from "./components/productosDestacados/Destacado";
+import { Destacado } from "./components/productosDestacados/Destacado";
+import { Destacados } from "./components/productosDestacados/Destacados";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
 import { Categorizados } from "./components/categorias/Categorizados";
@@ -21,7 +22,7 @@ import { Factura } from "./components/factura/factura";
 import DiseñoMain from "./components/diseño-main/DiseñoMain";
 import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 import EditarDestacados from './components/productosDestacados/EditarDestacados';
-import ProductoDetalle from './components/ProductoDetalle';
+import ProductoDetalle from './components/producto/ProductoDetalle';
 
 function App() {
   return (
@@ -45,10 +46,10 @@ function App() {
           <>
             <BarraNavegacion />
             <CarruselPromociones />
-            <Destacados />
+            <Destacado />
             <Categorizados /> {/* Muestra categorías en home */}
             <DiseñoMain />
-            <EditarDestacados />
+            <Destacados/>
             <PiePagina />
           </>
         }

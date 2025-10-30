@@ -7,13 +7,14 @@ export function AuthProvider({ children }) {
   const [isLogged, setIsLogged] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [userRole, setUserRole] = useState(null);
-  const [loginTrigger, setLoginTrigger] = useState(0); // Nuevo estado para forzar recarga del useEffect después del login
-
+  const [loginTrigger, setLoginTrigger] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Se ejecuta al montar, en cambios de ruta, y cuando loginTrigger cambia (después del login)
+    // QUITA LA VERIFICACIÓN INICIAL DEL TOKEN: No podemos acceder a cookies httpOnly desde JS.
+    // En su lugar, intenta los fetches directamente; si no hay token, fallarán con 401 y el catch los manejará.
+
     fetch("http://localhost:5000/usuarios/perfil", {
       method: "GET",
       credentials: "include",
@@ -21,41 +22,40 @@ export function AuthProvider({ children }) {
       .then((res) => {
         setIsLogged(res.ok);
         if (res.ok) {
-          return fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" });
+          return res.json();  // Obtén los datos del perfil directamente aquí
         }
+        throw new Error("No autorizado");  // Fuerza el catch si no es ok
       })
-      .then((res) => res ? res.json() : null)
       .then((data) => {
-        setIsOwner(data?.es_dueno || false);
-        return fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" });
-      })
-      .then((res) => res ? res.json() : null)
-      .then((data) => {
-        if (data?.id_cliente) setUserRole('cliente');
-        else if (data?.id_empleado) setUserRole('empleado');
+        // Verifica si es dueño (basado en id_cliente e id_empleado null)
+        const esDueno = !data.id_cliente && !data.id_empleado;
+        setIsOwner(esDueno);
+
+        // Setea userRole basado en los datos
+        if (data.id_cliente) setUserRole('cliente');
+        else if (data.id_empleado) setUserRole('empleado');
         else setUserRole('dueño');
 
-        // Redirección automática solo para empleados (si no están ya en /dashboard-empleado)
-        if (data?.id_empleado && location.pathname !== '/dashboard-empleado') {
+        // Redirección automática solo para empleados
+        if (data.id_empleado && location.pathname !== '/dashboard-empleado') {
           navigate('/dashboard-empleado');
         }
       })
       .catch(() => {
+        // Si falla (ej. 401), resetea todo
         setIsLogged(false);
         setIsOwner(false);
         setUserRole(null);
       });
-  }, [loginTrigger]); // Agregado loginTrigger para que se ejecute después del login
-  //location.pathname -> Hacia que cuando se cambiaba de ruta, se vuelva a recargar la direccion al dashboard-empleado si es empleado 
+  }, [loginTrigger]);  // Solo depende de loginTrigger
 
-  // useEffect separado para loggear cambios en userRole (evita el bug del console.log inmediato)
+  // useEffect separado para loggear cambios en userRole
   useEffect(() => {
     console.log("UserRole actualizado:", userRole);
   }, [userRole]);
 
   const login = () => {
-    setIsLogged(true);
-    setLoginTrigger(prev => prev + 1); // Incrementa el trigger para forzar el useEffect
+    setLoginTrigger((prev) => prev + 1);  // Incrementa para forzar el useEffect
   };
 
   const logout = () => {
@@ -63,12 +63,12 @@ export function AuthProvider({ children }) {
       method: "POST",
       credentials: "include",
     })
-    .finally(() => {
-      setIsLogged(false);
-      setIsOwner(false);
-      setUserRole(null);
-      setLoginTrigger(0); // Resetea el trigger al logout
-    });
+      .finally(() => {
+        setIsLogged(false);
+        setIsOwner(false);
+        setUserRole(null);
+        setLoginTrigger(0);
+      });
   };
 
   return (

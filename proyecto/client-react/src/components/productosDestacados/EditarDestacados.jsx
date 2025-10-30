@@ -11,7 +11,7 @@ function EditarDestacados() {
 
   useEffect(() => {
     if (!isLogged || !isOwner) {
-      window.location.href = '/login';
+      console.log(isLogged)
     } else {
       // Cargar productos con destacado y stock
       fetch("http://localhost:5000/productos/destacados/editar", { credentials: "include" })
