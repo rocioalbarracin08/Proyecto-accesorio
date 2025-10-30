@@ -18,7 +18,7 @@ def agregaCompra():
         
         # Iterar sobre cada item y insertar en detalle_factura
         for item in items:
-            nombre_producto = item.get("nombre_producto")
+            nombre_producto = print(item.get("nombre_producto")) #agregue el print para ver que llega
             cantidad = item.get("cantidad")
             precio_unitario = item.get("precio_unitario")
             subtotal = item.get("subtotal")

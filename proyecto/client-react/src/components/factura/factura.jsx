@@ -88,6 +88,7 @@ export function Factura() {
 
     // Obtener datos del usuario logueado desde el backend para comparar
 
+    let userData;
     try {
       const res = await fetch("http://localhost:5000/usuarios/perfil", {
         method: "GET",
@@ -307,7 +308,7 @@ export function Factura() {
                   <button
                     className="btn-finalizar"
                     onClick={handleFinalizar}
-                    disabled={isFormValid}
+                    disabled={!isFormValid} //agregue la condicion para validar el formulario
                   >
                     Finalizar Compra
                   </button>
