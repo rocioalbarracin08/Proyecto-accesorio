@@ -1,6 +1,6 @@
 import "./destacados.css"
 
-export function Destacados(){
+export function Destacado(){
     //Mover fotos a productos
     return(
         <section className="seccion-img">

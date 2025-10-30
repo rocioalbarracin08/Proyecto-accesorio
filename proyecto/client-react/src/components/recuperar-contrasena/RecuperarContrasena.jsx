@@ -20,7 +20,6 @@ export default function RecuperarContrasena() {
       setError("Por favor, ingresa un email válido.");
       return;
     }
-
     setLoading(true);
 
     try {
