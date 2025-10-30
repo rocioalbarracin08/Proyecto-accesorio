@@ -22,6 +22,9 @@ def agregaCompra():
             cantidad = item.get("cantidad")
             precio_unitario = item.get("precio_unitario")
             subtotal = item.get("subtotal")
+            id_producto = item.get("id_producto")
+            nombre_producto = item.get("nombre_producto")
+            print("Producto:", nombre_producto)
             
             if not all([nombre_producto, cantidad, precio_unitario, subtotal]):
                 return jsonify({"error": "Datos incompletos en uno de los items"}), 400
@@ -29,10 +32,10 @@ def agregaCompra():
             g.db_cursor.execute(
                 """
                 INSERT INTO detalle_factura 
-                (id_factura, nombre_producto, cantidad, precio_unitario, subtotal)
-                VALUES (%s, %s, %s, %s, %s)
+                (id_factura, id_producto,nombre_producto, cantidad, precio_unitario, subtotal)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 """,
-                (id_factura, nombre_producto, cantidad, precio_unitario, subtotal)
+                (id_factura, id_producto, nombre_producto, cantidad, precio_unitario, subtotal)
             )
         
         g.db.commit()

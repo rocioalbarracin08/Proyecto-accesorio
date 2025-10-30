@@ -59,12 +59,12 @@ export function Factura() {
   const handleFinalizar = async (e) => {
     e.preventDefault();
     console.log("capute el envio");
-    if (!isLogged) {
+    if (!isLogged) { // Verificar si el usuario está logueado
       alert("Debes iniciar sesión para finalizar la compra.");
       navigate("/login");
       return;
     }
-    if (!email) {
+    if (!email) { // Validar email
       alert("Por favor ingrese su correo electrónico.");
       return;
     }
@@ -97,8 +97,8 @@ export function Factura() {
       if (!res.ok) {
         throw new Error("No se pudo obtener los datos del usuario");
       }
-      const userData = await res.json();
-      console.log("Datos del usuario obtenidos:", userData);
+    userData = await res.json();     
+    console.log("Datos del usuario obtenidos:", userData);
     } catch (err) {
       console.error("Error al obtener perfil:", err);
       alert("Error al verificar datos del usuario: " + err.message);
@@ -141,10 +141,11 @@ export function Factura() {
       total: state.totalPrice,
       items: Object.entries(state.items).map(([id, item]) => ({
         producto_id: item.producto.id || id,
-        nombre_producto: item.producto.nombre || item.producto.name,
+        nombre_producto: item.producto.nombre ?? item.producto.name,
         cantidad: item.cantidad,
         precio_unitario: item.producto.precio,
         subtotal: item.cantidad * item.producto.precio,
+        id_producto: item.producto.id || id, //agregado para el endpoint
       })),
     };
 
