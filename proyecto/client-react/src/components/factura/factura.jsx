@@ -104,7 +104,7 @@ export function Factura() {
       return;
     }
 
-    /*
+    
     // Validar que los datos coincidan con los de la BD
     if (email.trim().toLowerCase() !== userData.email.trim().toLowerCase()) {
       alert("email no identificado");
@@ -171,7 +171,7 @@ export function Factura() {
       .catch((err) => {
         console.error("Error al enviar factura:", err);
         alert("Ocurrió un error al procesar la compra: " + err.message);
-      });*/
+      });
   };
 
   return (
