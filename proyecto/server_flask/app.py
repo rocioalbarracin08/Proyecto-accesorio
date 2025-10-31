@@ -66,11 +66,11 @@ from server_flask.endpoints.login_register import bp as usuarios_bp
 from server_flask.endpoints.productos import bp as productos_bp
 from server_flask.endpoints.promociones import bp as promociones_bp
 from server_flask.endpoints.inventario import bp as inventario_bp
-from server_flask.endpoints.tiendas import bp as tiendas_bp
+from proyecto.server_flask.project.app.routes.tiendas import bp as tiendas_bp
 from server_flask.endpoints.nosotros import bp as info_bp
 from server_flask.endpoints.ventas import bp as ventas_bp
 from server_flask.endpoints.metodos_pagos import bp as metodos_pagos_bp 
-from server_flask.endpoints.detalle_compra import bp as detalle_compra_bp
+from proyecto.server_flask.project.app.routes.detalle_compra import bp as detalle_compra_bp
 
 from server_flask.extensions import mail
 
