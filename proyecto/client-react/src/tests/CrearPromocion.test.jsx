@@ -10,7 +10,7 @@ import CrearPromocion from '../components/promociones/CrearPromocion';
 
 describe('CrearPromocion Component', () => {
   it('renders the create promotion form', () => {
-    render(<CrearPromocion />);
+    render(<CrearPromocion />);//"/i" pruebas flexibles, coincide con "Texto", "TEXTO", "texto", etc
     expect(screen.getByText(/crear nueva promoción/i)).toBeInTheDocument();
   });
 
