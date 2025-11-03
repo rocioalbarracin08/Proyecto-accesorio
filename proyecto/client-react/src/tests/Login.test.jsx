@@ -4,21 +4,38 @@ import { vi } from 'vitest';
 import { AuthProvider } from '../contexts/AuthContext';
 import { Login } from '../components/login/Login';
 
-// Mock completo del módulo useAuth
-vi.mock('../hooks/useAuth', () => ({
-  __esModule: true,
-  default: () => ({
-    email: '',
-    setEmail: vi.fn(),
-    contraseña: '',
-    setContraseña: vi.fn(),
-    error: false,
-    setError: vi.fn(),
-    setLoginError: vi.fn(),
-  }),
+// Mock del contexto de autenticación
+vi.mock('../contexts/AuthContext', () => ({
+  useAuth: () => ({ login: vi.fn(), user: null }),
 }));
 
-describe('Login component', () => {
+describe('Login Component', () => {
+  it('renders the login form', () => {
+    render(
+      <BrowserRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </BrowserRouter>
+    );
+    expect(screen.getByLabelText(/usuario/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
+  });
+
+  it('shows an error message on invalid login', async () => {
+    render(
+      <BrowserRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </BrowserRouter>
+    );
+    const loginButton = screen.getByRole('button', { name: /iniciar sesión/i });
+    loginButton.click();
+    expect(await screen.findByText(/credenciales inválidas/i)).toBeInTheDocument();
+  });
+
   it('Renderiza formulario y botón', () => {
     render(
       <BrowserRouter>
@@ -33,8 +50,6 @@ describe('Login component', () => {
   });
 
   it('Muestra error si email o contraseña están vacíos al hacer click', () => {
-    // No necesitas mockear otra vez aquí, el mock global ya existe
-
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -45,7 +60,6 @@ describe('Login component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /iniciar sesión/i }));
 
-    // Busca el texto de error esperado que se muestra al hacer click con campos vacíos
     expect(screen.queryByText(/por favor, complete todos los campos/i)).toBeInTheDocument();
   });
 });
