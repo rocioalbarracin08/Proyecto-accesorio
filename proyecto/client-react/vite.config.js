@@ -9,8 +9,8 @@ export default defineConfig({
     environment: 'jsdom',   // Simula el navegador (necesario para React)
     setupFiles: './src/tests/setupTests.js' // Archivo para importaciones globales
   },
-
-//para que el fronted pueda comunicarse
+  
+  //para que el fronted pueda comunicarse
   server: {
     proxy: {
       '/api': {
