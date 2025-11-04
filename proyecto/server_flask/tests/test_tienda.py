@@ -4,7 +4,7 @@ def test_crear_tienda_exitoso(mocker):
     mock_cursor = mocker.Mock()
     mock_db = mocker.Mock()
 
-    from proyecto.server_flask.tests import create_app
+    from server_flask.tests import create_app
     app = create_app({"TESTING": True})   # Creamos la app usada en el test
 
     with app.app_context():

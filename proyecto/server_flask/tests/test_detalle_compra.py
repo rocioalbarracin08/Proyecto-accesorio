@@ -1,11 +1,11 @@
 from flask import g
 
-def test_detalle_compra(client):
+def test_detalle_compra(mocker):
     # Mocks para DB
-    mock_cursor = client.Mock()
-    mock_db = client.Mock()
+    mock_cursor = mocker.Mock()
+    mock_db = mocker.Mock()
     
-    from proyecto.server_flask.tests import create_app
+    from server_flask.tests import create_app
     app = create_app({"TESTING": True})
     
     with app.app_context():
