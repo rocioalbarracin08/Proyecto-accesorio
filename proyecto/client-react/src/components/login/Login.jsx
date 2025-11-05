@@ -38,18 +38,18 @@ export function Login(){
                         } else {
                 const data = await response.json();
                 if (data && data.error === "La contraseña es incorrecta") {
-                    setLoginError("Contraseña incorrecta. Intenta nuevamente.");
+                    setLoginError("Contraseña incorrecta");
                 } else {
                     setLoginError("Error al iniciar sesión. Intente nuevamente.");
                 }
                 setError(false);
             }
         } catch (err) {
-            setLoginError("Error de conexión con el servidor.");
+            console.error("Error al conectar con el servidor:", err);
             setError(false);
+            setLoginError("Error de conexión con el servidor");
         }
     };
-
     return (
         <>
         <section className='section-log'>

@@ -2,10 +2,10 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-// Importá tus contextos
-import { AuthProvider } from "../src/contexts/AuthContext";
-import { CarritoProvider } from "../src/contexts/CarritoContext";
-import { PromocionesProvider } from "../src/contexts/PromocionesContext";
+// Importar contextos
+import { AuthProvider } from "../contexts/AuthContext";
+import { CarritoProvider } from "../contexts/CarritoContext";
+import { PromocionesProvider } from "../contexts/PromocionesContext";
 
 // Render helper con todos tus providers
 export function renderWithProviders(ui, { route = "/", ...options } = {}) {

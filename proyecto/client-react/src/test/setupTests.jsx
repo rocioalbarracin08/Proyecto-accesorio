@@ -4,6 +4,7 @@
 import { expect, afterEach } from 'vitest';  // Importa lo básico de Vitest
 import { cleanup } from '@testing-library/react';  // Limpia después de cada test
 import '@testing-library/jest-dom';  // Agrega matchers como toBeInTheDocument
+import './test-utils.jsx';
 
 // Limpia el DOM después de cada prueba para evitar interferencias
 afterEach(() => {
@@ -11,6 +12,8 @@ afterEach(() => {
 });
 
 // Polyfill para window.matchMedia (útil para carruseles o componentes que lo usan)
+// Simula la API del navegador para consultas de media (ej. @media queries).
+
 if (typeof window !== 'undefined' && !window.matchMedia) {
   window.matchMedia = function (query) {
     return {

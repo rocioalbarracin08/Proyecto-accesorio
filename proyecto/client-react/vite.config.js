@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -7,9 +8,13 @@ export default defineConfig({
   test: {
     globals: true,          // Para usar describe, it, expect globalmente
     environment: 'jsdom',   // Simula el navegador (necesario para React)
-    setupFiles: './src/tests/setupTests.js' // Archivo para importaciones globales
+    setupFiles: './src/test/setupTests.jsx', // Archivo para importaciones globales
   },
-  
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   //para que el fronted pueda comunicarse
   server: {
     proxy: {
