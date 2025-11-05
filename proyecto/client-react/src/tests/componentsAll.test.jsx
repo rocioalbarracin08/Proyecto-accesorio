@@ -1,3 +1,4 @@
+//ideal para detectar archivos rotos o mal exportados
 import { describe, it, expect } from 'vitest';
 
 describe('components directory exports', () => {
