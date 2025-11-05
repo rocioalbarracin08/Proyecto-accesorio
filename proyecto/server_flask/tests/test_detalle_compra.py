@@ -5,9 +5,9 @@ def test_detalle_compra(client):
         "items": [
             {
                 "id_producto": 2,
-                "nombre_producto": "Pepsi 1L",
+                "nombre_producto": "broche rectangulo",
                 "cantidad": 2,
-                "precio_unitario": 100,
+                "precio_unitario": 2000,
                 "subtotal": 200
             }
         ]
