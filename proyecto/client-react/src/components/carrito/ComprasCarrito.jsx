@@ -52,7 +52,7 @@ export function ComprasCarrito() {
                     />
                     <div className="carrito-item-info">
                       <h3>{item.producto.nombre || item.producto.name}</h3>
-                      <p>${item.producto.precio}</p>
+                      <p>{item.producto.precio}</p>
                       <div className="carrito-controles">
                         <button onClick={() => handleDecrement(id)}>-</button>
                         <span>{item.cantidad}</span>
