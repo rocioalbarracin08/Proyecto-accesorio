@@ -17,6 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </CarritoProvider>
         </PromocionesProvider>
       </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
   </React.StrictMode>,
 )

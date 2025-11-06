@@ -1,6 +1,5 @@
 {
-  "liveServer.settings.port": 5501,
-  "python.testing.pytestArgs": ["proyecto"],
+  "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true
 }
