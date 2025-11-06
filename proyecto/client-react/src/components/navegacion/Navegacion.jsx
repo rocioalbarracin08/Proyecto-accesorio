@@ -91,7 +91,7 @@ export function BarraNavegacion() {
 
 return (
   <>
-    <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
+    <header className={`encabezado ${isSearchOpen ? 'search-active' : ''} ${isLogged ? 'logged-in' : 'not-logged-in'}`}>
       {/* Logo: ocupa 2 filas a la izquierda */}
       <Link to="/" className="logo-link">
         <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
@@ -175,7 +175,7 @@ return (
         </div>
       </div>
 
-      {/* Derecha fila 1: carrito */}
+      {/* Derecha fila 1: carrito y cerrar sesión */}
       <div className="header-right">
         <button
           onClick={toggleCarrito}
