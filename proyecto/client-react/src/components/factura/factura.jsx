@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./factura.css";
 
 export function Factura() {
-  const { state } = useCarrito();
+  const { state, clearCart } = useCarrito();  // Agregué clearCart para limpiar el carrito después de la compra
   const { isLogged } = useAuthContext();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ export function Factura() {
   const [codigoPostal, setCodigoPostal] = useState("");
   const [ciudad, setCiudad] = useState("");
   const [provincia, setProvincia] = useState("");
+  const [idMetodoPago, setIdMetodoPago] = useState("");  // Nuevo estado para método de pago
 
   // useEffect(() => {
   //   console.log("User from context:", user);
@@ -27,12 +28,13 @@ export function Factura() {
 
   const handleEntregaClick = (opcion) => setEntrega(opcion);
 
-  // Función para validar si el formulario está completo (simplificada, sin dirección por ahora)
+  // Función para validar si el formulario está completo (agregué validación para idMetodoPago)
   const isFormValid = useMemo(() => {
     if (!isLogged) return false;
     if (!email.trim()) return false;
     if (!entrega) return false;
     if (!nombre.trim() || !apellido.trim()) return false;
+    if (!idMetodoPago) return false;  // Nueva validación para método de pago
     if (
       entrega === "envio" &&
       (!direccion.trim() ||
@@ -54,11 +56,12 @@ export function Factura() {
     ciudad,
     provincia,
     codigoPostal,
+    idMetodoPago,  // Agregado a las dependencias
   ]);
 
   const handleFinalizar = async (e) => {
     e.preventDefault();
-    console.log("capute el envio");
+    console.log("Capturé el envío");
     if (!isLogged) { // Verificar si el usuario está logueado
       alert("Debes iniciar sesión para finalizar la compra.");
       navigate("/login");
@@ -76,8 +79,11 @@ export function Factura() {
       alert("Por favor complete nombre y apellido.");
       return;
     }
+    if (!idMetodoPago) {  // Nueva validación para método de pago
+      alert("Por favor seleccione un método de pago.");
+      return;
+    }
 
-    //
     if (
       entrega === "envio" &&
       (!direccion || !ciudad || !provincia || !codigoPostal)
@@ -87,7 +93,6 @@ export function Factura() {
     }
 
     // Obtener datos del usuario logueado desde el backend para comparar
-
     let userData;
     try {
       const res = await fetch("http://localhost:5000/usuarios/perfil", {
@@ -97,18 +102,17 @@ export function Factura() {
       if (!res.ok) {
         throw new Error("No se pudo obtener los datos del usuario");
       }
-    userData = await res.json();     
-    console.log("Datos del usuario obtenidos:", userData);
+      userData = await res.json();     
+      console.log("Datos del usuario obtenidos:", userData);
     } catch (err) {
       console.error("Error al obtener perfil:", err);
       alert("Error al verificar datos del usuario: " + err.message);
       return;
     }
 
-    
     // Validar que los datos coincidan con los de la BD
     if (email.trim().toLowerCase() !== userData.email.trim().toLowerCase()) {
-      alert("email no identificado");
+      alert("Email no identificado");
       return;
     }
     if (nombre.trim().toLowerCase() !== userData.nombre.trim().toLowerCase()) {
@@ -126,52 +130,37 @@ export function Factura() {
       return;
     }
 
-    // Si todo coincide, construir payload y enviar
+    // Construir payload adaptado al endpoint /ventas/registrar_venta
     const payload = {
-      id_factura: Date.now().toString(), // temporal: usar timestamp como id de factura; idealmente el backend debe generar el id
-      entrega, // Indicamos la opción seleccionada para que el backend decida qué guardar
-      mail: email,
-      nombre,
-      apellido,
-      direccion: entrega === "envio" ? direccion : null,
-      ciudad: entrega === "envio" ? ciudad : null,
-      provincia: entrega === "envio" ? provincia : null,
-      codigo_postal: entrega === "envio" ? codigoPostal : null,
-      // Quitar dirección por ahora
-      total: state.totalPrice,
-      items: Object.entries(state.items).map(([id, item]) => ({
-        producto_id: item.producto.id || id,
-        nombre_producto: item.producto.nombre ?? item.producto.name,
+      id_cliente: userData.id_cliente,  // Obligatorio para venta online (cliente logueado)
+      id_metodo_pago: parseInt(idMetodoPago),  // Convertir a número
+      detalles: Object.entries(state.items).map(([id, item]) => ({
+        id_producto: parseInt(item.producto.id || id),  // Asegurar que sea número
         cantidad: item.cantidad,
-        precio_unitario: item.producto.precio,
-        subtotal: item.cantidad * item.producto.precio,
-        id_producto: item.producto.id || id, //agregado para el endpoint
       })),
     };
 
-    // Enviar al endpoint
-    fetch("http://localhost:5000/detalle_factura/insertar/compra", {
+    // Enviar al endpoint correcto
+    fetch("http://localhost:5000/ventas/registrar_venta", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      credentials: "include",
+      credentials: "include",  // Incluye cookies para el token JWT
     })
       .then(async (res) => {
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          throw new Error(err.error || "Error al guardar la factura");
+          throw new Error(err.error || "Error al registrar la venta");
         }
         return res.json();
       })
       .then((data) => {
-        alert(
-          data.mensaje || `Pedido enviado a ${email} con entrega: ${entrega}`
-        );
-        // Aquí podríamos limpiar el carrito o redirigir
-        navigate("/");
+        alert(data.mensaje || `Compra realizada exitosamente. ID de factura: ${data.id_factura}`);
+        clearCart();  // Limpiar el carrito después de la compra
+        navigate("/");  // Redirigir a la página principal
       })
       .catch((err) => {
-        console.error("Error al enviar factura:", err);
+        console.error("Error al registrar venta:", err);
         alert("Ocurrió un error al procesar la compra: " + err.message);
       });
   };
@@ -265,6 +254,21 @@ export function Factura() {
                     />
                   </label>
 
+                  {/* Nuevo campo para método de pago */}
+                  <label>
+                    Método de Pago:
+                    <select
+                      value={idMetodoPago}
+                      onChange={(e) => setIdMetodoPago(e.target.value)}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="1">Efectivo</option>
+                      <option value="2">Tarjeta de Crédito</option>
+                      {/* Agrega más opciones según tu BD, e.g., <option value="3">Transferencia</option> */}
+                    </select>
+                  </label>
+
                   {/* Campos adicionales solo para envío a domicilio */}
                   {entrega === "envio" && (
                     <>
@@ -309,7 +313,7 @@ export function Factura() {
                   <button
                     className="btn-finalizar"
                     onClick={handleFinalizar}
-                    disabled={!isFormValid} //agregue la condicion para validar el formulario
+                    disabled={!isFormValid} // Condición para validar el formulario
                   >
                     Finalizar Compra
                   </button>
