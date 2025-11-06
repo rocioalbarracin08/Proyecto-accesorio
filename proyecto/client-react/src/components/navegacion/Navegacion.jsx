@@ -16,6 +16,8 @@ export function BarraNavegacion() {
   const { state, toggleCarrito, closeCarrito } = useCarrito();
   const [perfil, setPerfil] = useState({}); 
 
+  const [categorias, setCategorias] = useState([]);
+
   // Obtener perfil al loguearse
   useEffect(() => {
     if (isLogged) {
@@ -27,6 +29,14 @@ export function BarraNavegacion() {
       setPerfil({});  // Limpiar si no esta logueado
     }
   }, [isLogged]);
+
+  // NUEVO: Fetch categorías al montar
+  useEffect(() => {
+    fetch("http://localhost:5000/categoria/")
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+      .catch(err => console.error("Error obteniendo categorías:", err));
+  }, []);
 
   const handleLogout = async () => {
     await fetch("http://localhost:5000/usuarios/logout", {
@@ -79,25 +89,17 @@ export function BarraNavegacion() {
     setResultados([]);
   };
 
-  return (
-    <>
-      <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
-        <Link to="/">
-          <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
-        </Link>
+return (
+  <>
+    <header className={`encabezado ${isSearchOpen ? 'search-active' : ''}`}>
+      {/* Logo: ocupa 2 filas a la izquierda */}
+      <Link to="/" className="logo-link">
+        <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
+      </Link>
 
-        <Link to="/" className='direccionamiento'>Inicio</Link> 
-        <Link to="/productos" className='direccionamiento'>Tienda</Link>
-        
-        {/* Submenu para "Nosotros" */}
-        <div className="nosotros-submenu-container">
-          <Link to="/nosotros" className='direccionamiento nosotros-link'>Nosotros</Link>
-          <div className="nosotros-submenu">
-            <Link to="/nosotros" className="submenu-item">Nosotros</Link>
-            <Link to="/nosotros/preguntas" className="submenu-item">Preguntas de clientes</Link>
-          </div>
-        </div>
-
+      {/* Centro fila 1: buscador, saludo, perfil */}
+      <div className="header-center">
+        <div className="buscador-container">
         {/* Contenedor del buscador desplegable */}
         <div className="buscador-container">
           <div className={`buscador-wrapper ${isSearchOpen ? 'open' : ''}`}>
@@ -154,42 +156,75 @@ export function BarraNavegacion() {
           )}
           {isSearchOpen && loading && <p className="buscador-loading">Buscando...</p>}
         </div>
-
-        <div className="iconosUser">
+        </div>
+        <div className="user-section">
           {isLogged ? (
             <>
-              {/* Saludo personalizado */}
               <div className="saludo-usuario">
                 <span className="saludo-texto">Hola, {perfil.nombre || "Usuario"}!</span>
               </div>
               <Link to="/perfil">
                 <img src="/logos/vectorUsuario.png" alt="Perfil" className="perfil" />
               </Link>
-              <button onClick={handleLogout} className="btn-cerrarSesion">
-                Cerrar sesión
-              </button>
             </>
           ) : (
             <Link to="/login" className="user">
               <img src="/logos/vectorUsuario.png" alt="Iniciar sesión" />
             </Link>
           )}
-          <button
-            onClick={toggleCarrito}
-            className="carrito"
-            aria-label={`Ver carrito (${state.totalItems} items)`}
-          >
-            <img src="/logos/carrito.png" alt="Ícono de carrito de compras" />
-            {state.totalItems > 0 && (
-              <span className="carrito-count" aria-hidden="true">
-                {state.totalItems}
-              </span>
-            )}
-          </button>
         </div>
-      </header>
+      </div>
 
-      {state.showCarrito && <ComprasCarrito />}
-    </>
-  );
-}
+      {/* Derecha fila 1: carrito */}
+      <div className="header-right">
+        <button
+          onClick={toggleCarrito}
+          className="carrito"
+          aria-label={`Ver carrito (${state.totalItems} items)`}
+        >
+          <img src="/logos/carrito.png" alt="Ícono de carrito de compras" />
+          {state.totalItems > 0 && (
+            <span className="carrito-count" aria-hidden="true">
+              {state.totalItems}
+            </span>
+          )}
+        </button>
+        {isLogged && (
+          <button onClick={handleLogout} className="btn-cerrarSesion">
+            Cerrar sesión
+          </button>
+        )}
+      </div>
+
+      {/* Fila 2: links centrados */}
+      <nav className="nav-links">
+        <Link to="/" className='direccionamiento'>Inicio</Link>
+
+        <div className="tienda-submenu-container">
+          <Link to="/productos" className='direccionamiento tienda-link'>Tienda</Link>
+          <div className="tienda-submenu">
+            {categorias.map(cat => (
+              <button
+                key={cat.id_category}
+                className="submenu-item"
+                onClick={() => navigate(`/productos/${cat.id_category}`)}
+              >
+                {cat.categoria}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="nosotros-submenu-container">
+          <Link to="/nosotros" className='direccionamiento nosotros-link'>+ INFO</Link>
+          <div className="nosotros-submenu">
+            <Link to="/nosotros" className="submenu-item">Nosotros</Link>
+            <Link to="/nosotros/preguntas" className="submenu-item">Preguntas de clientes</Link>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    {state.showCarrito && <ComprasCarrito />}
+  </>
+);}

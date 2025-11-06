@@ -24,6 +24,7 @@ import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 import EditarDestacados from './components/productosDestacados/EditarDestacados';
 import ProductoDetalle from './components/producto/ProductoDetalle';
 
+
 function App() {
   return (
     <Routes>
@@ -71,6 +72,28 @@ function App() {
         <PiePagina />
         </>} 
         />
+
+      <Route
+      path="/nosotros"
+      element={
+        <>
+          <BarraNavegacion />
+          <Nosotros />
+          <PiePagina />
+        </>
+      }
+      />
+      <Route
+      path="/nosotros/preguntas"
+      element={
+        <>
+          <BarraNavegacion />
+          <Nosotros />
+          <PiePagina />
+        </>
+      }
+      />
+
       <Route
         path="/nosotros"
         element={

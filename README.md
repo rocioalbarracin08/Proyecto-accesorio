@@ -10,3 +10,5 @@ npm install react-router-dom
 Ver si se puede borrar el css de main
 
 pytest -v
+
+npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom

@@ -1,3 +1,4 @@
+import React from 'react';  // Agrega esta línea para usar JSX
 import { createContext, useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

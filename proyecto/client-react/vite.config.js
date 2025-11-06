@@ -1,11 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-
-//para que el fronted pueda comunicarse
+  test: {
+    globals: true,          // Para usar describe, it, expect globalmente
+    environment: 'jsdom',   // Simula el navegador (necesario para React)
+    setupFiles: './src/test/setupTests.jsx', // Archivo para importaciones globales
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  //para que el fronted pueda comunicarse
   server: {
     proxy: {
       '/api': {

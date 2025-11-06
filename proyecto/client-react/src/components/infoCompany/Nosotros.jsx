@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // Para detectar la ruta
+import { useLocation } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./nosotros.css";
 
 export default function Nosotros() {
-  const location = useLocation(); // Detectar ruta actual
-  const isEditingNosotros = location.pathname === "/nosotros"; // true si /nosotros (id=1)
-  const isEditingPreguntas = location.pathname === "/nosotros/preguntas"; // true si /nosotros/preguntas (id=2)
+  const location = useLocation();
+  const isEditingNosotros = location.pathname === "/nosotros";
+  const isEditingPreguntas = location.pathname === "/nosotros/preguntas";
 
   const [dataNosotros, setDataNosotros] = useState(null);
   const [dataPreguntas, setDataPreguntas] = useState(null);
@@ -18,9 +18,8 @@ export default function Nosotros() {
   const [open, setOpen] = useState(null);
   const [nuevaPregunta, setNuevaPregunta] = useState("");
   const [nuevaRespuesta, setNuevaRespuesta] = useState("");
-  const [editingPregunta, setEditingPregunta] = useState(null); // Índice de la pregunta que se está editando
+  const [editingPregunta, setEditingPregunta] = useState(null);
 
-  // Función reutilizable para fetch datos
   const fetchData = () => {
     setError(null);
     console.log("Fetching /nosotros...");
@@ -31,9 +30,9 @@ export default function Nosotros() {
         return res.json();
       })
       .then(payload => {
-        console.log("Datos recibidos:", payload);
+        console.log("Datos recibidos del backend:", payload);  // Log para depurar qué llega exactamente
         setDataNosotros(payload.nosotros || {});
-        setDataPreguntas(payload.preguntas || { preguntas: [] });
+        setDataPreguntas(payload.preguntas || { preguntas: [] });  // Fallback si es null
       })
       .catch(err => {
         console.error('Error fetch /nosotros:', err);
@@ -44,7 +43,6 @@ export default function Nosotros() {
   useEffect(() => {
     fetchData();
 
-    // Verificar si es dueño
     console.log("Verificando si es dueño...");
     fetch("http://localhost:5000/usuarios/es_dueno", { credentials: "include" })
       .then(res => res.json())
@@ -60,6 +58,10 @@ export default function Nosotros() {
 
   if (error) return <div className="nosotros-error">Error cargando datos: {error}</div>;
   if (!dataNosotros || !dataPreguntas) return <p>Cargando...</p>;
+
+  // Variables seguras: Aseguran que sean arrays para evitar errores en .map()
+  const preguntasNosotros = dataNosotros.preguntas || [];
+  const preguntasClientes = dataPreguntas.preguntas || [];
 
   // Agregar nueva pregunta
   const agregarPregunta = () => {
@@ -281,7 +283,7 @@ export default function Nosotros() {
                 <div className="preguntas-nosotros">
                   <h3>Preguntas de Nosotros</h3>
                   <div className="preguntas">
-                    {dataNosotros.preguntas.map((item, idx) => (
+                    {preguntasNosotros.map((item, idx) => (  // Usa variable segura
                       <article className="pregunta-item" key={`nosotros-${idx}`}>
                         <button className="pregunta-btn" onClick={() => setOpen(open === `nosotros-${idx}` ? null : `nosotros-${idx}`)}>
                           {item.pregunta}
@@ -318,7 +320,7 @@ export default function Nosotros() {
             <section className="preguntas-section">
               <div className="preguntas-clientes">
                 <div className="preguntas">
-                  {dataPreguntas.preguntas.map((item, idx) => (
+                  {preguntasClientes.map((item, idx) => (  // Usa variable segura
                     <article className="pregunta-item" key={`clientes-${idx}`}>
                       <button className="pregunta-btn" onClick={() => setOpen(open === `clientes-${idx}` ? null : `clientes-${idx}`)}>
                         {item.pregunta}

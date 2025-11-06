@@ -1,172 +1,98 @@
+/* Header con Grid: 2 filas */
 .encabezado {
-  background-color: rosybrown;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  display: grid;
+  grid-template-rows: 1fr auto; /* Fila 1: flexible, Fila 2: auto */
+  grid-template-columns: auto 1fr auto; /* Columna 1: logo (auto), Columna 2: centro (flexible), Columna 3: derecha (auto) */
+  align-items: center; /* Centrar verticalmente */
+  justify-items: center; /* Centrar horizontalmente en celdas */
   width: 100%;
   position: relative;
-  transition: 0.3s ease;
-  padding: 10px 20px;  /* Agregué padding para más espacio */
+  background-color: rosybrown;
+  padding: 5px 15px; /* Padding reducido para menos separación */
+  gap: 10px; /* Gap reducido para filas más juntas */
+  min-height: 60px; /* Altura mínima reducida */
 }
 
-/* Opacidad cuando la búsqueda está activa: Cambié a 0.95 para que sea muy poco opaco */
+/* Logo: ocupa fila 1 y 2, columna 1 */
+.logo-link {
+  grid-row: 1 / -1; /* Toda la altura */
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar logo */
+}
+
+.miLogo {
+  width: 80px; /* Tamaño reducido para no ocupar tanto */
+  border-radius: 10px;
+}
+
+/* Centro fila 1: buscador y user section */
+.header-center {
+  grid-row: 1;
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* Gap reducido */
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Derecha fila 1: cerrar sesión y carrito */
+.header-right {
+  grid-row: 1;
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Gap entre cerrar sesión y carrito */
+  justify-content: flex-end; /* Alinear a la derecha */
+}
+
+/* Fila 2: links centrados */
+.nav-links {
+  grid-row: 2;
+  grid-column: 2; /* Centrado en la columna del medio */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centrar verticalmente */
+  gap: 15px; /* Gap reducido */
+  flex-wrap: wrap;
+}
+
+/* Opacidad cuando búsqueda activa */
 .encabezado.search-active {
   opacity: 0.95;
-  pointer-events: none;
-}
-.buscador-icono{
-  padding: 0%;
 }
 
-/*interacciones en el buscador */
 .encabezado.search-active .buscador-container {
   pointer-events: auto;
 }
 
-.perfil {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  display: block;
-  object-fit: contain;
-  transition: 0.2s;
-}
-.perfil:hover {
-  transform: scale(1.1);
-}
-
-.user img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  display: block;
-  transition: 0.2s;
-}
-.user img:hover {
-  transform: scale(1.1);
-}
-
-.carrito {
-  position: relative;
-  border: none;
-  outline: none;
-  padding: 0%;
-}
-
-.carrito img {
-  width: 40px;
-  height: 50px;
-  object-fit: contain;
-  display: block;
-  border: none;
-  outline: none;
-}
-
-.direccionamiento {
-  gap: 1rem;
-}
-.direccionamiento:hover {
-  color: rgb(238, 204, 204);
-  overflow: hidden;
-}
-
-.miLogo {
-  width: 90px;
-  border-radius: 10px;
-}
-
-.buscador {
-  background-color: rgb(250, 219, 219);
-  border: none;
-  color: black;
-  width: 15%;
-  height: 25px;
-  text-align: center;
-}
-
-.carrito-count {
-  position: absolute;
-  top: -6px;
-  right: -10px;
-  background-color: red;
-  color: white;
-  border-radius: 50%;
-  width: 25px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.btn-cerrarSesion {
-  background-color: white;
-  color: rosybrown;
-  border: 1px solid rosybrown;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-weight: bold;
-  margin-left: 18px;
-  margin-right: 8px;
-  transition: 0.2s, color 0.2s, border 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-}
-.btn-cerrarSesion:hover {
-  background-color: rgb(238, 204, 204);
-  color: #a05252;
-  border: 1.5px solid #a05252;
-}
-
-.iconosUser {
-  display: flex;
-  align-items: center;
-  gap: 20px;  /* Aumenté gap para evitar apretado */
-  height: 55px;
-  flex-wrap: wrap;  /* Permite wrap si es necesario */
-}
-
-/* Nuevo: Saludo del usuario */
-.saludo-usuario {
-  display: flex;
-  align-items: center;
-}
-
-.saludo-texto {
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  font-family: 'Arial', sans-serif;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  margin-right: 10px;  /* Espacio entre saludo e ícono */
-  white-space: nowrap;  /* Evita que se rompa */
-}
-
-/* Contenedor del buscador */
+/* Buscador */
 .buscador-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Wrapper del buscador: Ancho fijo para evitar mover el header */
 .buscador-wrapper {
   display: flex;
   align-items: center;
   position: relative;
-  width: 40px;  /* Ancho mínimo: solo el ícono */
+  width: 40px;
   transition: 0.3s ease;
-  overflow: hidden;  /* Evita que el contenido se salga */
-  margin: 0%;
-  padding: 0%;
+  overflow: hidden;
 }
 
-/* Cuando abierto, expande el ancho */
 .buscador-wrapper.open {
-  width: 300px;  /* Ancho total cuando abierto */
+  width: 280px; /* Ancho reducido */
 }
 
-/* Ícono del buscador: Oculto cuando abierto */
 .buscador-icono {
   background: none;
   border: none;
@@ -174,16 +100,17 @@
   padding: 5px;
   transition: 0.2s ease;
   z-index: 2;
-  flex-shrink: 0;  /* No se encoja */
+  flex-shrink: 0;
 }
+
 .buscador-icono:hover {
   transform: scale(1.1);
 }
+
 .buscador-wrapper.open .buscador-icono {
-  opacity: 0;  /* Desaparece cuando abierto */
+  opacity: 0;
 }
 
-/* Input del buscador: Inicialmente oculto, se expande al abrir */
 .buscador {
   width: 0;
   opacity: 0;
@@ -196,17 +123,15 @@
   outline: none;
   transition: width 0.3s ease, opacity 0.3s ease;
   position: absolute;
-  left: 40px;  /* Empieza después del ícono */
+  left: 40px;
   z-index: 1;
 }
 
-/* Cuando abierto, expande el input */
 .buscador-wrapper.open .buscador {
-  width: 240px;  /* Ancho del input: deja espacio para cerrar */
+  width: 220px; /* Ancho reducido */
   opacity: 1;
 }
 
-/* Botón de cerrar */
 .buscador-cerrar {
   background: none;
   border: none;
@@ -218,16 +143,16 @@
   z-index: 2;
   flex-shrink: 0;
 }
+
 .buscador-cerrar:hover {
   color: black;
 }
 
-/* Dropdown del buscador */
 .buscador-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  width: 300px;  /* Ancho del dropdown */
+  width: 280px; /* Ancho reducido */
   list-style: none;
   padding: 0;
   margin: 0;
@@ -245,6 +170,7 @@
   border-top: 1px solid #eee;
   transition: 0.2s ease;
 }
+
 .buscador-item:hover {
   background: rgb(250, 219, 219);
 }
@@ -267,7 +193,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  width: 300px;
+  width: 280px; /* Ancho reducido */
   padding: 10px;
   background: white;
   border: 1px solid #ccc;
@@ -276,7 +202,151 @@
   color: #a05252;
   z-index: 1000;
 }
-/* Submenu para "Nosotros" */
+
+/* Saludo y perfil */
+.saludo-usuario {
+  display: flex;
+  align-items: center;
+}
+
+.saludo-texto {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.perfil {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  display: block;
+  transition: 0.2s;
+}
+
+.perfil:hover {
+  transform: scale(1.1);
+}
+
+.user img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  display: block;
+  transition: 0.2s;
+}
+
+.user img:hover {
+  transform: scale(1.1);
+}
+
+/* Carrito */
+.carrito {
+  position: relative;
+  border: none;
+  outline: none;
+  padding: 0;
+  background: none;
+}
+
+.carrito img {
+  width: 40px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+  border: none;
+  outline: none;
+}
+
+.carrito-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Botón cerrar sesión */
+.btn-cerrarSesion {
+  background-color: white;
+  color: rosybrown;
+  border: 1px solid rosybrown;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-weight: bold;
+  transition: 0.2s, color 0.2s, border 0.2s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+}
+
+.btn-cerrarSesion:hover {
+  background-color: rgb(238, 204, 204);
+  color: #a05252;
+  border: 1.5px solid #a05252;
+}
+
+/* Links */
+.direccionamiento {
+  gap: 1rem;
+}
+
+.direccionamiento:hover {
+  color: rgb(238, 204, 204);
+  overflow: hidden;
+}
+
+/* Submenu Tienda */
+.tienda-submenu-container {
+  position: relative;
+}
+
+.tienda-submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: rgba(188, 143, 143, 0.9);
+  border-radius: 10px;
+  padding: 10px;
+  display: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  z-index: 1000;
+}
+
+.tienda-submenu-container:hover .tienda-submenu {
+  display: block;
+}
+
+.tienda-submenu .submenu-item {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.tienda-submenu .submenu-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: whitesmoke;
+}
+
+/* Submenu Nosotros */
 .nosotros-submenu-container {
   position: relative;
 }
@@ -285,11 +355,12 @@
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: rgba(188, 143, 143, 0.9); /* Rosybrown semitransparente */
+  background-color: rgba(188, 143, 143, 0.9);
   border-radius: 10px;
   padding: 10px;
-  display: none; /* Oculto por defecto */
+  display: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 200px;
   z-index: 1000;
 }
 
@@ -297,7 +368,7 @@
   display: block;
 }
 
-.submenu-item {
+.nosotros-submenu .submenu-item {
   display: block;
   color: white;
   text-decoration: none;
@@ -306,29 +377,41 @@
   transition: 0.3s ease;
 }
 
-.submenu-item:hover {
+.nosotros-submenu .submenu-item:hover {
   background-color: rgba(255, 255, 255, 0.2);
+  color: whitesmoke;
 }
 
-
-/* Responsive*/
+/* Responsive */
 @media (max-width: 768px) {
   .encabezado {
-    justify-content: space-between;
-    padding: 0 10px;
-    flex-wrap: wrap;  /* Permite wrap en móviles */
+    grid-template-columns: auto 1fr; /* Logo y centro/derecha juntos */
+    grid-template-rows: auto auto; /* 2 filas */
+    gap: 5px; /* Gap más pequeño */
+    padding: 5px 10px;
+    min-height: 50px; /* Altura reducida */
   }
 
-  .miLogo {
-    width: 70px;
+  .header-center {
+    order: 2;
+    justify-content: flex-start;
+    gap: 10px;
   }
 
-  .direccionamiento {
-    display: none;
+  .header-right {
+    order: 3;
+    justify-content: flex-end;
+  }
+
+  .nav-links {
+    order: 4;
+    grid-column: 1 / -1;
+    justify-content: center;
+    gap: 10px;
   }
 
   .buscador-wrapper.open {
-    width: 250px;  /* Menos ancho en móviles */
+    width: 250px;
   }
 
   .buscador-wrapper.open .buscador {
@@ -339,13 +422,8 @@
     width: 250px;
   }
 
-  .iconosUser {
-    gap: 15px;  /* Menos gap en móviles */
-    flex-wrap: wrap;
-  }
-
   .saludo-texto {
-    font-size: 14px;  /* Texto más pequeño en móviles */
+    font-size: 14px;
     margin-right: 5px;
   }
 
@@ -363,9 +441,54 @@
     padding: 6px 12px;
     font-size: 0.9rem;
   }
+
+  .carrito-count {
+    width: 20px;
+    height: 18px;
+    font-size: 11px;
+    top: -5px;
+    right: -8px;
+  }
+
+  .tienda-submenu, .nosotros-submenu {
+    width: 150px;
+  }
 }
 
 @media (max-width: 480px) {
+  .encabezado {
+    grid-template-columns: 1fr; /* Todo en una columna */
+    grid-template-rows: auto auto auto auto;
+    gap: 5px;
+    padding: 5px;
+    min-height: 40px;
+  }
+
+  .logo-link {
+    grid-row: 1;
+    grid-column: 1;
+    justify-content: center;
+  }
+
+  .header-center {
+    grid-row: 2;
+    grid-column: 1;
+    justify-content: center;
+  }
+
+  .header-right {
+    grid-row: 3;
+    grid-column: 1;
+    justify-content: center;
+  }
+
+  .nav-links {
+    grid-row: 4;
+    grid-column: 1;
+    justify-content: center;
+    gap: 5px;
+  }
+
   .buscador-wrapper.open {
     width: 200px;
   }
@@ -389,5 +512,15 @@
 
   .iconosUser {
     gap: 10px;
+  }
+
+  .tienda-submenu, .nosotros-submenu {
+    width: 120px;
+  }
+
+  .carrito-count {
+    width: 18px;
+    height: 16px;
+    font-size: 10px;
   }
 }
