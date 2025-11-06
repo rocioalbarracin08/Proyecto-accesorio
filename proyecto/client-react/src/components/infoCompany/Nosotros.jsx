@@ -283,24 +283,40 @@ export default function Nosotros() {
                 <div className="preguntas-nosotros">
                   <h3>Preguntas de Nosotros</h3>
                   <div className="preguntas">
-                    {preguntasNosotros.map((item, idx) => (  // Usa variable segura
-                      <article
-                        className={`pregunta-item ${open === `nosotros-${idx}` ? "open" : ""}`}
-                        key={`nosotros-${idx}`}
+                  {preguntasNosotros.map((item, idx) => (
+                    <article
+                      className={`pregunta-item ${open === `nosotros-${idx}` ? "open" : ""}`}
+                      key={`nosotros-${idx}`}
+                    >
+                      <button
+                        className="pregunta-btn"
+                        onClick={() => setOpen(open === `nosotros-${idx}` ? null : `nosotros-${idx}`)}
                       >
-                        <button
-                          className="pregunta-btn"
-                          onClick={() => setOpen(open === `nosotros-${idx}` ? null : `nosotros-${idx}`)}
-                        >
-                          {item.pregunta}
-                        </button>
-                        <div className="respuesta">
-                          <p>{item.respuesta}</p>
-                          /*{idx === 2 && /* mapa */}*/
-                        </div>
-                      </article>
+                        {item.pregunta}
+                      </button>
 
-                    ))}
+                      <div className="respuesta">
+                        <p>{item.respuesta}</p>
+
+                        {/* Mostrar el mapa cuando la pregunta es "¿Dónde estamos?" o idx === 2 */}
+                        {(item.pregunta.includes("Dónde") || idx === 2) && (
+                          <MapContainer
+                            center={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}
+                            zoom={15}
+                            style={{ height: "300px", width: "100%", marginTop: "10px", borderRadius: "10px" }}
+                          >
+                            <TileLayer
+                              attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <Marker position={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}>
+                              <Popup>{dataNosotros.ubicacion_descripcion}</Popup>
+                            </Marker>
+                          </MapContainer>
+                        )}
+                      </div>
+                    </article>
+                  ))}
                   </div>
                 </div>
               </section>
