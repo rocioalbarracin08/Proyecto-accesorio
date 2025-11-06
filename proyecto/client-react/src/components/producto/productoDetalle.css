@@ -39,14 +39,148 @@
   font-weight: bold;
   margin: 10px 0;
 }
-
-/* Carrusel de productos relacionados */
-.carrusel-relacionados {
-  margin-top: 40px;
-  text-align: center;
+/* Layout general de producto-detalle */
+.producto-detalle {
+  display: flex;
+  flex-direction: row; /* Imagen a la izquierda, info a la derecha */
+  gap: 20px; /* Espacio entre imagen e info */
+  max-width: 1200px; /* Ancho máximo para centrar */
+  margin: 0 auto; /* Centrar horizontalmente */
+  padding: 20px;
+  align-items: flex-start; /* Alinear arriba */
 }
 
-.carrusel-relacionados h2 {
+.producto-imagen {
+  width: 40%; /* Imagen ocupa 40% del ancho */
+  max-width: 400px; /* Máximo ancho para no ser demasiado grande */
+  height: auto; /* Mantener proporción */
+  object-fit: cover; /* Ajustar imagen */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.producto-info {
+  flex: 1; /* Ocupa el resto del espacio */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre elementos */
+}
+
+.producto-info h1 {
+  font-size: 2rem;
+  color: rosybrown;
+  margin: 0;
+}
+
+.descripcion {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Precio con promoción */
+.precio-section {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.precio-final {
+  color: red;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.descuento-etiqueta {
+  background: red;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.precio {
+  font-size: 1.3rem;
+  color: rosybrown;
+  font-weight: bold;
+}
+
+/* Cartelitos de promociones */
+.cartelito-verde {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cartelito-violeta {
+  background-color: purple;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cartelito-naranja {
+  background-color: orange;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Botón agregar al carrito */
+.agregar-carrito {
+  background-color: rosybrown;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:0.3s;
+  align-self: flex-start; /* Alinear a la izquierda */
+}
+
+.agregar-carrito:hover {
+  background-color: #bc8f8f;
+}
+
+.agregar-carrito:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Carrusel de productos relacionados - Ocupa ancho completo */
+.carrusel-relacionados-full {
+  margin-top: 40px;
+  text-align: center;
+  width: 100%; /* Ocupa todo el ancho de la página */
+  padding: 20px 0; /* Padding vertical */
+  background-color: #f9f9f9; /* Fondo sutil para diferenciar */
+}
+
+.carrusel-relacionados-full h2 {
   color: rosybrown;
   margin-bottom: 20px;
 }
@@ -77,7 +211,7 @@
   display: flex;
   gap: 15px;
   overflow: hidden;
-  width: 60%; /* Ajusta según necesidad */
+  width: 80%; /* Más ancho para ocupar espacio */
 }
 
 .relacionado-item {
@@ -87,8 +221,8 @@
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-  min-width: 150px;
+  transition: 0.3s;
+  min-width: 320px;
 }
 
 .relacionado-item:hover {

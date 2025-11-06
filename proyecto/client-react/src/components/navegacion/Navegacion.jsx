@@ -1,10 +1,10 @@
-import "./nav.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
 import { FaSearch } from "react-icons/fa";  // Importar ícono de búsqueda de React Icons
+import "./nav.css";
 
 export function BarraNavegacion() {
   const { isLogged, logout } = useAuthContext();
@@ -99,13 +99,11 @@ return (
 
       {/* Centro fila 1: buscador, saludo, perfil */}
       <div className="header-center">
-        <div className="buscador-container">
-        {/* Contenedor del buscador desplegable */}
-        <div className="buscador-container">
+        <div className="buscador-container">  {/* Solo un contenedor */}
           <div className={`buscador-wrapper ${isSearchOpen ? 'open' : ''}`}>
             <FaSearch color="#a05252" size={20} onClick={() => setIsSearchOpen(true)}
               className="buscador-icono"
-              aria-label="Abrir búsqueda"/>  {/* Ícono de React en color similar a la paleta */}
+              aria-label="Abrir búsqueda"/>
             <input
               className="buscador"
               type="text"
@@ -133,7 +131,7 @@ return (
               {resultados.map((prod) => (
                 <li key={prod.id_producto} className="buscador-item">
                   <Link
-                    to={`/productos/${prod.id_categoria}`}
+                    to={`/producto/${prod.id_producto}`}
                     onClick={() => {
                       setBusqueda("");
                       setResultados([]);
@@ -155,7 +153,6 @@ return (
             </ul>
           )}
           {isSearchOpen && loading && <p className="buscador-loading">Buscando...</p>}
-        </div>
         </div>
         <div className="user-section">
           {isLogged ? (

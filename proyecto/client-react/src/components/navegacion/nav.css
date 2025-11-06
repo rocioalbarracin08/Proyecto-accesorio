@@ -1,4 +1,7 @@
 /* Header con Grid: 2 filas */
+header{
+  position: fixed;
+}
 .encabezado {
   display: grid;
   grid-template-rows: 1fr auto; /* Fila 1: flexible, Fila 2: auto */
@@ -89,7 +92,7 @@
 
 /* Buscador */
 .buscador-container {
-  position: relative;
+  position: relative; /* Necesario para posicionar el dropdown absolutamente */
   display: flex;
   align-items: center;
 }
@@ -135,7 +138,7 @@
   padding: 0 8px;
   border-radius: 6px;
   outline: none;
-  transition:  0.3s ease;
+  transition: 0.3s ease;
   position: absolute;
   left: 40px;
   z-index: 1;
@@ -164,7 +167,7 @@
 
 .buscador-dropdown {
   position: absolute;
-  top: 100%;
+  top: 100%; /* Posiciona justo abajo del buscador */
   left: 0;
   width: 280px; /* Ancho reducido */
   list-style: none;
@@ -176,13 +179,14 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-height: 200px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 2000; /* Alto para estar por encima de todo */
 }
 
 .buscador-item {
   padding: 10px;
   border-top: 1px solid #eee;
   transition: 0.2s ease;
+  z-index: 2001; /* Agregado para estar encima del dropdown y otros elementos */
 }
 
 .buscador-item:hover {
@@ -214,7 +218,7 @@
   border-radius: 8px;
   text-align: center;
   color: #a05252;
-  z-index: 1000;
+  z-index: 2000; /* Alto para consistencia */
 }
 
 /* Saludo y perfil */

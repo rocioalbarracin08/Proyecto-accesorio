@@ -8,6 +8,37 @@ from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
 
+# OBTENER PRODUCTO INDIVIDUAL (público, filtra por tienda del usuario si aplica)
+@bp.route('/<int:id_producto>', methods=['GET'])
+def get_producto(id_producto):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    # Verificar usuario para obtener su tienda (igual que en /mostrar)
+    user, error, status = verificar_usuario()
+    if error:
+        id_tienda_usuario = 1  # Tienda por defecto para público
+    else:
+        id_tienda_usuario = user.get('id_tienda') or 1  # Tienda del empleado o 1 para online
+    
+    try:
+        # Obtener el producto con stock de la tienda del usuario
+        g.db_cursor.execute("""
+            SELECT p.id_producto, p.name, p.descripcion, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock, c.categoria
+            FROM productos p
+            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
+            LEFT JOIN categoria c ON p.id_categoria = c.id_category
+            WHERE p.id_producto = %s AND p.activo = 1
+        """, (id_tienda_usuario, id_producto))
+        
+        producto = g.db_cursor.fetchone()
+        if not producto:
+            return jsonify({"error": "Producto no encontrado"}), 404
+        
+        return jsonify(producto), 200
+    except Exception as err:
+        return jsonify({"error": f"Error al obtener producto: {err}"}), 500
+
 @bp.route('/destacados', methods=['GET'])
 #@solo_dueno
 def get_destacados():

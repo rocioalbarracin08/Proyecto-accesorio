@@ -9,6 +9,16 @@
     background-color: white;
     
   }
+
+.img-container {
+    /* Contenedor fijo para cada imagen, para consistencia */
+    width: 16%; /* Mismo ancho relativo que antes */
+    height: 80%; /* Mismo alto relativo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Evita que imágenes grandes sobresalgan */
+}
 .seccion-img img{
     /*Estilo a las imagenes*/
     width: 16%;

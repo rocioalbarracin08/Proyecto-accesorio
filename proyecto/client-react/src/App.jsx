@@ -28,7 +28,13 @@ import ProductoDetalle from './components/producto/ProductoDetalle';
 function App() {
   return (
     <Routes>
-      <Route path="/producto/:id_producto" element={<ProductoDetalle />} />
+      <Route path="/producto/:id_producto" element={
+        <>
+          <BarraNavegacion />
+          <ProductoDetalle />
+          <PiePagina />
+        </>
+      } />
       <Route path="/admin/destacados" element={<EditarDestacados />} />
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
       <Route
