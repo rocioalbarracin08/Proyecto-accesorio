@@ -17,34 +17,32 @@ export default function ProductoDetalle() {
   const { userRole } = useAuthContext();
   const { promociones } = usePromociones();
 
-  useEffect(() => {
-    console.log("Fetching producto con ID:", id_producto);  // Log para depurar
-    
-    fetch(`http://localhost:5000/productos/${id_producto}`, { credentials: "include" })  // Agregado credentials
+ useEffect(() => {
+    console.log("Fetching producto con ID:", id_producto);
+    fetch(`http://localhost:5000/productos/${id_producto}`, { credentials: "include" })
       .then(res => {
-        console.log("Response status:", res.status);  // Log del status HTTP
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);  // Error descriptivo si no es 200
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         return res.json();
       })
       .then(data => {
-        console.log("Producto cargado:", data);  // Log de los datos
+        console.log("Producto cargado:", data);
         setProducto(data);
       })
       .catch(err => {
-        console.error("Error en fetch:", err);  // Log del error
+        console.error("Error en fetch:", err);
         setError(err.message);
       });
+  }, [id_producto]); // Solo depende de id_producto
 
-    // Fetch de productos relacionados (solo si producto ya está cargado)
+  // useEffect separado para relacionados: Si no tiene id_categoria, no van aparecer sus relacionados
+  useEffect(() => {
     if (producto?.id_categoria) {
       fetch(`http://localhost:5000/productos/por_categoria/${producto.id_categoria}?page=1&per_page=5`, { credentials: "include" })
         .then(res => res.json())
         .then(data => setProductosRelacionados(data.productos.filter(p => p.id_producto !== id_producto) || []))
         .catch(err => console.error("Error cargando relacionados:", err));
     }
-  }, [id_producto, producto?.id_categoria]);
+  }, [producto, id_producto]); // Depende de producto y id_producto
 
   if (error) return <p>Error cargando producto: {error}</p>;
   if (!producto) return <p>Cargando...</p>;
@@ -98,11 +96,6 @@ export default function ProductoDetalle() {
               <>
                 <span className="precio-original">${precioOriginal.toFixed(2)}</span>
                 <span className="precio-final">${precioFinal.toFixed(2)}</span>
-                <span className="descuento-etiqueta">
-                  {promocionActiva.tipo_descuento === "porcentaje"
-                    ? `${promocionActiva.descuento * 100}% OFF`
-                    : `$${promocionActiva.descuento} OFF`}
-                </span>
               </>
             ) : (
               <span className="precio">${precioFinal.toFixed(2)}</span>
@@ -154,18 +147,30 @@ export default function ProductoDetalle() {
         <div className="carrusel-relacionados-full">
           <h2>Productos Relacionados</h2>
           <div className="carrusel-container">
-            <button className="carrusel-btn" onClick={prevSlide}>&lt;</button>
-            <div className="carrusel-slides">
-              {productosRelacionados.slice(currentIndex, currentIndex + 4).map(prod => (
-                <ProductoItem
-                  key={prod.id_producto}
-                  producto={prod}
-                  promocion={promociones.find(p => p.id_categoria == prod.id_categoria && p.activo && new Date() >= new Date(p.fecha_inicio) && new Date() <= new Date(p.fecha_fin))}  // Pasa la promoción si existe
-                />
-              ))}
-            </div>
-            <button className="carrusel-btn" onClick={nextSlide}>&gt;</button>
+          <button 
+            className="carrusel-btn" 
+            onClick={prevSlide} 
+            disabled={productosRelacionados.length <= 4 || currentIndex === 0} // Deshabilita si no hay suficientes para deslizar
+          >
+            &lt;
+          </button>
+          <div className="carrusel-slides">
+            {productosRelacionados.slice(currentIndex, Math.min(currentIndex + 4, productosRelacionados.length)).map(prod => ( // Muestra hasta 4, pero no más de los disponibles
+              <ProductoItem
+                key={prod.id_producto}
+                producto={prod}
+                promocion={promociones.find(p => p.id_categoria == prod.id_categoria && p.activo && new Date() >= new Date(p.fecha_inicio) && new Date() <= new Date(p.fecha_fin))}
+              />
+            ))}
           </div>
+          <button 
+            className="carrusel-btn" 
+            onClick={nextSlide} 
+            disabled={productosRelacionados.length <= 4 || currentIndex >= productosRelacionados.length - 4} // Deshabilita si no hay más para deslizar
+          >
+            &gt;
+          </button>
+        </div>
         </div>
       )}
     </>

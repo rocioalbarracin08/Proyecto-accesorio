@@ -189,7 +189,7 @@ function RegistrarVenta() {
               const precioFinal = p.precio * (1 - descuento);
               const stock = p.stock || 0;
               return (
-                <div key={p.id_producto} className="producto-item">
+                <div key={p.id_producto} className="product-item">
                   <div className="producto-info">
                     <span className="producto-nombre">{p.name}</span>
                     <span className="producto-precio">

@@ -47,16 +47,16 @@
   max-width: 1200px; /* Ancho máximo para centrar */
   margin: 0 auto; /* Centrar horizontalmente */
   padding: 20px;
-  align-items: flex-start; /* Alinear arriba */
+  align-items: center; /* Alinear arriba */
 }
 
 .producto-imagen {
-  width: 40%; /* Imagen ocupa 40% del ancho */
-  max-width: 400px; /* Máximo ancho para no ser demasiado grande */
-  height: auto; /* Mantener proporción */
-  object-fit: cover; /* Ajustar imagen */
-  border-radius: 10px; /* Bordes redondeados */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  width: 100%;
+  max-width: 550px;
+  height: 350px; /* Fija una altura para consistencia, ajusta según necesites */
+  object-fit: contain; /* Cambia a 'contain' para evitar estiramiento */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .producto-info {
@@ -64,6 +64,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px; /* Espacio entre elementos */
+  align-items: center;
 }
 
 .producto-info h1 {
@@ -116,12 +117,13 @@
 .cartelito-verde {
   background-color: green;
   color: white;
-  padding: 10px;
   border-radius: 8px;
   font-weight: bold;
   font-size: 0.9rem;
   text-align: center;
   margin: 10px 0;
+  width: 40%;
+  height: 20%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -163,7 +165,10 @@
 }
 
 .agregar-carrito:hover {
-  background-color: #bc8f8f;
+  background-color: transparent;
+  color: #bc8f8f;
+  border-style: hidden;
+  border-color: #bc8f8f;
 }
 
 .agregar-carrito:disabled {
@@ -276,7 +281,28 @@
   margin: 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+/* Estilos específicos para ProductoItem en el carrusel */
+.carrusel-slides .producto-item {
+  min-width: 200px; /* Ancho fijo para uniformidad */
+  min-height: 220px; /* Altura reducida para compactar */
+  max-width: 90%; /* Limita el ancho máximo */
+  display: flex;
+  flex-direction: column;
+}
+.carrusel-slides .producto-item img {
+  height: 300px; /* Reduce la altura de la imagen */
+  width: 250px;
+  object-fit: cover; /* Mantiene proporción, recorta si es necesario */
+}
 
+/*CONFUSIOOOOOOOOOOON, AFECTA AL ESTILO DE PRODUCTO ITEM*/
+.carrusel-slides .producto-item a {
+  font-size: 0.9rem; /* Reduce tamaño de título para compactar */
+  color: rosybrown;
+}
+.carrusel-slides .agregar-carrito {
+  font-size: 0.9rem;
+}
 /* Responsive */
 @media (max-width: 768px) {
   .carrusel-slides {
@@ -284,5 +310,20 @@
   }
   .relacionado-item {
     min-width: 120px;
+  }
+  .producto-detalle {
+    flex-direction: column; /* Apila imagen e info verticalmente */
+    gap: 15px;
+  }
+  .producto-imagen {
+    width: 100%; /* Imagen ocupa todo el ancho en móvil */
+    max-width: none;
+    height: 250px; /* Ajusta altura para móvil */
+  }
+  .carrusel-slides {
+    width: 90%; /* Más ancho en móvil */
+  }
+  .relacionado-item {
+    min-width: 150px; /* Ajusta tamaño en móvil */
   }
 }

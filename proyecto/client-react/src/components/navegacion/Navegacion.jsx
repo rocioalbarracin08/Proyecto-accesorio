@@ -145,7 +145,7 @@ return (
                       className="buscador-img"
                     />
                     <div>
-                      <strong>CATEGORIA: {prod.categoria}</strong>: {prod.name}
+                      <strong>{prod.categoria}</strong>: {prod.name}
                     </div>
                   </Link>
                 </li>

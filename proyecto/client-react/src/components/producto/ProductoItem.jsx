@@ -20,6 +20,7 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
 
   return (
     <div className="producto-item" style={{ position: "relative" }}>
+      <Link to={`/producto/${producto.id_producto || producto.id}`}>
       {promocion && (
         <span className="descuento-etiqueta">
           {promocion.tipo_descuento === "porcentaje"
@@ -27,14 +28,10 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
             : `$${promocion.descuento} OFF`}
         </span>
       )}
-
-      {/* Enlace al detalle: envuelve la imagen para que sea clickeable */}
-      <Link to={`/producto/${producto.id_producto || producto.id}`}>
         <img src={producto.imagen_url || "/default-product.jpg"} alt={producto.name} />
-      </Link>
-      <h3>
+      <h2>
         <Link to={`/producto/${producto.id_producto || producto.id}`}>{producto.name}</Link>
-      </h3>
+      </h2>
       <p className="producto-precio">
         {promocion ? (
           <>
@@ -50,7 +47,7 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
           `$${precioFinal.toFixed(2)}`
         )}
       </p>
-
+      </Link>
       <button
         className="agregar-carrito"
         onClick={() => {
