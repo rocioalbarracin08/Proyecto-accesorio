@@ -1,7 +1,7 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { AuthProvider, useAuthContext } from "../AuthContext";
 import { describe, it, expect } from "vitest";
-import React from "react";
 
 // Componente de prueba que usa el contexto
 function TestComponent() {

@@ -1,6 +1,6 @@
+import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import { CarritoProvider, useCarrito } from "../../contexts/CarritoContext";
-import React from "react";
 
 describe("CarritoContext", () => {
   it("agrega un item al carrito", () => {

@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     globals: true,          // Para usar describe, it, expect globalmente
     environment: 'jsdom',   // Simula el navegador (necesario para React)
-    setupFiles: ["test/setupTests.jsx"], // Archivo para importaciones globales
+    setupFiles: ["@/test/setupTests.jsx"], // Archivo para importaciones globales
   },
   resolve: {
     alias: {

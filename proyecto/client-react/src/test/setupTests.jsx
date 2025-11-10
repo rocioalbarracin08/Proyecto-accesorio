@@ -1,6 +1,5 @@
 // /test/setupTests.jsx - Setup global para Vitest
 // Este archivo se ejecuta antes de todas las pruebas. Aquí van polyfills y configuraciones globales.
-
 import { expect, afterEach } from 'vitest';  // Importa lo básico de Vitest
 import { cleanup } from '@testing-library/react';  // Limpia después de cada test
 import '@testing-library/jest-dom';  // Agrega matchers como toBeInTheDocument

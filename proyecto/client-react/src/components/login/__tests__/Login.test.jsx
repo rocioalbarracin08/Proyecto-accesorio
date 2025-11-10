@@ -1,5 +1,5 @@
 import React from "react";
-import { renderWithProviders, screen, fireEvent, waitFor } from ".@/test/test-utils";
+import { renderWithProviders, screen, fireEvent, waitFor } from "../../../test/test-utils";
 import { vi, describe, it, expect } from "vitest";
 import { Login } from "../Login";
 

@@ -1,5 +1,6 @@
 //TEST GENERAL DE ESPORTACIONES DE CONTEXTS
 //se usa una funcion de vitest para importar todos los modulos bajo /src/contexts
+import React from "react";
 import { describe, it, expect } from "vitest";
 
 describe("contexts directory exports", () => {

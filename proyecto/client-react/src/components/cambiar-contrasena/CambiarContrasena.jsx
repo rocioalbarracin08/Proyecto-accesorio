@@ -80,7 +80,7 @@ export default function CambiarContrasena() {
       <h1>Cambiar Contraseña</h1>
       {mensaje && <p className="mensaje">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
-      <form className="cambiar-form" onSubmit={handleSubmit}>
+      <form className="cambiar-form" onSubmit={handleSubmit}noValidate> {/*Para deshabilitar la validación automáticamente del navegador*/}
         <div className="password-container">
           <input
             type={showActual ? "text" : "password"}
