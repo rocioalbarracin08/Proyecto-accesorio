@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./pie.css"
 
 export function PiePagina(){
@@ -26,8 +27,8 @@ export function PiePagina(){
             
             <div className="compañia">
                 <h4>Compañia</h4>
-                <a className="a-company" href="#">¿Quiénes somos?</a>
-                <a className="a-company" href="#">¿Qué hacemos?</a>
+                <Link to="/nosotros" className="a-company">¿Quiénes somos?</Link>
+                <Link to="/nosotros/preguntas" className="a-company">¿Cómo trabajamos?</Link>
             </div>
 
         </div>

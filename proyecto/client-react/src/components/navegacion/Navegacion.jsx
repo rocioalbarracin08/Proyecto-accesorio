@@ -196,7 +196,6 @@ return (
       {/* Fila 2: links centrados */}
       <nav className="nav-links">
         <Link to="/" className='direccionamiento'>Inicio</Link>
-
         <div className="tienda-submenu-container">
           <Link to="/productos" className='direccionamiento tienda-link'>Tienda</Link>
           <div className="tienda-submenu">
