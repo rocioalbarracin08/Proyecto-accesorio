@@ -99,4 +99,5 @@ describe("Login Component", () => {
       expect(screen.getByText(/error de conexión con el servidor/i)).toBeInTheDocument();
     });
   });
+  it("Redireccion a home si hay login exitoso",()=>{})
 });

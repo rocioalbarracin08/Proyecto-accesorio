@@ -23,6 +23,48 @@ export function renderWithProviders(ui, { route = "/", ...options } = {}) {
 
   return render(ui, { wrapper: Wrapper, ...options });
 }
+import { vi } from "vitest";
+// Crear funciones mockeables para contextos
+export const mockUseAuthContext = vi.fn(() => ({
+  isLogged: false,
+  logout: vi.fn(),
+}));
+export const mockUseCarrito = vi.fn(() => ({
+  state: { totalItems: 0, showCarrito: false },
+  toggleCarrito: vi.fn(),
+  closeCarrito: vi.fn(),
+}));
+
+// En renderWithMockProviders
+export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
+  const MockAuthProvider = ({ children }) => {
+    const mockValue = mockUseAuthContext();
+    return <AuthContext.Provider value={mockValue}>{children}</AuthContext.Provider>;
+  };
+
+  const MockCarritoProvider = ({ children }) => {
+    const mockValue = mockUseCarrito();
+    return <CarritoContext.Provider value={mockValue}>{children}</CarritoContext.Provider>;
+  };
+
+  const Wrapper = ({ children }) => (
+    <MemoryRouter initialEntries={[route]}>
+      <MockAuthProvider>
+        <MockCarritoProvider>
+          <PromocionesProvider>
+            {children}
+          </PromocionesProvider>
+        </MockCarritoProvider>
+      </MockAuthProvider>
+    </MemoryRouter>
+  );
+
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+
+// Importa AuthContext y CarritoContext en test-utils.jsx
+import { AuthContext } from "../contexts/AuthContext";
+import { CarritoContext } from "../contexts/CarritoContext";
 
 // Reexporta todo lo útil de testing-library
 export * from "@testing-library/react";

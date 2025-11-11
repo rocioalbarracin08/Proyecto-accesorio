@@ -183,10 +183,11 @@ header{
 }
 
 .buscador-item {
+  position: absolute;
   padding: 10px;
   border-top: 1px solid #eee;
   transition: 0.2s ease;
-  z-index: 2001; /* Agregado para estar encima del dropdown y otros elementos */
+  z-index: 2; /* Agregado para estar encima del dropdown y otros elementos */
 }
 
 .buscador-item:hover {

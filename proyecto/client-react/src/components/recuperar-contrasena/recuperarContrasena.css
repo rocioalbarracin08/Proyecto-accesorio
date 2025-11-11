@@ -73,12 +73,13 @@
   transition: all 0.3s ease;  /* Animación suave para hover y aparición */
   transform: scale(0);  /* Empieza oculto (escala 0) */
   opacity: 0;
-  animation: 0.5s ease-in forwards;  /* Animación de aparición */
+  animation: appear 0.5s ease-in forwards;  /* CORRECCIÓN: 'appear' al inicio */
 }
 
 /* Estilos para el botón de reset al pasar el mouse */
 .reset-link-btn:hover {
-  background-color: #d2691e;  /* Mismo hover que el botón */
+  background-color: white;  /* Mismo hover que el botón */
+  color: rosybrown;
   transform: scale(1.05);  /* Ligero aumento de escala en hover */
 }
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
@@ -30,7 +31,6 @@ export function BarraNavegacion() {
     }
   }, [isLogged]);
 
-  // NUEVO: Fetch categorías al montar
   useEffect(() => {
     fetch("http://localhost:5000/categoria/")
       .then(res => res.json())

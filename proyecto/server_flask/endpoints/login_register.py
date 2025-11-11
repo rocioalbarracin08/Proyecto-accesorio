@@ -236,7 +236,7 @@ def recuperar_contrasena():
         #msg.body = f'Haz click aquí para resetear tu contraseña: {reset_url}'
         #mail.send(msg)   mail configurado en app.py
         print(f"Simulación: Email enviado a {email}. Enlace de recuperación: {reset_url}")
-        return jsonify({"mensaje": "Solicitud de recuperación enviada. Usa el enlace para resetear.", "reset_url": reset_url}), 200
+        return jsonify({"reset_url": reset_url}), 200
     except Exception as err:
         g.db.rollback()
         return jsonify({"error": f"Error en recuperación: {err}"}), 500

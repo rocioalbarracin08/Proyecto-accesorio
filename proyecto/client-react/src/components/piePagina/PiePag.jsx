@@ -32,7 +32,7 @@ export function PiePagina(){
             </div>
 
         </div>
-        <h5 className="derechos">© 2025 Accesorios | Todos los derechos reservados.</h5>
+        <h5 className="derechos">© 2025 Accesorios | Todos los derechos reservados</h5>
     </footer>
     )
 }
