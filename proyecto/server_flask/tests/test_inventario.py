@@ -16,7 +16,7 @@ def test_inventario(client):
 
     # Obtener producto y buscar el id de un producto que tenga stock
     id_producto = 3
-    nuevo_stock = 200
+    nuevo_stock = 50
 
 
     # Llamar al endpoint para actualizar stock (ruta definida en /productos/actualizar_stock/<id>)

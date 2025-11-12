@@ -1,6 +1,6 @@
 def test_toggle_empleado_activo(client):
    """
-   Test que verifica que el endpoint PATCH /empleados/desactivar/<id> alterna
+   Test que verifica que el endpoint PATCH /empleados/desactivar/<id> alterne
    el estado `activo` de un empleado. Se loguea primero como dueño para
    obtener la cookie de autenticación usada por el decorador `solo_dueno`.
    Este test asume que existe un empleado con id_empleado = 1 en la DB.

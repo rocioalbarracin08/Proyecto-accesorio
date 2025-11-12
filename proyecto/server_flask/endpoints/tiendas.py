@@ -27,7 +27,7 @@ def crear_tienda():
 
 
 ########################### M O S T R A R  ###########################
-@bp.route("/", methods=["GET"])
+@bp.route("/mostrar", methods=["GET"])
 def listar_tiendas():
     if not hasattr(g, "db_cursor"):
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500

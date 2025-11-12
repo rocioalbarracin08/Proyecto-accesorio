@@ -65,9 +65,7 @@ def create_app(config=None):
     from server_flask.endpoints.tiendas import bp as tiendas_bp
     from server_flask.endpoints.nosotros import bp as info_bp
     from server_flask.endpoints.ventas import bp as ventas_bp
-    from server_flask.endpoints.metodos_pagos import bp as metodos_pagos_bp 
-    from server_flask.endpoints.detalle_compra import bp as detalle_compra_bp
-    
+    from server_flask.endpoints.metodos_pagos import bp as metodos_pagos_bp     
 
     # Registrar blueprints
     app.register_blueprint(categoria_bp)
@@ -81,7 +79,6 @@ def create_app(config=None):
     app.register_blueprint(info_bp)
     app.register_blueprint(ventas_bp)
     app.register_blueprint(metodos_pagos_bp)
-    app.register_blueprint(detalle_compra_bp)
 
     mail.init_app(app)
 
