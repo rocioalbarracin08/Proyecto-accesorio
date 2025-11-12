@@ -111,7 +111,6 @@ describe("Categorizados Component", () => {
     );
 
     // El componente muestra "No hay categorías disponibles" porque categorias inicia como [] y no se cambia en error
-    // Ajusta el test para esperar que aparezca (comportamiento actual)
     expect(screen.getByText(/no hay categorías disponibles/i)).toBeInTheDocument();
   });
 });

@@ -4,6 +4,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
+import CarruselPromociones from "./PromosBanner";
 import { FaSearch } from "react-icons/fa";  // Importar ícono de búsqueda de React Icons
 import "./nav.css";
 
@@ -91,6 +92,7 @@ export function BarraNavegacion() {
 
 return (
   <>
+    <CarruselPromociones />
     <header className={`encabezado ${isSearchOpen ? 'search-active' : ''} ${isLogged ? 'logged-in' : 'not-logged-in'}`}>
       {/* Logo: ocupa 2 filas a la izquierda */}
       <Link to="/" className="logo-link">

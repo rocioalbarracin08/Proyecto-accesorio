@@ -76,8 +76,6 @@ export default function DashboardEmpleado() {
       <main className="dashboard-content">
         {renderSeccion()}
       </main>
-
-      <Link to="/" className="volver">Volver a Inicio</Link>
     </div>
   );
 }

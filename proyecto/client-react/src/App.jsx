@@ -23,6 +23,7 @@ import DiseñoMain from "./components/diseño-main/DiseñoMain";
 import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 import EditarDestacados from './components/productosDestacados/EditarDestacados';
 import ProductoDetalle from './components/producto/ProductoDetalle';
+import Categorias from "./components/categorias/Categorias";
 
 
 function App() {
@@ -35,18 +36,19 @@ function App() {
           <PiePagina />
         </>
       } />
+      <Route path="/gestionCategorias" element={<Categorias/>}/>
+      <Route path=""/>
       <Route path="/admin/destacados" element={<EditarDestacados />} />
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
-      <Route
-        path="/resetear-contrasena"
-        element={<ResetearContrasenaToken />}
-      />
-      <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />{" "}
-      {/*Cuando ya estan logueados */}
+      <Route path="/resetear-contrasena" element={<ResetearContrasenaToken />}/>
+      <Route path="/dashboard-empleado" element={<DashboardEmpleado />}/>
+      <Route path="/cambiar-contrasena" element={<CambiarContrasena />} />
       <Route path="/crear-promocion" element={<CrearPromocion />} />
       <Route path="/promociones" element={<Promociones />} />
       <Route path="/editarPromociones" element={<EditarPromocion />} />
       <Route path="/factura" element={<Factura />} />
+      <Route path="/registro" element={<Registrarse />} />
+      <Route path="/login" element={<Login />} />
       <Route
         path="/"
         element={
@@ -109,8 +111,7 @@ function App() {
             <PiePagina />
           </>
         }
-      ></Route>
-      <Route path="/login" element={<Login />} />
+      />
       <Route
         path="/perfil"
         element={
@@ -121,7 +122,6 @@ function App() {
           </>
         }
       />
-      <Route path="/registro" element={<Registrarse />} />
       {/* Ruta para registrar empleados (protegida, solo dueño) */}
       <Route
         path="/registrar-empleado"
@@ -129,16 +129,6 @@ function App() {
           <>
             <BarraNavegacion />
             <RegistrarEmpleado />
-            <PiePagina />
-          </>
-        }
-      />
-      <Route
-        path="/dashboard-empleado"
-        element={
-          <>
-            <BarraNavegacion />
-            <DashboardEmpleado />
             <PiePagina />
           </>
         }

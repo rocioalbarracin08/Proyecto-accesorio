@@ -329,7 +329,7 @@ export default function Nosotros() {
               <div className="preguntas-clientes">
                 <div className="preguntas">
                   {preguntasClientes.map((item, idx) => (  // Usa variable segura
-                    <article className="pregunta-item" key={`clientes-${idx}`}>
+                    <article className={`pregunta-item ${open === `clientes-${idx}` ? "open" : ""}`} key={`clientes-${idx}`}>
                       <button className="pregunta-btn" onClick={() => setOpen(open === `clientes-${idx}` ? null : `clientes-${idx}`)}>
                         {item.pregunta}
                       </button>
