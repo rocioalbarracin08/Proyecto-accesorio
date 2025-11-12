@@ -60,6 +60,7 @@ export function Registrarse() {
   const handleClick = async (event) => {
     event.preventDefault();
     setError("");
+    setLoading(true);
 
     // Validaciones
     if (!usuarioName.trim()) return setError("El nombre es obligatorio.");
@@ -73,7 +74,6 @@ export function Registrarse() {
     if (contraseña !== repetirContraseña) return setError("Las contraseñas no coinciden.");
     if (!genero) return setError("Selecciona tu género.");
 
-    setLoading(true);
 
     try {
       const response = await fetch("http://localhost:5000/usuarios/register", {
@@ -181,7 +181,10 @@ export function Registrarse() {
           </div>
         </form>
 
-        <button onClick={handleClick} className="registro" disabled={loading}>
+        <button disabled={loading}//agregue la condicion para validar el formulario
+        onClick={handleClick} 
+        className="registro" 
+        data-testid="button" >
           {loading ? "Registrando..." : "Registrarse"}
         </button>
 

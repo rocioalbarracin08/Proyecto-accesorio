@@ -53,7 +53,7 @@ function RegistrarVenta() {
 
   // Búsqueda de clientes
   useEffect(() => {
-    if (busquedaCliente.trim().length > 2) {
+    if (busquedaCliente.trim().length > 0) {
       fetch(`http://localhost:5000/clientes?busqueda=${encodeURIComponent(busquedaCliente)}`, { credentials: "include" })
         .then(res => res.json())
         .then(data => setClientes(data || []));

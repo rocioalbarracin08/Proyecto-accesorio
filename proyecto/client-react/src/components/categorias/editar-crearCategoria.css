@@ -128,7 +128,7 @@
 }
 
 /* Contenedor principal (inspirado en EditarDestacados) */
-.categorias-container {
+.category-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -311,7 +311,7 @@
 
 /* Responsive: En móviles */
 @media (max-width: 768px) {
-  .categorias-container {
+  .category-container {
     padding: 10px;
     max-width: 95%;
   }

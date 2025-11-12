@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -6,6 +6,34 @@ import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "../contexts/AuthContext";
 import { CarritoProvider } from "../contexts/CarritoContext";
 import { PromocionesProvider } from "../contexts/PromocionesContext";
+
+// Mock de useAuth para tests (estado reactivo sin fetch)
+const mockUseAuth = () => {
+  const [usuarioName, setUsuarioName] = useState("");
+  const [usuarioApellido, setUsuarioApellido] = useState("");
+  const [email, setEmail] = useState("");
+  const [contraseña, setContraseña] = useState("");
+  const [repetirContraseña, setRepetirContraseña] = useState("");
+  const [error, setError] = useState("");
+  return {
+    usuarioName,
+    setUsuarioName,
+    usuarioApellido,
+    setUsuarioApellido,
+    email,
+    setEmail,
+    contraseña,
+    setContraseña,
+    repetirContraseña,
+    setRepetirContraseña,
+    error,
+    setError,
+  };
+};
+// Mockea el hook useAuth
+vi.mock("../../hooks/useAuth", () => ({
+  default: mockUseAuth,
+}));
 
 // Render helper con todos tus providers
 export function renderWithProviders(ui, { route = "/", ...options } = {}) {

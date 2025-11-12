@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Productos } from "../producto/Productos";// Componente unificado para productos
 import RegistrarVenta from "../ventas/RegistrarVenta";  // Para registrar ventas
 import HistorialVentas from '../ventas/HistorialVentas';
@@ -12,6 +12,8 @@ export default function DashboardEmpleado() {
   const [seccionActiva, setSeccionActiva] = useState('productos');  // 'productos', 'ventas', 'historial'
   const [perfil, setPerfil] = useState({});
   const [nombreTienda, setNombreTienda] = useState('Asignada'); 
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" })
@@ -29,6 +31,14 @@ export default function DashboardEmpleado() {
         }
       });
   }, []);
+  const handleLogout = async () => {
+    await fetch("http://localhost:5000/usuarios/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    logout();
+    navigate("/login");
+  };
 
   const renderSeccion = () => {
     switch (seccionActiva) {
@@ -48,9 +58,8 @@ export default function DashboardEmpleado() {
       <h1>Panel de Empleado</h1>
       <div className="perfil-info">
         <span className="tienda">Tienda: {nombreTienda || 'Asignada'}</span>  
-        <button onClick={logout} className="btn-cerrarS">Cerrar Sesión</button>
+        <button onClick={handleLogout} className="btn-cerrarS">Cerrar Sesión</button>
       </div>
-      
 
       <nav className="dashboard-nav">
         <button 

@@ -2,25 +2,26 @@ from flask import Blueprint, request, jsonify, g
 
 bp = Blueprint('clientes', __name__, url_prefix='/clientes')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET']) 
 def obtener_clientes():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        busqueda = request.args.get('busqueda', '').strip()  # Obtener parámetro 'busqueda' de la URL
+        busqueda = request.args.get('busqueda', '').strip()
         
         if busqueda:
-            # Filtrar por name, apellido o email (corregido a 'name')
+            # Buscar en usuarios (solo clientes: id_rol = 1), filtrando por nombre, apellido o email
             query = """
-                SELECT id_cliente, name, apellido, email 
-                FROM clientes 
-                WHERE name LIKE %s OR apellido LIKE %s OR email LIKE %s
+                SELECT id_cliente, nombre AS name, apellido, email 
+                FROM usuarios 
+                WHERE id_rol = 1 AND (nombre LIKE %s OR apellido LIKE %s OR email LIKE %s)
             """
             search_term = f'%{busqueda}%'
             g.db_cursor.execute(query, (search_term, search_term, search_term))
         else:
-            # Sin búsqueda, devolver todos
-            g.db_cursor.execute("SELECT id_cliente, name, apellido, email FROM clientes")
+            # Sin búsqueda, devolver todos los clientes de usuarios
+            query = "SELECT id_cliente, nombre AS name, apellido, email FROM usuarios WHERE id_rol = 1"
+            g.db_cursor.execute(query)
         
         clientes = g.db_cursor.fetchall()
         return jsonify(clientes)
