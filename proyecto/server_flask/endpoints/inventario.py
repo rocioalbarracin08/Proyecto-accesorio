@@ -13,11 +13,12 @@ def actualizar_stock(id_producto):
         if stock is None or stock < 0:
             return jsonify({"error": "Stock válido requerido"}), 400
         
-        g.db_cursor.execute("""
-            UPDATE inventario SET stock_actual = %s WHERE id_producto = %s AND id_tienda = %s
-        """, (stock, id_producto, id_tienda))
-        if g.db_cursor.rowcount == 0:
-            return jsonify({"error": "Producto o tienda no encontrada en inventario"}), 404
+        #si no existe lo crea, si existe lo actualiza
+        g.db_cursor.execute(""" 
+        INSERT INTO inventario (id_producto, id_tienda, stock_actual, stock_minimo)
+        VALUES (%s, %s, %s, 3)
+        ON DUPLICATE KEY UPDATE stock_actual = VALUES(stock_actual)
+    """, (id_producto, id_tienda, stock))
         g.db.commit()
         return jsonify({"mensaje": "Stock actualizado"}), 200
     except Exception as e:

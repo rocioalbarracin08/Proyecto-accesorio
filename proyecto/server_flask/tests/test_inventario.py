@@ -1,6 +1,5 @@
 def test_inventario(client):
     """Test que verifica que el stock de un producto se actualiza correctamente.
-    Flujo:
     - Loguea como empleado (usar credenciales de test existentes).
     - Llama PATCH a /productos/actualizar_stock/<id_producto> con un nuevo stock.
     - Consulta /productos/mostrar y verifica que el campo 'stock' cambió para ese producto (usa id_producto=2 por convención de tests).
@@ -17,16 +16,20 @@ def test_inventario(client):
 
     # Obtener producto y buscar el id de un producto que tenga stock
     id_producto = 3
-    nuevo_stock = 42
+    nuevo_stock = 200
+
 
     # Llamar al endpoint para actualizar stock (ruta definida en /productos/actualizar_stock/<id>)
-    patch_resp = client.patch(f"/productos/actualizar_stock/{id_producto}", json={"stock": nuevo_stock}, headers={"Cookie": token_cookie})
+    patch_resp = client.patch(f"/inventario/actualizar_stock/{id_producto}", json={"stock": nuevo_stock}, headers={"Cookie": token_cookie})
+    
     assert patch_resp.status_code == 200 # Si no sos empleado, el endpoint devuelve 403 — el test requiere ser empleado
+   
     data = patch_resp.get_json()
     assert data.get('mensaje') is not None
 
     # Ahora obtener productos y buscar el id para comprobar su stock
     get_resp = client.get('/productos/mostrar', headers={"Cookie": token_cookie})
+    print(get_resp.get_json())
     assert get_resp.status_code == 200
     productos = get_resp.get_json().get('productos') if isinstance(get_resp.get_json(), dict) else get_resp.get_json()
     # Algunos endpoints devuelven una lista directa, otros un dict con 'productos'
