@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
@@ -75,8 +76,6 @@ export default function DashboardEmpleado() {
       <main className="dashboard-content">
         {renderSeccion()}
       </main>
-
-      <Link to="/" className="volver">Volver a Inicio</Link>
     </div>
   );
 }

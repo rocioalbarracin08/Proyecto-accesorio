@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 
-export default function ProductoItem({ producto, promocion, onEdit, onDelete, onUpdateStock }) {
+export default function ProductoItem({ producto, promocion, onEdit, onDelete, onUpdateStock }) {  // Agrega las props opcionales
   const { addItem, openCarrito } = useCarrito();
   const { userRole } = useAuthContext();
 
@@ -19,6 +20,7 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
 
   return (
     <div className="producto-item" style={{ position: "relative" }}>
+      <Link to={`/producto/${producto.id_producto || producto.id}`}>
       {promocion && (
         <span className="descuento-etiqueta">
           {promocion.tipo_descuento === "porcentaje"
@@ -26,9 +28,10 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
             : `$${promocion.descuento} OFF`}
         </span>
       )}
-
-      <img src={producto.imagen_url || "/default-product.jpg"} alt={producto.name} />
-      <h3>{producto.name}</h3>
+        <img src={producto.imagen_url || "/default-product.jpg"} alt={producto.name} />
+      <h2>
+        <Link to={`/producto/${producto.id_producto || producto.id}`}>{producto.name}</Link>
+      </h2>
       <p className="producto-precio">
         {promocion ? (
           <>
@@ -44,7 +47,7 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
           `$${precioFinal.toFixed(2)}`
         )}
       </p>
-
+      </Link>
       <button
         className="agregar-carrito"
         onClick={() => {
@@ -55,12 +58,12 @@ export default function ProductoItem({ producto, promocion, onEdit, onDelete, on
         Agregar al Carrito
       </button>
 
-      {userRole === "empleado" && (
+      {userRole === "empleado" && onEdit && onDelete && onUpdateStock && (  // Solo muestra si se pasan las props
         <>
           <p>Stock: {producto.stock || 0}</p>
           <button className="btn-empleado" onClick={() => onEdit(producto)}>Editar</button>
-          <button className="btn-empleado" onClick={() => onDelete(producto.id_producto)}>Desactivar</button>
-          <button className="btn-empleado" onClick={() => onUpdateStock(producto.id_producto, producto.stock)}>Actualizar Stock</button>
+          <button className="btn-empleado" onClick={() => onDelete(producto.id_producto || producto.id)}>Desactivar</button>
+          <button className="btn-empleado" onClick={() => onUpdateStock(producto.id_producto || producto.id, producto.stock)}>Actualizar Stock</button>
         </>
       )}
     </div>

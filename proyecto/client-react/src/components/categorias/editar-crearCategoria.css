@@ -1,0 +1,282 @@
+/* Overlay del modal */
+.modal-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background: rgba(0, 0, 0, 0.5);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+/* Contenido del modal */
+.modal-content {
+background: #F5DEB3; /* Fondo rosybrown claro */
+padding: 30px;
+border-radius: 15px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+max-width: 500px;
+width: 90%;
+animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+from { transform: translateY(-50px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h2 {
+text-align: center;
+color: #A0522D; /* Rosybrown oscuro */
+margin-bottom: 20px;
+}
+
+/* Formulario */
+.categoria-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.categoria-form input {
+padding: 12px;
+border: 2px solid #D2B48C; /* Rosybrown medio */
+border-radius: 8px;
+font-size: 16px;
+transition: 0.3s ease;
+}
+
+.categoria-form input:focus {
+border-color: #A0522D;
+outline: none;
+}
+
+.checkbox-container {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.checkbox-container input[type="checkbox"] {
+width: 20px;
+height: 20px;
+}
+
+/* Botones */
+.form-buttons {
+display: flex;
+justify-content: space-between;
+margin-top: 20px;
+}
+
+.btn-submit {
+padding: 12px 24px;
+background: linear-gradient(45deg, #A0522D, #8B4513);
+color: white;
+border: none;
+border-radius: 25px;
+font-size: 16px;
+cursor: pointer;
+transition: all 0.3s ease;
+flex: 1;
+margin-right: 10px;
+}
+
+.btn-submit:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 15px rgba(160, 82, 45, 0.4);
+}
+
+.btn-cancel {
+padding: 12px 24px;
+background: #D2B48C;
+color: white;
+border: none;
+border-radius: 25px;
+font-size: 16px;
+cursor: pointer;
+transition: 0.3s ease;
+flex: 1;
+}
+
+.btn-cancel:hover {
+background: #BC8F8F;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.modal-content {
+    padding: 20px;
+    width: 95%;
+}
+.form-buttons {
+    flex-direction: column;
+    gap: 10px;
+}
+.btn-submit, .btn-cancel {
+    flex: none;
+}
+}
+
+/* Contenedor principal */
+.categorias-container {
+padding: 20px;
+background: #F5DEB3; /* Fondo rosybrown claro */
+min-height: 100vh;
+font-family: Arial, sans-serif;
+}
+
+/* Botón de volver atrás */
+.categorias-back-btn {
+background: #A0522D; /* Rosybrown oscuro */
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 5px;
+cursor: pointer;
+margin-bottom: 20px;
+transition: 0.3s ease;
+}
+
+.categorias-back-btn:hover {
+background: #8B4513; /* Más oscuro al hover */
+}
+
+/* Título */
+.categorias-title {
+color: #A0522D; /* Rosybrown oscuro */
+margin-bottom: 20px;
+font-size: 2em;
+text-align: center;
+}
+
+/* Botón de crear categoría */
+.categorias-create-btn {
+background: linear-gradient(45deg, #A0522D, #8B4513); /* Gradiente rosybrown */
+color: white;
+border: none;
+padding: 12px 24px;
+border-radius: 25px;
+cursor: pointer;
+margin-bottom: 20px;
+transition: all 0.3s ease;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+.categorias-create-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 15px rgba(160, 82, 45, 0.4);
+}
+
+/* Lista de categorías */
+.categorias-list {
+list-style: none;
+padding: 0;
+max-width: 800px;
+margin: 0 auto;
+}
+
+/* Item individual de categoría */
+.categoria-item {
+background: #FFF8DC; /* Fondo claro rosybrown */
+padding: 15px;
+margin-bottom: 10px;
+border-radius: 10px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+transition: 0.3s ease;
+}
+
+.categoria-item:hover {
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Información de la categoría */
+.categoria-info p {
+margin: 0;
+color: #A0522D; /* Rosybrown oscuro */
+font-weight: bold;
+}
+
+.categoria-info img {
+margin-top: 10px;
+border-radius: 5px;
+max-width: 50px;
+max-height: 50px;
+}
+
+/* Botones de acciones */
+.categoria-buttons {
+display: flex;
+gap: 10px;
+}
+
+.categoria-btn {
+padding: 8px 16px;
+border: none;
+border-radius: 20px;
+cursor: pointer;
+font-size: 14px;
+transition: 0.3s ease;
+font-weight: bold;
+}
+
+.categoria-btn-edit {
+background: #D2B48C; /* Rosybrown medio */
+color: white;
+}
+
+.categoria-btn-edit:hover {
+background: #BC8F8F; /* Más oscuro */
+}
+
+.categoria-btn-toggle {
+background: #A0522D; /* Rosybrown oscuro */
+color: white;
+}
+
+.categoria-btn-toggle:hover {
+background: #8B4513; /* Más oscuro */
+}
+
+.categoria-btn-delete {
+background: #CD5C5C; /* Rojo rosybrown */
+color: white;
+}
+
+.categoria-btn-delete:hover {
+background: #B22222; /* Rojo más oscuro */
+}
+
+/* Responsive: En móviles */
+@media (max-width: 768px) {
+.categorias-container {
+    padding: 10px;
+}
+.categoria-item {
+    flex-direction: column;
+    align-items: flex-start;
+}
+.categoria-buttons {
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.categoria-btn {
+    flex: 1;
+    min-width: 80px;
+}
+}

@@ -1,4 +1,5 @@
 //ideal para detectar archivos rotos o mal exportados
+import React from "react";
 import { describe, it, expect } from 'vitest';
 
 describe('components directory exports', () => {

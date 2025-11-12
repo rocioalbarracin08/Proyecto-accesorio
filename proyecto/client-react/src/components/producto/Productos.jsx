@@ -5,6 +5,7 @@ import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
+import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
 import "./productos.css";
 
 export function Productos() {
@@ -142,10 +143,13 @@ export function Productos() {
                       : `$${promocionProducto.descuento} OFF`}
                   </span>
                 )}
-                <img
-                  src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
-                  alt={producto.name}
-                />
+                {/* Enlace al detalle: envuelve la imagen */}
+                <Link to={`/producto/${getId(producto)}`}>
+                  <img
+                    src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
+                    alt={producto.name}
+                  />
+                </Link>
                 <h3>{producto.name}</h3>
                 <p className="producto-precio">
                   {promocionProducto ? (
@@ -158,17 +162,16 @@ export function Productos() {
                     `$${precioFinal.toFixed(2)}`
                   )}
                 </p>
-                {userRole === 'cliente' && (
-                  <button
-                    className="agregar-carrito"
-                    onClick={() => {
-                      addItem({ ...producto, precio: precioFinal });
-                      openCarrito();
-                    }}
-                  >
-                    Agregar al Carrito
-                  </button>
-                )}
+                <button
+                  className="agregar-carrito"
+                  onClick={() => {
+                    addItem({ ...producto, precio: precioFinal });
+                    openCarrito();
+                  }}
+                >
+                  Agregar al Carrito
+                </button>
+                
                 {userRole === 'empleado' && (
                   <>
                     <p>Stock: {producto.stock || 0}</p>

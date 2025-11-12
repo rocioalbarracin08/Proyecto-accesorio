@@ -1,3 +1,4 @@
+import React from "react";
 import "./diseño-main.css";
 
 export default function DiseñoMain() {

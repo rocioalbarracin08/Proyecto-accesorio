@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { FaEye, FaEyeSlash, FaEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";  // Íconos actualizados

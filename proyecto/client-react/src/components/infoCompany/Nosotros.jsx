@@ -155,14 +155,14 @@ export default function Nosotros() {
 
   return (
     <main className="nosotros-container">
-      <header className="nosotros-header">
+      <div className="nosotros-header">
         <h1 className="nosotros-title">
           {isOwner ? title : (isEditingNosotros ? dataNosotros.titulo : "Preguntas de Clientes")}
         </h1>
         {isOwner && !isEditing && (
           <button className="nosotros-edit-btn" onClick={() => setIsEditing(true)}>Editar</button>
         )}
-      </header>
+      </div>
 
       {isOwner && isEditing ? (
         <section className="nosotros-edit-section">
@@ -283,32 +283,40 @@ export default function Nosotros() {
                 <div className="preguntas-nosotros">
                   <h3>Preguntas de Nosotros</h3>
                   <div className="preguntas">
-                    {preguntasNosotros.map((item, idx) => (  // Usa variable segura
-                      <article className="pregunta-item" key={`nosotros-${idx}`}>
-                        <button className="pregunta-btn" onClick={() => setOpen(open === `nosotros-${idx}` ? null : `nosotros-${idx}`)}>
-                          {item.pregunta}
-                        </button>
-                        {open === `nosotros-${idx}` && (
-                          <div className="respuesta">
-                            <p>{item.respuesta}</p>
-                            {idx === 2 && typeof dataNosotros.ubicacion_lat === 'number' && typeof dataNosotros.ubicacion_lng === 'number' ? (
-                              <div className="mapa-container">
-                                <MapContainer
-                                  center={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}
-                                  zoom={13}
-                                  style={{ width: "100%", height: "100%" }}
-                                >
-                                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                  <Marker position={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}>
-                                    <Popup>{dataNosotros.ubicacion_descripcion}</Popup>
-                                  </Marker>
-                                </MapContainer>
-                              </div>
-                            ) : null}
-                          </div>
+                  {preguntasNosotros.map((item, idx) => (
+                    <article
+                      className={`pregunta-item ${open === `nosotros-${idx}` ? "open" : ""}`}
+                      key={`nosotros-${idx}`}
+                    >
+                      <button
+                        className="pregunta-btn"
+                        onClick={() => setOpen(open === `nosotros-${idx}` ? null : `nosotros-${idx}`)}
+                      >
+                        {item.pregunta}
+                      </button>
+
+                      <div className="respuesta">
+                        <p>{item.respuesta}</p>
+
+                        {/* Mostrar el mapa cuando la pregunta es "¿Dónde estamos?" o idx === 2 */}
+                        {(item.pregunta.includes("Dónde") || idx === 2) && (
+                          <MapContainer
+                            center={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}
+                            zoom={15}
+                            style={{ height: "300px", width: "100%", marginTop: "10px", borderRadius: "10px" }}
+                          >
+                            <TileLayer
+                              attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <Marker position={[dataNosotros.ubicacion_lat, dataNosotros.ubicacion_lng]}>
+                              <Popup>{dataNosotros.ubicacion_descripcion}</Popup>
+                            </Marker>
+                          </MapContainer>
                         )}
-                      </article>
-                    ))}
+                      </div>
+                    </article>
+                  ))}
                   </div>
                 </div>
               </section>
@@ -321,7 +329,7 @@ export default function Nosotros() {
               <div className="preguntas-clientes">
                 <div className="preguntas">
                   {preguntasClientes.map((item, idx) => (  // Usa variable segura
-                    <article className="pregunta-item" key={`clientes-${idx}`}>
+                    <article className={`pregunta-item ${open === `clientes-${idx}` ? "open" : ""}`} key={`clientes-${idx}`}>
                       <button className="pregunta-btn" onClick={() => setOpen(open === `clientes-${idx}` ? null : `clientes-${idx}`)}>
                         {item.pregunta}
                       </button>
