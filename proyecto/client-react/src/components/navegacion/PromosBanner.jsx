@@ -47,9 +47,6 @@ export default function CarruselPromociones() {
         {promo.producto ? ` en ${promo.producto}` : ""}
         {promo.categoria ? ` (${promo.categoria})` : ""}
       </p>
-      <div className="indicadores">
-        {indice + 1}/{promos.length}
-      </div>
     </div>
   );
 }

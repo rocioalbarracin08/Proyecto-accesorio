@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import './editarDestacados.css';  // Crea este CSS (ver abajo)
+import { useNavigate } from "react-router-dom"; // <-- importá esto
+import './editarDestacados.css';
 
 function EditarDestacados() {
   const { isLogged, isOwner } = useAuthContext();
+  const navigate = useNavigate(); // <-- inicializalo
   const [productos, setProductos] = useState([]);
   const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [busquedaProducto, setBusquedaProducto] = useState("");
@@ -11,20 +13,18 @@ function EditarDestacados() {
 
   useEffect(() => {
     if (!isLogged || !isOwner) {
-      console.log(isLogged)
+      console.log(isLogged);
     } else {
-      // Cargar productos con destacado y stock
       fetch("http://localhost:5000/productos/destacados/editar", { credentials: "include" })
         .then(res => res.json())
         .then(data => {
           setProductos(data.productos || []);
           setProductosFiltrados(data.productos || []);
         })
-        .catch(err => setMensaje({ text: "Error cargando productos", type: 'error' }));
+        .catch(() => setMensaje({ text: "Error cargando productos", type: 'error' }));
     }
   }, [isLogged, isOwner]);
 
-  // Búsqueda de productos
   useEffect(() => {
     if (busquedaProducto.trim().length > 2) {
       const filtrados = productos.filter(p =>
@@ -47,7 +47,7 @@ function EditarDestacados() {
       id_producto: p.id_producto,
       destacado: p.destacado ? 1 : 0
     }));
-    
+
     fetch("http://localhost:5000/productos/destacados/actualizar", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -58,18 +58,14 @@ function EditarDestacados() {
       .then(data => {
         setMensaje(data.mensaje ? { text: data.mensaje, type: 'success' } : { text: data.error, type: 'error' });
       })
-      .catch(err => setMensaje({ text: "Error guardando cambios", type: 'error' }));
+      .catch(() => setMensaje({ text: "Error guardando cambios", type: 'error' }));
   };
 
   return (
     <div className="editar-destacados-container">
       <h2>Editar Productos Destacados</h2>
-      {mensaje && (
-        <div className={`mensaje ${mensaje.type}`}>
-          {mensaje.text}
-        </div>
-      )}
-      
+      {mensaje && <div className={`mensaje ${mensaje.type}`}>{mensaje.text}</div>}
+
       <div className="busqueda-seccion">
         <input
           type="text"
@@ -80,7 +76,7 @@ function EditarDestacados() {
         />
         <span className="lupa">🔍</span>
       </div>
-      
+
       <div className="productos-lista">
         {productosFiltrados.map(p => (
           <div key={p.id_producto} className="producto-item">
@@ -101,8 +97,9 @@ function EditarDestacados() {
           </div>
         ))}
       </div>
-      
+
       <button onClick={handleGuardar} className="btn-guardar">Guardar Cambios</button>
+      <button onClick={() => navigate(-1)} className="btn-volver">Volver Atrás</button> {/* <-- botón para volver */}
     </div>
   );
 }

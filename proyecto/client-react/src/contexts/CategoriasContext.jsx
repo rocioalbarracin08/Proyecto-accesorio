@@ -34,7 +34,7 @@ export const CategoriasProvider = ({ children }) => {
 
   const toggleActivo = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/categoria/${id}/toggle`, {}, { withCredentials: true });
+      await axios.patch(`http://localhost:5000/categoria/${id}/estado`, {}, { withCredentials: true });
       cargarCategorias();
     } catch (err) {
       alert('Error al cambiar estado');

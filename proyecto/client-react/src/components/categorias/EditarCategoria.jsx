@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useCategorias } from '../../contexts/CategoriasContext';
-import './editar-crearCategorias.css';
+import './editar-crearCategoria.css';
 
 const EditarCategoria = ({ categoria, onCerrar }) => {
   const { cargarCategorias } = useCategorias();

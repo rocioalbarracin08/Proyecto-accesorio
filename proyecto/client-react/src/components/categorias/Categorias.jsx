@@ -23,17 +23,32 @@ const Categorias = () => {
       {editando && <EditarCategoria categoria={editando} onCerrar={() => setEditando(null)} />}
       <ul className="categorias-list">
         {categorias.map(c => (
-          <li key={c.id_category} className="categoria-item">
+          <li key={c.id_category} className={`categoria-item ${!c.activo ? 'categoria-inactiva' : ''}`}>
             <div className="categoria-info">
               <p>{c.categoria} - Activa: {c.activo ? 'Sí' : 'No'}</p>
               {c.img_url && <img src={c.img_url} alt={c.categoria} style={{width: '50px', height: '50px'}} />}
             </div>
             <div className="categoria-buttons">
-              <button className="categoria-btn categoria-btn-edit" onClick={() => setEditando(c)}>Editar</button>
-              <button className="categoria-btn categoria-btn-toggle" onClick={() => toggleActivo(c.id_category)}>
+              <button 
+                className="categoria-btn categoria-btn-edit" 
+                onClick={() => setEditando(c)} 
+                disabled={!c.activo}  // Deshabilita si no está activa
+              >
+                Editar
+              </button>
+              <button 
+                className="categoria-btn categoria-btn-toggle" 
+                onClick={() => toggleActivo(c.id_category)}
+              >
                 {c.activo ? 'Desactivar' : 'Activar'}
               </button>
-              <button className="categoria-btn categoria-btn-delete" onClick={() => eliminarCategoria(c.id_category)}>Eliminar</button>
+              <button 
+                className="categoria-btn categoria-btn-delete" 
+                onClick={() => eliminarCategoria(c.id_category)} 
+                disabled={!c.activo}  // Deshabilita si no está activa
+              >
+                Eliminar
+              </button>
             </div>
           </li>
         ))}
