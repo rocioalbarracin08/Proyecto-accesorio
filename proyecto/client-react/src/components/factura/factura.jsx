@@ -1,3 +1,4 @@
+// ...existing code...
 import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useState, useEffect, useMemo } from "react";
@@ -155,9 +156,18 @@ export function Factura() {
         return res.json();
       })
       .then((data) => {
+        // Notificar y limpiar carrito
         alert(data.mensaje || `Compra realizada exitosamente. ID de factura: ${data.id_factura}`);
         clearCart();  // Limpiar el carrito después de la compra
-        navigate("/");  // Redirigir a la página principal
+
+        // Redirigir a la página de pago con la información necesaria
+        navigate("/pago-tarjeta", {
+          state: {
+            id_factura: data.id_factura,
+            id_metodo_pago: payload.id_metodo_pago,
+            total: state.totalPrice,
+          },
+        });
       })
       .catch((err) => {
         console.error("Error al registrar venta:", err);
@@ -228,7 +238,7 @@ export function Factura() {
               {entrega  /* Si se seleccionó entrega */ && (
                 <>
                   <label>
-                    <input className="email-input"
+                    <input className="email-input-factura"
                       placeholder="Email"
                       type="email"
                       value={email}
@@ -267,7 +277,7 @@ export function Factura() {
                       </label>
 
                       <label>
-                        <input className="ciudad-input"º
+                        <input className="ciudad-input"
                           placeholder="Ciudad"
                           type="text"
                           value={ciudad}
@@ -333,3 +343,4 @@ export function Factura() {
     </div>
   );
 }
+// ...existing code...
