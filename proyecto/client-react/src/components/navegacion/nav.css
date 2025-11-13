@@ -26,14 +26,12 @@
   width: 100%;
   background-color: rosybrown;
   padding: 5px 15px; /* Padding reducido para menos separación */
-  gap: 5px; /* Gap reducido aún más para filas más juntas */
   min-height: 50px; /* Altura mínima reducida para menos espacio */
 }
 
-/* push content below fixed header */
 :root {
   --banner-height: 60px;
-  --header-content-height: 60px;
+  --header-content-height: 85px;/*Arregla el espacio entre el encabzado y los componentes de abajo, sin un alto largo, queda encime de otros componentes*/
   --header-height: calc(var(--banner-height) + var(--header-content-height));
 }
 body { padding-top: var(--header-height); }
