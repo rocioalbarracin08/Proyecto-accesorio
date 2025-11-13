@@ -1,3 +1,82 @@
+.direccion-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.ciudad-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.provincia-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.codigo-postal-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.email-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.apellido-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.nombre-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.metodo-pago-select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.metodo-pago-label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
 .factura-container {
   display: flex;
   gap: 20px; /* Espacio entre columnas */
@@ -123,7 +202,7 @@
 
 /* Botones de selección de entrega */
 .factura-entrega-buttons button {
-  border: 1px solid #c77d7d;
+  border: 1px solid #f0b6c1;
   background-color: #fff;
   color: #c77d7d;
   font-weight: bold;
@@ -144,7 +223,7 @@
   display: block;
   margin: 20px auto 0 auto;
   padding: 10px 20px;
-  background-color: #c77d7d;
+  background-color: #f0b6c1;
   color: #fff;
   border: none;
   border-radius: 5px;

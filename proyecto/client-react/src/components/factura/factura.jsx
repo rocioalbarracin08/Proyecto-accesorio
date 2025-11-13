@@ -225,10 +225,10 @@ export function Factura() {
               </div>
 
               {/* Formulario completo solo si se seleccionó un método de entrega */}
-              {entrega /* Si se seleccionó entrega */ && (
+              {entrega  /* Si se seleccionó entrega */ && (
                 <>
                   <label>
-                    <input
+                    <input className="email-input"
                       placeholder="Email"
                       type="email"
                       value={email}
@@ -237,7 +237,7 @@ export function Factura() {
                   </label>
 
                   <label>
-                    <input
+                    <input className="nombre-input"
                       placeholder="Nombre"
                       type="text"
                       value={nombre}
@@ -246,7 +246,7 @@ export function Factura() {
                   </label>
 
                   <label>
-                    <input
+                    <input className="apellido-input"
                       placeholder="Apellido"
                       type="text"
                       value={apellido}
@@ -254,26 +254,11 @@ export function Factura() {
                     />
                   </label>
 
-                  {/* Nuevo campo para método de pago */}
-                  <label>
-                    Método de Pago:
-                    <select
-                      value={idMetodoPago}
-                      onChange={(e) => setIdMetodoPago(e.target.value)}
-                      required
-                    >
-                      <option value="">Seleccione...</option>
-                      <option value="1">Efectivo</option>
-                      <option value="2">Tarjeta de Crédito</option>
-                      {/* Agrega más opciones según tu BD, e.g., <option value="3">Transferencia</option> */}
-                    </select>
-                  </label>
-
                   {/* Campos adicionales solo para envío a domicilio */}
                   {entrega === "envio" && (
                     <>
                       <label>
-                        <input
+                        <input className="direccion-input"
                           placeholder="Dirección"
                           type="text"
                           value={direccion}
@@ -282,7 +267,7 @@ export function Factura() {
                       </label>
 
                       <label>
-                        <input
+                        <input className="ciudad-input"º
                           placeholder="Ciudad"
                           type="text"
                           value={ciudad}
@@ -291,7 +276,7 @@ export function Factura() {
                       </label>
 
                       <label>
-                        <input
+                        <input className="provincia-input"
                           placeholder="Provincia"
                           type="text"
                           value={provincia}
@@ -300,7 +285,7 @@ export function Factura() {
                       </label>
 
                       <label>
-                        <input
+                        <input className="codigo-postal-input"
                           placeholder="Código Postal"
                           type="text"
                           value={codigoPostal}
@@ -309,6 +294,24 @@ export function Factura() {
                       </label>
                     </>
                   )}
+
+                     {/* Nuevo campo para método de pago */}
+                  <label className="metodo-pago-label">
+                    Método de Pago:
+                    <select className="metodo-pago-select"
+                      value={idMetodoPago}
+                      onChange={(e) => setIdMetodoPago(e.target.value)}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="1">Efectivo</option>
+                      <option value="2">Tarjeta de Crédito</option>
+                      <option value="3">Tarjeta de Debito</option>
+                      <option value="4">Mercado Pago</option>
+                      <option value="5">Transferencia</option>
+
+                    </select>
+                  </label>
 
                   <button
                     className="btn-finalizar"
