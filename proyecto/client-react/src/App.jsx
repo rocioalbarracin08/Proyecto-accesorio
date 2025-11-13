@@ -37,7 +37,6 @@ function App() {
         </>
       } />
       <Route path="/gestionCategorias" element={<Categorias/>}/>
-      <Route path=""/>
       <Route path="/admin/destacados" element={<EditarDestacados />} />
       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
       <Route path="/resetear-contrasena" element={<ResetearContrasenaToken />}/>
