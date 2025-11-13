@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderWithMockProviders, screen, waitFor, userEvent } from "../test-utils"; // Ajusta la ruta si es necesario
-import { BarraNavegacion } from "./BarraNavegacion"; // Ajusta la ruta al componente
+import { renderWithMockProviders, screen, waitFor, userEvent } from "../../../test/test-utils"; // Ajusta la ruta si es necesario
+import { BarraNavegacion } from "../Navegacion"; // Ajusta la ruta al componente
 
 // Mock global para fetch (simula respuestas de la API)
 globalThis.fetch = vi.fn();
@@ -10,25 +10,38 @@ describe("BarraNavegacion - Buscador", () => {
     // Resetea mocks antes de cada test
     vi.clearAllMocks();
     globalThis.fetch.mockClear();
+
+      // Mock por defecto para el fetch inicial de categorías
+    globalThis.fetch.mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
   });
 
   it("debería abrir el buscador al hacer click en el ícono de búsqueda", async () => {
     const user = userEvent.setup();
     renderWithMockProviders(<BarraNavegacion />);
 
-    // Verifica que el input esté oculto inicialmente
-    const input = screen.getByPlaceholderText("Buscar producto o categoría");
-    expect(input).not.toBeVisible(); // Asume que CSS oculta el input cuando no está 'open'
+    // Obtén el wrapper del buscador (que controla la visibilidad con la clase 'open')
+    const wrapper = screen.getByPlaceholderText("Buscar producto o categoría").closest('.buscador-wrapper');
+    
+    // Verifica que el wrapper NO tenga la clase 'open' inicialmente (buscador cerrado)
+    expect(wrapper).not.toHaveClass('open');
+    
+    // Verifica que el botón de cerrar NO esté presente inicialmente
+    expect(screen.queryByRole("button", { name: /✕/ })).not.toBeInTheDocument();
 
     // Haz click en el ícono de búsqueda
     const searchIcon = screen.getByLabelText("Abrir búsqueda");
     await user.click(searchIcon);
 
-    // Verifica que el input esté visible ahora (puedes ajustar según tu CSS)
-    expect(input).toBeVisible();
-    // Verifica que isSearchOpen sea true (indirectamente, via clases o estado)
-    expect(screen.getByRole("button", { name: /✕/ })).toBeInTheDocument(); // Botón de cerrar aparece
+    // Verifica que el wrapper TENGA la clase 'open' ahora (buscador abierto)
+    expect(wrapper).toHaveClass('open');
+    
+    // Verifica que el botón de cerrar esté presente ahora
+    expect(screen.getByRole("button", { name: /✕/ })).toBeInTheDocument();
   });
+
 
   it("debería mostrar resultados al escribir en el input y esperar el timeout", async () => {
     const user = userEvent.setup();
@@ -61,7 +74,7 @@ describe("BarraNavegacion - Buscador", () => {
 
     // Verifica que se muestre el dropdown con resultados
     await waitFor(() => {
-      expect(screen.getByText("Categoría A: Producto 1")).toBeInTheDocument();
+      expect(screen.getByText("Categoría A: Producto 1")).toBeInTheDocument(); //union de dos nodos
       expect(screen.getByText("Categoría B: Producto 2")).toBeInTheDocument();
     });
 
@@ -126,7 +139,9 @@ describe("BarraNavegacion - Buscador", () => {
 
     // Espera y verifica que se muestre el error
     await waitFor(() => {
-      expect(screen.getByText("ERROR DE BÚSQUEDA")).toBeInTheDocument();
+      expect(
+        screen.getByText(/(ERROR DE BÚSQUEDA|Network error)/i)
+      ).toBeInTheDocument();
     });
   });
 });

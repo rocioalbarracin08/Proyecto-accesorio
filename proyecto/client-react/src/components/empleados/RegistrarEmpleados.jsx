@@ -187,7 +187,7 @@ export default function RegistrarEmpleado() {
 
   return (
     <section className="section-registrar-empleado">
-      <h1>Gestión de Empleados</h1>
+      <h1 className="h1-e">Gestión de Empleados</h1>
       {error && <p className="error-message">{error}</p>}
 
       {/* Sección de Registro */}

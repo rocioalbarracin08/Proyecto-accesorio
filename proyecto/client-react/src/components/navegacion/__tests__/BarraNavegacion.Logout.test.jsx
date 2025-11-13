@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderWithMockProviders, screen, userEvent } from "../test-utils"; // Usa helpers de test-utils.jsx
-import { BarraNavegacion } from "./BarraNavegacion"; // Ajusta ruta
+import { renderWithMockProviders, screen, userEvent } from "../../../test/test-utils"; // Usa helpers de test-utils.jsx
+import { BarraNavegacion } from "../Navegacion"; // Ajusta ruta
 
 // Mock global para fetch (de setupTests.jsx, simula logout)
 globalThis.fetch = vi.fn();

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { renderWithMockProviders, screen, userEvent } from "../test-utils"; // Usa helpers
-import { BarraNavegacion } from "./BarraNavegacion";
+import { renderWithMockProviders, screen, userEvent } from "../../../test/test-utils"; // Usa helpers
+import { BarraNavegacion } from "../Navegacion";
 
 describe("BarraNavegacion - Botón Carrito", () => {
   it("muestra el contador de items en el carrito", () => {
