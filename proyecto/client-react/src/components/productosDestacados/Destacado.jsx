@@ -1,4 +1,4 @@
-import "./destacados.css"
+import "./Destacados.css"
 
 export function Destacado(){
     //Mover fotos a productos

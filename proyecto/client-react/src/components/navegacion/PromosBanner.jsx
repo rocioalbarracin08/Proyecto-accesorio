@@ -42,14 +42,11 @@ export default function CarruselPromociones() {
   return (
     <div className="carrusel-textual">
       <p className="promo-texto">
-        🛒 {promo.descripcion} — {promo.descuento}
+        🛒 {promo.descripcion} | {promo.descuento}
         {promo.tipo_descuento === "porcentaje" ? "%" : "$"} de descuento
         {promo.producto ? ` en ${promo.producto}` : ""}
         {promo.categoria ? ` (${promo.categoria})` : ""}
       </p>
-      <div className="indicadores">
-        {indice + 1}/{promos.length}
-      </div>
     </div>
   );
 }

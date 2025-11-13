@@ -64,12 +64,13 @@ export function AuthProvider({ children }) {
       method: "POST",
       credentials: "include",
     })
-      .finally(() => {
-        setIsLogged(false);
-        setIsOwner(false);
-        setUserRole(null);
-        setLoginTrigger(0);
-      });
+    .finally(() => {
+      setIsLogged(false);
+      setIsOwner(false);
+      setUserRole(null);
+      setLoginTrigger(0);
+      useNavigate("/login")
+    });
   };
 
   return (

@@ -72,11 +72,14 @@ def login():
 
         if not all([email, password]):
             return jsonify({'error': 'Faltan datos'}), 400
+        
+        print(f"Intentando login con email: {email}")
 
         g.db_cursor.execute("SELECT id_usuario, password, activo FROM usuarios WHERE email = %s", (email,))
         user = g.db_cursor.fetchone()
 
         if not user:
+            print("Email no registrado") 
             return jsonify({"error": "El email no está registrado"}), 401
 
         if not check_password_hash(user["password"], password):
@@ -84,7 +87,8 @@ def login():
 
         if user.get("activo", 1) == 0:
             return jsonify({"error": "Cuenta desactivada"}), 403
-
+        
+        print(f"Token con email: {email}")
         token = jwt.encode({
             "id_usuario": user["id_usuario"],
             "exp": datetime.now(timezone.utc) + timedelta(hours=4)
@@ -125,7 +129,7 @@ def perfil():
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token expirado"}), 401
     except jwt.InvalidTokenError:
-        return jsonify({"error": "Token inválido"}), 401
+        return jsonify({"error": "Token inválido"}), 405
 
 #Cambiar contraseña (cualquier rol logueado) 
 @bp.route('/cambiar_contrasena', methods=['POST'])

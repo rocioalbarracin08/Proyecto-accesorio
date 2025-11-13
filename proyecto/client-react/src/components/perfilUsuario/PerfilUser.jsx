@@ -57,7 +57,7 @@
              <h2>Opciones de Dueño</h2>
              <Link to="/registrar-empleado" className="linkPromos">Registrar Nuevo Empleado</Link>
              <Link to="/promociones" className="linkPromos">Gestión promociones</Link>
-             <Link to="/admin/destacados" className="direccionamiento">Editar destacados</Link>
+             <Link to="/admin/destacados" className="linkPromos">Editar destacados</Link>
              <Link to="/gestionCategorias" className="linkPromos">Gestión Categorias</Link>
            </div>
          )}

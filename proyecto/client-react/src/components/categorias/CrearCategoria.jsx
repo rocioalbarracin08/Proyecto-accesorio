@@ -14,7 +14,7 @@ const CrearCategoria = ({ onCerrar }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/categoria', form, { withCredentials: true });
+      await axios.post('http://localhost:5000/categoria/', form, { withCredentials: true });
       cargarCategorias();
       onCerrar();
     } catch (err) {

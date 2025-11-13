@@ -3,6 +3,7 @@ import { renderWithProviders, screen } from "../../../test/test-utils"; // Usamo
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event"; // Para simular interacciones del usuario
 import Promociones from "../Promociones"; // Importamos el componente a testear
+import { usePromociones } from '../../contexts/PromocionesContext';
 
 // Mockeamos useNavigate para controlar la navegación
 const mockNavigate = vi.fn();
@@ -16,16 +17,15 @@ vi.mock('react-router-dom', async () => {
 
 // Mockeamos usePromociones para controlar el estado del contexto
 vi.mock('../../contexts/PromocionesContext', () => ({
-  usePromociones: () => ({
-    promociones: [
-      { id_promocion: 1, descripcion: "Descuento 10%", descuento: 10, tipo_descuento: "porcentaje", activo: true },
-      { id_promocion: 2, descripcion: "Envío gratis", descuento: 5, tipo_descuento: "fijo", activo: false },
-    ], // Datos mockeados de promociones
-    loading: false, // Estado inicial sin loading
-    error: null, // Sin error inicialmente
-    eliminarPromocion: vi.fn(), // Mock de función
-    desactivarPromocion: vi.fn(), // Mock de función
-  }),
+  usePromociones: vi.fn(),
+}));
+
+// Mockeamos los componentes hijos para evitar renders complejos
+vi.mock('./CrearPromocion', () => ({
+  default: ({ onCerrar }) => <div data-testid="crear-promocion-modal"><button onClick={onCerrar}>Cerrar Crear</button></div>,
+}));
+vi.mock('./EditarPromocion', () => ({
+  default: ({ onCerrar }) => <div data-testid="editar-promocion-modal"><button onClick={onCerrar}>Cerrar Editar</button></div>,
 }));
 
 describe("Promociones Component", () => {
@@ -34,14 +34,28 @@ describe("Promociones Component", () => {
     vi.clearAllMocks();
   });
 
+  // Configuración por defecto antes de cada test
+  beforeEach(() => {
+    usePromociones.mockReturnValue({
+      promociones: [
+        { id_promocion: 1, descripcion: "Descuento 10%", descuento: 10, tipo_descuento: "porcentaje", activo: true },
+        { id_promocion: 2, descripcion: "Envío gratis", descuento: 5, tipo_descuento: "fijo", activo: false },
+      ],
+      loading: false,
+      error: null,
+      eliminarPromocion: vi.fn(),
+      desactivarPromocion: vi.fn(),
+    });
+  });
+
   // Test básico: Verifica que el componente renderice correctamente
   it("renderiza la sección de promociones", () => {
     renderWithProviders(<Promociones />);
     
     // Verificamos el título y elementos principales
     expect(screen.getByText(/promociones/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /volver atrás/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /crear promoción/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Volver atrás/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Crear promoción/i })).toBeInTheDocument();
   });
 
   // Test: Verifica que muestre la lista de promociones
@@ -58,8 +72,7 @@ describe("Promociones Component", () => {
 
   // Test: Verifica estado de loading
   it("muestra mensaje de cargando cuando está en loading", () => {
-    // Mockeamos usePromociones para simular loading
-    vi.mocked(vi.importMock('../../contexts/PromocionesContext')).usePromociones.mockReturnValue({
+    usePromociones.mockReturnValue({
       promociones: [],
       loading: true,
       error: null,
@@ -75,8 +88,7 @@ describe("Promociones Component", () => {
 
   // Test: Verifica mensaje de error
   it("muestra mensaje de error si hay un error", () => {
-    // Mockeamos usePromociones para simular error
-    vi.mocked(vi.importMock('../../contexts/PromocionesContext')).usePromociones.mockReturnValue({
+    usePromociones.mockReturnValue({
       promociones: [],
       loading: false,
       error: "Error al cargar promociones",
@@ -95,7 +107,7 @@ describe("Promociones Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<Promociones />);
     
-    const backButton = screen.getByRole("button", { name: /volver atrás/i });
+    const backButton = screen.getByRole("button", { name: /Volver atrás/i });
     await user.click(backButton);
     
     // Verificamos que navigate haya sido llamado con -1 (volver atrás)
@@ -107,12 +119,11 @@ describe("Promociones Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<Promociones />);
     
-    const createButton = screen.getByRole("button", { name: /crear promoción/i });
+    const createButton = screen.getByRole("button", { name: /Crear promoción/i });
     await user.click(createButton);
     
-    // Verificamos que el modal aparezca (asumiendo que CrearPromocion renderiza algo detectable, ej. un título)
-    // Nota: Si CrearPromocion no tiene un texto único, ajusta según su contenido real
-    expect(screen.getByText(/crear promoción/i)).toBeInTheDocument(); // O el texto específico del modal
+    // Verificamos que el modal aparezca usando el testid del mock
+    expect(screen.getByTestId("crear-promocion-modal")).toBeInTheDocument();
   });
 
   // Test: Verifica que se muestre el modal de editar promoción
@@ -120,18 +131,17 @@ describe("Promociones Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<Promociones />);
     
-    const editButton = screen.getByRole("button", { name: /editar/i }); // El primer botón de editar
+    const editButton = screen.getByRole("button", { name: /Editar/i }); // El primer botón de editar
     await user.click(editButton);
     
-    // Verificamos que el modal aparezca (asumiendo que EditarPromocion renderiza algo detectable)
-    expect(screen.getByText(/editar promoción/i)).toBeInTheDocument(); // O el texto específico del modal
+    // Verificamos que el modal aparezca usando el testid del mock
+    expect(screen.getByTestId("editar-promocion-modal")).toBeInTheDocument();
   });
 
   // Test: Verifica llamada a desactivarPromocion
   it("llama a desactivarPromocion al hacer clic en 'Desactivar'", async () => {
     const mockDesactivar = vi.fn();
-    // Mockeamos para inyectar la función mock
-    vi.mocked(vi.importMock('../../contexts/PromocionesContext')).usePromociones.mockReturnValue({
+    usePromociones.mockReturnValue({
       promociones: [
         { id_promocion: 1, descripcion: "Descuento 10%", descuento: 10, tipo_descuento: "porcentaje", activo: true },
       ],
@@ -144,7 +154,7 @@ describe("Promociones Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<Promociones />);
     
-    const deactivateButton = screen.getByRole("button", { name: /desactivar/i });
+    const deactivateButton = screen.getByRole("button", { name: /Desactivar/i });
     await user.click(deactivateButton);
     
     // Verificamos que la función haya sido llamada con el ID correcto
@@ -154,8 +164,7 @@ describe("Promociones Component", () => {
   // Test: Verifica llamada a eliminarPromocion
   it("llama a eliminarPromocion al hacer clic en 'Eliminar'", async () => {
     const mockEliminar = vi.fn();
-    // Mockeamos para inyectar la función mock
-    vi.mocked(vi.importMock('../../contexts/PromocionesContext')).usePromociones.mockReturnValue({
+    usePromociones.mockReturnValue({
       promociones: [
         { id_promocion: 1, descripcion: "Descuento 10%", descuento: 10, tipo_descuento: "porcentaje", activo: true },
       ],
@@ -168,7 +177,7 @@ describe("Promociones Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<Promociones />);
     
-    const deleteButton = screen.getByRole("button", { name: /eliminar/i });
+    const deleteButton = screen.getByRole("button", { name: /Eliminar/i });
     await user.click(deleteButton);
     
     // Verificamos que la función haya sido llamada con el ID correcto

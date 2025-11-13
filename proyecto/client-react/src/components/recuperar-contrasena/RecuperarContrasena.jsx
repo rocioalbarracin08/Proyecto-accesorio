@@ -58,14 +58,14 @@ export default function RecuperarContrasena() {
           className="recuperar-input"
         />
         <button type="submit" disabled={loading} className="recuperar-btn">
-          {loading ? "Enviando..." : "Enviar Email"}
+          {loading ? "Enviando..." : "Enviar email"}
         </button>
       </form>
       <Link to="/login" className="recuperar-link">Volver a Login</Link>
       {/* Botón animado que aparece si hay resetUrl */}
       {resetUrl && (
         <a href={resetUrl} className="reset-link-btn">
-          Ir a Resetear Contraseña
+          Ir a resetear contraseña
         </a>
       )}
     </div>

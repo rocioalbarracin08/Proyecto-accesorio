@@ -11,6 +11,7 @@
   
   .promo-texto {
     animation: fadeSlide 0.5s ease-in-out;
+    text-transform: uppercase;
   }
   
   @keyframes fadeSlide {

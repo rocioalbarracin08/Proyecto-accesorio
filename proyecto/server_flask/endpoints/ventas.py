@@ -158,21 +158,27 @@ def registrar_venta():
 @bp.route('/', methods=['GET'])
 def listar_ventas():
     if g.db_cursor is None:
+        print("Error: No se pudo conectar a la base de datos")  # Log agregado
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     
     # Verificar token y obtener id_empleado
     token = request.cookies.get('token')
     if not token:
+        print("Error: No hay token en cookies")  # Log agregado
         return jsonify({"error": "No autorizado"}), 401
     try:
         data_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         user_id = data_token['id_usuario']
+        print(f"Usuario ID del token: {user_id}")  # Log agregado
         g.db_cursor.execute("SELECT id_empleado FROM usuarios WHERE id_usuario = %s", (user_id,))
         user = g.db_cursor.fetchone()
         if not user or not user['id_empleado']:
+            print(f"Error: Usuario {user_id} no es empleado o no tiene id_empleado")  # Log agregado
             return jsonify({"error": "Acceso denegado"}), 403
         id_empleado = user['id_empleado']
-    except:
+        print(f"ID Empleado: {id_empleado}")  # Log agregado
+    except Exception as e:
+        print(f"Error al decodificar token: {e}")  # Log agregado
         return jsonify({"error": "Token inválido"}), 401
     
     try:
@@ -183,16 +189,19 @@ def listar_ventas():
             page = int(page_str)
             per_page = int(per_page_str)
         except ValueError:
+            print("Error: Parámetros de paginación inválidos")  # Log agregado
             return jsonify({"error": "Parámetros de paginación inválidos"}), 400
         
         offset = (page - 1) * per_page
+        print(f"Página: {page}, Por página: {per_page}, Offset: {offset}")  # Log agregado
         
         # Total de ventas
         g.db_cursor.execute("SELECT COUNT(*) AS total FROM factura WHERE id_empleado = %s", (id_empleado,))
         total_result = g.db_cursor.fetchone()
         total_ventas = total_result['total'] if total_result else 0
+        print(f"Total ventas para empleado {id_empleado}: {total_ventas}")  # Log agregado
         
-        # Ventas paginadas con detalles - AHORA CON LEFT JOIN PARA EVITAR ERRORES SI FALTA TIENDA O MÉTODO
+        # Ventas paginadas con detalles
         g.db_cursor.execute("""
             SELECT f.id_factura, f.fecha, f.hora, t.nombre AS nombre_tienda, mp.name AS metodo_pago, f.costo_total,
                    GROUP_CONCAT(CONCAT(df.nombre_producto, ' (', df.cantidad, ' x ', df.precio_unitario, ')') SEPARATOR '; ') AS productos
@@ -206,6 +215,7 @@ def listar_ventas():
             LIMIT %s OFFSET %s
         """, (id_empleado, per_page, offset))
         ventas = g.db_cursor.fetchall()
+        print(f"Ventas obtenidas: {len(ventas)}")  # Log agregado
         
         total_pages = (total_ventas + per_page - 1) // per_page
         return jsonify({
@@ -219,4 +229,5 @@ def listar_ventas():
         }), 200
     
     except Exception as err:
+        print(f"Error en query: {err}")  # Log agregado
         return jsonify({"error": f"Error al listar ventas: {err}"}), 500

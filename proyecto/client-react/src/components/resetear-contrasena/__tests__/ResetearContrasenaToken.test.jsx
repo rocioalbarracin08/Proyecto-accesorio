@@ -24,30 +24,25 @@ describe("ResetearContrasenaToken Component", () => {
     vi.clearAllMocks();
   });
 
-  // Test básico: Verifica que el componente renderice correctamente
   it("renderiza el formulario de reseteo de contraseña", () => {
     renderWithProviders(<ResetearContrasenaToken />);
-    // Verificamos que aparezca el título correcto (el componente usa "Resetear Contraseña")
     expect(screen.getByText(/resetear contraseña/i)).toBeInTheDocument();
-    // Verificamos que aparezca el párrafo descriptivo
     expect(screen.getByText(/ingresa una nueva contraseña segura/i)).toBeInTheDocument();
   });
 
-  // Test básico: Verifica que los campos de entrada estén presentes
   it("muestra los campos de entrada para nueva contraseña y confirmación", () => {
     renderWithProviders(<ResetearContrasenaToken />);
     // Usamos placeholders en lugar de labels, ya que el componente no tiene labels explícitos
-    expect(screen.getByPlaceholderText(/nueva contraseña/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/confirmar contraseña/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Nueva contraseña/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Confirmar contraseña/i)).toBeInTheDocument();
     // Verificamos el botón de envío
-    expect(screen.getByRole("button", { name: /actualizar contraseña/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Actualizar contraseña/i })).toBeInTheDocument();
   });
 
   // Test: Verifica error si no hay token en la URL
   it("muestra error si no hay token en la URL", () => {
     // Mockeamos useSearchParams para simular sin token
     vi.mocked(vi.importMock('react-router-dom')).useSearchParams.mockReturnValue([new URLSearchParams('')]);
-    
     renderWithProviders(<ResetearContrasenaToken />);
     // Verificamos que aparezca el mensaje de error por enlace inválido
     expect(screen.getByText("Enlace inválido. Solicita un nuevo enlace de recuperación.")).toBeInTheDocument();
@@ -63,7 +58,7 @@ describe("ResetearContrasenaToken Component", () => {
     await user.type(screen.getByPlaceholderText(/confirmar contraseña/i), "123");
     
     // Enviamos el formulario
-    await user.click(screen.getByRole("button", { name: /actualizar contraseña/i }));
+    await user.click(screen.getByRole("button", { name: /Actualizar contraseña/i }));
     
     // Verificamos que aparezca el error de validación
     expect(screen.getByText("La contraseña debe tener al menos 8 caracteres.")).toBeInTheDocument();
@@ -75,11 +70,11 @@ describe("ResetearContrasenaToken Component", () => {
     renderWithProviders(<ResetearContrasenaToken />);
     
     // Llenamos los campos con contraseñas que no coinciden
-    await user.type(screen.getByPlaceholderText(/nueva contraseña/i), "Password123!");
-    await user.type(screen.getByPlaceholderText(/confirmar contraseña/i), "Different123!");
+    await user.type(screen.getByPlaceholderText(/Nueva contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Confirmar contraseña/i), "Different123!");
     
     // Enviamos el formulario
-    await user.click(screen.getByRole("button", { name: /actualizar contraseña/i }));
+    await user.click(screen.getByRole("button", { name: /Actualizar contraseña/i }));
     
     // Verificamos que aparezca el error
     expect(screen.getByText("Las contraseñas no coinciden. Verifica e intenta de nuevo.")).toBeInTheDocument();
@@ -87,7 +82,7 @@ describe("ResetearContrasenaToken Component", () => {
 
   // Test: Verifica el estado de loading durante el envío
   it("muestra loading y deshabilita el botón durante el envío", async () => {
-    // Mockeamos fetch para simular una respuesta exitosa
+    // simular una respuesta exitosa
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({}),
@@ -97,10 +92,10 @@ describe("ResetearContrasenaToken Component", () => {
     renderWithProviders(<ResetearContrasenaToken />);
     
     // Llenamos los campos con datos válidos
-    await user.type(screen.getByPlaceholderText(/nueva contraseña/i), "Password123!");
-    await user.type(screen.getByPlaceholderText(/confirmar contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Nueva contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Confirmar contraseña/i), "Password123!");
     
-    const submitButton = screen.getByRole("button", { name: /actualizar contraseña/i });
+    const submitButton = screen.getByRole("button", { name: /Actualizar contraseña/i });
     await user.click(submitButton);
     
     // Verificamos que el botón esté deshabilitado y muestre "Actualizando..."
@@ -120,8 +115,8 @@ describe("ResetearContrasenaToken Component", () => {
     renderWithProviders(<ResetearContrasenaToken />);
     
     // Llenamos los campos con datos válidos
-    await user.type(screen.getByPlaceholderText(/nueva contraseña/i), "Password123!");
-    await user.type(screen.getByPlaceholderText(/confirmar contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Nueva contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Confirmar contraseña/i), "Password123!");
     
     // Enviamos el formulario
     await user.click(screen.getByRole("button", { name: /actualizar contraseña/i }));
@@ -146,11 +141,11 @@ describe("ResetearContrasenaToken Component", () => {
     renderWithProviders(<ResetearContrasenaToken />);
     
     // Llenamos los campos con datos válidos
-    await user.type(screen.getByPlaceholderText(/nueva contraseña/i), "Password123!");
-    await user.type(screen.getByPlaceholderText(/confirmar contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Nueva contraseña/i), "Password123!");
+    await user.type(screen.getByPlaceholderText(/Confirmar contraseña/i), "Password123!");
     
     // Enviamos el formulario
-    await user.click(screen.getByRole("button", { name: /actualizar contraseña/i }));
+    await user.click(screen.getByRole("button", { name: /Actualizar contraseña/i }));
     
     // Verificamos que aparezca el error de la API
     expect(await screen.findByText("Token expirado")).toBeInTheDocument();
