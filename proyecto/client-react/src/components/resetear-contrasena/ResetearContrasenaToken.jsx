@@ -89,7 +89,7 @@ export default function ResetearContrasenaToken() {
         <div className="input-password">
           <input
             type={showPassword ? "text" : "password"}
-            placeholder="Nueva Contraseña"
+            placeholder="Nueva contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -102,7 +102,7 @@ export default function ResetearContrasenaToken() {
         <div className="input-password">
           <input
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirmar Contraseña"
+            placeholder="Confirmar contraseña"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -113,7 +113,7 @@ export default function ResetearContrasenaToken() {
           </span>
         </div>
         <button type="submit" disabled={loading || !token} className="resetear-btn">
-          {loading ? "Actualizando..." : "Actualizar Contraseña"}
+          {loading ? "Actualizando..." : "Actualizar contraseña"}
         </button>
         <Link to="/" className="linkInicio">I N I C I O</Link>
       </form>

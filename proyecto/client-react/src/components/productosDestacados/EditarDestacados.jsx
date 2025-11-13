@@ -98,8 +98,8 @@ function EditarDestacados() {
         ))}
       </div>
 
-      <button onClick={handleGuardar} className="btn-guardar">Guardar Cambios</button>
-      <button onClick={() => navigate(-1)} className="btn-volver">Volver Atrás</button> {/* <-- botón para volver */}
+      <button onClick={handleGuardar} className="btn-guardar">Guardar cambios</button>
+      <button onClick={() => navigate(-1)} className="btn-volver">Volver atrás</button> {/* <-- botón para volver */}
     </div>
   );
 }

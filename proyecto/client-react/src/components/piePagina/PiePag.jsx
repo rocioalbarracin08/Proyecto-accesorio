@@ -15,10 +15,10 @@ export function PiePagina(){
                 <h4>Redes sociales</h4>
                 <div className="iconos">
                     
-                        <a href="instagram.com"><img src="/logos/igIcono.jpeg" alt="" /></a>
+                        <a href="https://www.instagram.com/"><img src="/logos/igIcono.jpeg" alt="" /></a>
                 
                     
-                        <a href="tiktok.com"><img src="/logos/tiktokIcono.png" alt="" /></a>
+                        <a href="https://www.tiktok.com/"><img src="/logos/tiktokIcono.png" alt="" /></a>
                     
                         <a href="twiter.com"><img src="/logos/twiterIco.png" alt="" /></a>
                     

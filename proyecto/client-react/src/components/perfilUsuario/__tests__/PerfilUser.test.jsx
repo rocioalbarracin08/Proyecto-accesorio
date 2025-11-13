@@ -3,15 +3,12 @@ import { renderWithProviders, screen } from "../../../test/test-utils"; // Usamo
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event"; // Para simular interacciones del usuario
 import PerfilUser from "../PerfilUser"; // Importamos el componente a testear
+import { useAuthContext } from "../../contexts/AuthContext";
 
 // Mockeamos useAuthContext para controlar el estado de autenticación
 vi.mock("../../contexts/AuthContext", () => ({
   useAuthContext: vi.fn(),
 }));
-
-// Importamos la función mockeada para poder cambiar sus valores por test
-import { useAuthContext } from "../../contexts/AuthContext";
-
 // Mockeamos useNavigate para controlar la navegación
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -24,6 +21,24 @@ vi.mock('react-router-dom', async () => {
 
 // Mockeamos fetch globalmente para controlar las llamadas a la API
 global.fetch = vi.fn();
+
+// Helpers para reducir repetición en mocks
+const mockUserData = {
+  nombre: "Rocío",
+  apellido: "Albarracín",
+  genero: "Femenino",
+  email: "rocio@example.com",
+};
+
+const mockFetchSuccess = () => global.fetch.mockResolvedValueOnce({
+  json: async () => mockUserData,
+});
+
+const mockFetchError = (error) => global.fetch.mockResolvedValueOnce({
+  json: async () => ({ error }),
+});
+
+const mockFetchNetworkError = () => global.fetch.mockRejectedValueOnce(new Error("Error de red"));
 
 describe("PerfilUser Component", () => {
   // Limpiamos los mocks después de cada test
@@ -45,15 +60,8 @@ describe("PerfilUser Component", () => {
   it("muestra los datos del usuario cuando el fetch es exitoso", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con datos válidos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper para mock exitoso
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 
@@ -67,8 +75,8 @@ describe("PerfilUser Component", () => {
   it("muestra mensaje de error si el fetch falla por red", async () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch para simular error de red
-    global.fetch.mockRejectedValueOnce(new Error("Error de red"));
+    // Usamos el helper para error de red
+    mockFetchNetworkError();
 
     renderWithProviders(<PerfilUser />);
 
@@ -80,10 +88,8 @@ describe("PerfilUser Component", () => {
   it("muestra mensaje de error si la API devuelve un error", async () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con respuesta de error de la API
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({ error: "Usuario no encontrado" }),
-    });
+    // Usamos el helper para error de API
+    mockFetchError("Usuario no encontrado");
 
     renderWithProviders(<PerfilUser />);
 
@@ -95,15 +101,8 @@ describe("PerfilUser Component", () => {
   it('muestra el botón "Cambiar Contraseña" si el usuario está logueado', async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 
@@ -115,15 +114,8 @@ describe("PerfilUser Component", () => {
   it('no muestra el botón "Cambiar Contraseña" si el usuario no está logueado', async () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 
@@ -136,15 +128,8 @@ describe("PerfilUser Component", () => {
   it('navega a "/cambiar-contrasena" al hacer clic en "Cambiar Contraseña"', async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     const user = userEvent.setup();
     renderWithProviders(<PerfilUser />);
@@ -161,15 +146,8 @@ describe("PerfilUser Component", () => {
   it("muestra opciones de dueño si isOwner es true", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: true, userRole: "dueño" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 
@@ -185,15 +163,8 @@ describe("PerfilUser Component", () => {
   it("muestra opciones de empleado si el rol es 'empleado'", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "empleado" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 
@@ -206,15 +177,8 @@ describe("PerfilUser Component", () => {
   it("no muestra opciones de dueño ni empleado si no es owner ni empleado", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
 
-    // Mockeamos fetch con datos
-    global.fetch.mockResolvedValueOnce({
-      json: async () => ({
-        nombre: "Rocío",
-        apellido: "Albarracín",
-        genero: "Femenino",
-        email: "rocio@example.com",
-      }),
-    });
+    // Usamos el helper
+    mockFetchSuccess();
 
     renderWithProviders(<PerfilUser />);
 

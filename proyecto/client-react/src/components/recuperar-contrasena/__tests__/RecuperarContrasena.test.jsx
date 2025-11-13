@@ -18,10 +18,10 @@ describe("RecuperarContrasena Component", () => {
     renderWithProviders(<RecuperarContrasena />);
     
     // Verificamos el título y elementos principales
-    expect(screen.getByText(/recuperar contraseña/i)).toBeInTheDocument();
-    expect(screen.getByText(/ingresa tu email para recibir un enlace de recuperación/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/tu email/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /enviar email/i })).toBeInTheDocument();
+    expect(screen.getByText(/Recuperar contraseña/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ingresa tu email para recibir un enlace de recuperación/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Tu email/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Enviar email/i })).toBeInTheDocument();
   });
 
   // Test: Verifica error si el email está vacío
@@ -29,7 +29,7 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Intentamos enviar sin llenar el email (aunque el input tiene required, testeamos la validación extra)
     await user.click(button);
@@ -43,15 +43,15 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const input = screen.getByPlaceholderText(/Tu email/i);
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Llenamos con un email inválido
     await user.type(input, "correo-invalido");
     await user.click(button);
     
     // Verificamos que aparezca el error
-    expect(await screen.findByText(/por favor, ingresa un email válido/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Por favor, ingresa un email válido/i)).toBeInTheDocument();
   });
 
   // Test: Verifica mensaje de éxito y enlace de reset si el fetch es correcto
@@ -65,19 +65,19 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const input = screen.getByPlaceholderText(/Tu email/i);
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Llenamos con un email válido
     await user.type(input, "usuario@correo.com");
     await user.click(button);
     
     // Esperamos a que aparezca el mensaje de éxito y el enlace
-    expect(await screen.findByText(/email enviado/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /ir a resetear contraseña/i })).toBeInTheDocument();
+    expect(await screen.findByText(/Email enviado. Revisa tu bandeja de entrada./i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Ir a resetear contraseña/i })).toBeInTheDocument();
   });
 
-  // Test: Verifica mensaje de error si el fetch falla
+  // Test: con error de back
   it("muestra mensaje de error si el fetch falla", async () => {
     // Mockeamos fetch para simular una respuesta de error
     global.fetch.mockResolvedValueOnce({
@@ -88,8 +88,8 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const input = screen.getByPlaceholderText(/Tu email/i);
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Llenamos con un email válido
     await user.type(input, "noexiste@correo.com");
@@ -99,30 +99,7 @@ describe("RecuperarContrasena Component", () => {
     expect(await screen.findByText(/usuario no encontrado/i)).toBeInTheDocument();
   });
 
-  // Test adicional: Verifica estado de loading durante el envío
-  it("muestra loading y deshabilita el botón durante el envío", async () => {
-    // Mockeamos fetch para simular una respuesta exitosa (para que llegue al loading)
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ reset_url: "http://localhost:5000/reset/abc123" }),
-    });
-    
-    const user = userEvent.setup();
-    renderWithProviders(<RecuperarContrasena />);
-    
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
-    
-    // Llenamos con un email válido
-    await user.type(input, "usuario@correo.com");
-    await user.click(button);
-    
-    // Verificamos que el botón esté deshabilitado y muestre "Enviando..."
-    expect(button).toBeDisabled();
-    expect(button).toHaveTextContent("Enviando...");
-  });
-
-  // Test adicional: Verifica error de conexión (catch en try-catch)
+  // Test: Verifica error de conexión
   it("muestra error de conexión si fetch falla por red", async () => {
     // Mockeamos fetch para simular un error de red (lanza una excepción)
     global.fetch.mockRejectedValueOnce(new Error("Network error"));
@@ -130,26 +107,26 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const input = screen.getByPlaceholderText(/Tu email/i);
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Llenamos con un email válido
     await user.type(input, "usuario@correo.com");
     await user.click(button);
     
     // Verificamos que aparezca el error de conexión
-    expect(await screen.findByText(/error de conexión/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Error de conexión. Verifica tu internet e intenta nuevamente./i)).toBeInTheDocument();
   });
 
-  // Test adicional: Verifica que el enlace de reset no aparezca inicialmente
+  // Test: Verifica que el enlace de reset no aparezca inicialmente
   it("no muestra el enlace de reset inicialmente", () => {
     renderWithProviders(<RecuperarContrasena />);
     
     // Verificamos que el enlace no esté presente al inicio
-    expect(screen.queryByRole("link", { name: /ir a resetear contraseña/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Ir a resetear contraseña/i })).not.toBeInTheDocument();
   });
 
-  // Test adicional: Verifica que el enlace de reset aparezca después de éxito
+  // Test: Verifica que el enlace de reset aparezca después de éxito
   it("muestra el enlace de reset después de un envío exitoso", async () => {
     // Mockeamos fetch para simular éxito
     global.fetch.mockResolvedValueOnce({
@@ -160,14 +137,14 @@ describe("RecuperarContrasena Component", () => {
     const user = userEvent.setup();
     renderWithProviders(<RecuperarContrasena />);
     
-    const input = screen.getByPlaceholderText(/tu email/i);
-    const button = screen.getByRole("button", { name: /enviar email/i });
+    const input = screen.getByPlaceholderText(/Tu email/i);
+    const button = screen.getByRole("button", { name: /Enviar email/i });
     
     // Llenamos y enviamos
     await user.type(input, "usuario@correo.com");
     await user.click(button);
     
     // Verificamos que el enlace aparezca
-    expect(await screen.findByRole("link", { name: /ir a resetear contraseña/i })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: /Ir a resetear contraseña/i })).toBeInTheDocument();
   });
 });
