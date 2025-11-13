@@ -166,7 +166,7 @@ export default function RegistrarEmpleado() {
         body: JSON.stringify({
           nombre: editNombre, apellido: editApellido, email: editEmail,
           puesto_trabajo: editPuestoTrabajo, telefono: editTelefono, genero: editGenero,
-          password: editPassword || undefined,  // Corregido: quitar coma extra
+          password: editPassword || undefined, 
         }),
         credentials: "include",
       });
@@ -248,8 +248,8 @@ export default function RegistrarEmpleado() {
 
       {/* Modal para Editar */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-overlayE">
+          <div className="modal-contentEmp">
             <h2>Editar Empleado</h2>
             <form onSubmit={guardarEdicion} className="formRegistrarEmpleado">
               <input type="text" placeholder="Nombre" value={editNombre} onChange={(e) => setEditNombre(e.target.value)} required />

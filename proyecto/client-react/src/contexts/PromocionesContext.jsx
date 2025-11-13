@@ -39,6 +39,15 @@ export const PromocionesProvider = ({ children }) => {
     }
   };
 
+  const activarPromocion = async (id) => {
+    try {
+      await axios.patch(`http://localhost:5000/promociones/${id}/activar`, {}, { withCredentials: true });
+      cargarPromociones();
+    } catch (error) {
+      console.error('Error activando promoción:', error);
+    }
+  };
+
   useEffect(() => {
     cargarPromociones();
   }, []);
@@ -49,7 +58,8 @@ export const PromocionesProvider = ({ children }) => {
     error,
     cargarPromociones,
     eliminarPromocion,
-    desactivarPromocion
+    desactivarPromocion,
+    activarPromocion  // Agregado
   };
 
   return (
@@ -66,4 +76,4 @@ export const usePromociones = () => {
   }
   return context;
 };
-export {PromocionesContext}
+export { PromocionesContext };

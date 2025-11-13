@@ -34,7 +34,7 @@ def crear_promocion():
     fecha_fin = datos.get("fecha_fin")
     id_categoria = datos.get("id_categoria")
     id_metodo_pago = datos.get("id_metodo_pago")
-    id_producto = datos.get("id_producto")  # Nuevo campo
+    id_producto = datos.get("id_producto")
     activo = datos.get("activo", True)
     
     if not all([descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin]):
@@ -62,7 +62,7 @@ def listar_promociones():
         activas = request.args.get('activas', 'false').lower() == 'true'
         id_categoria = request.args.get('categoria')
         id_metodo_pago = request.args.get('metodo_pago')
-        id_producto = request.args.get('producto')  # Nuevo filtro opcional
+        id_producto = request.args.get('producto')
         
         query = """
             SELECT p.*, c.categoria, mp.name AS metodo_pago, pr.name AS producto
@@ -122,6 +122,8 @@ def actualizar_promocion(id_promocion):
         return jsonify({"error": "Solo el dueño puede actualizar promociones"}), 403
     
     datos = request.get_json()
+    print("Datos recibidos:", datos)  # Debug: quita después
+    
     descripcion = datos.get("descripcion")
     descuento = datos.get("descuento")
     tipo_descuento = datos.get("tipo_descuento")
@@ -129,19 +131,57 @@ def actualizar_promocion(id_promocion):
     fecha_fin = datos.get("fecha_fin")
     id_categoria = datos.get("id_categoria")
     id_metodo_pago = datos.get("id_metodo_pago")
-    id_producto = datos.get("id_producto")  # Nuevo campo
+    id_producto = datos.get("id_producto")
     activo = datos.get("activo")
     
+    if tipo_descuento and tipo_descuento not in ['porcentaje', 'fijo']:
+        return jsonify({"error": "Tipo de descuento inválido"}), 400
+    
+    fields = []
+    values = []
+    if descripcion is not None and str(descripcion).strip() != '':
+        fields.append("descripcion = %s")
+        values.append(descripcion)
+    if descuento is not None and str(descuento).strip() != '':
+        fields.append("descuento = %s")
+        values.append(float(descuento))  # Convierte a float para evitar errores de tipo
+    if tipo_descuento is not None and str(tipo_descuento).strip() != '':
+        fields.append("tipo_descuento = %s")
+        values.append(tipo_descuento)
+    if fecha_inicio is not None and str(fecha_inicio).strip() != '':
+        fields.append("fecha_inicio = %s")
+        values.append(fecha_inicio)
+    if fecha_fin is not None and str(fecha_fin).strip() != '':
+        fields.append("fecha_fin = %s")
+        values.append(fecha_fin)
+    if id_categoria is not None and str(id_categoria).strip() != '':
+        fields.append("id_categoria = %s")
+        values.append(int(id_categoria))  # Convierte a int si es necesario
+    if id_metodo_pago is not None and str(id_metodo_pago).strip() != '':
+        fields.append("id_metodo_pago = %s")
+        values.append(int(id_metodo_pago))
+    if id_producto is not None and str(id_producto).strip() != '':
+        fields.append("id_producto = %s")
+        values.append(int(id_producto))
+    if activo is not None:
+        fields.append("activo = %s")
+        values.append(activo)
+    
+    if not fields:
+        return jsonify({"error": "No se proporcionaron campos para actualizar"}), 400
+    
+    query = f"UPDATE promociones SET {', '.join(fields)} WHERE id_promocion = %s"
+    values.append(id_promocion)
+    print("Query:", query, "Values:", values)  # Debug: quita después
+    
     try:
-        g.db_cursor.execute("""
-            UPDATE promociones SET descripcion = %s, descuento = %s, tipo_descuento = %s, fecha_inicio = %s, fecha_fin = %s, id_categoria = %s, id_metodo_pago = %s, id_producto = %s, activo = %s
-            WHERE id_promocion = %s
-        """, (descripcion, descuento, tipo_descuento, fecha_inicio, fecha_fin, id_categoria, id_metodo_pago, id_producto, activo, id_promocion))
+        g.db_cursor.execute(query, values)
         g.db.commit()
         return jsonify({"mensaje": "Promoción actualizada"}), 200
     except Exception as err:
         g.db.rollback()
-        return jsonify({"error": f"Error al actualizar promoción: {err}"}), 500
+        print("Error en UPDATE:", str(err))  # Debug: quita después
+        return jsonify({"error": f"Error al actualizar promoción: {err}"}), 500  # Cambiado de 501
 
 #------------------- E L I M I N A R -------------------
 @bp.route("/<int:id_promocion>", methods=["DELETE"])
@@ -175,3 +215,19 @@ def desactivar_promocion(id_promocion):
     except Exception as err:
         g.db.rollback()
         return jsonify({"error": f"Error al desactivar promoción: {err}"}), 500
+
+#------------------- A C T I V A R -------------------
+@bp.route("/<int:id_promocion>/activar", methods=["PATCH"])
+def activar_promocion(id_promocion):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    if not verificar_dueno():
+        return jsonify({"error": "Solo el dueño puede activar promociones"}), 403
+    
+    try:
+        g.db_cursor.execute("UPDATE promociones SET activo = TRUE WHERE id_promocion = %s", (id_promocion,))
+        g.db.commit()
+        return jsonify({"mensaje": "Promoción activada"}), 200
+    except Exception as err:
+        g.db.rollback()
+        return jsonify({"error": f"Error al activar promoción: {err}"}), 500

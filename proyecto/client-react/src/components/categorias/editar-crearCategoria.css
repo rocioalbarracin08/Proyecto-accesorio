@@ -1,11 +1,11 @@
 /* Overlay del modal */
-.modal-overlay {
+.modal-overlayCat {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(160, 82, 45, 0.5); /* Rosybrown semi-transparente para fondo opaco */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,8 +19,8 @@
 }
 
 /* Contenido del modal */
-.modal-content {
-  background: #F5DEB3; /* Fondo rosybrown claro */
+.modal-contentCat {
+  background: #F5DEB3; /* Fondo rosybrown claro (beige rosado) */
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -34,7 +34,7 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-.modal-content h2 {
+.modal-contentCat h2 {
   text-align: center;
   color: #A0522D; /* Rosybrown oscuro */
   margin-bottom: 20px;
@@ -114,7 +114,7 @@
 
 /* Responsive para modales */
 @media (max-width: 768px) {
-  .modal-content {
+  .modal-contentCat {
     padding: 20px;
     width: 95%;
   }
@@ -127,9 +127,9 @@
   }
 }
 
-/* Contenedor principal (inspirado en EditarDestacados) */
-.category-container {
-  max-width: 800px;
+/* Contenedor principal - CORREGIDO A .categorias-container */
+.categorias-container2 {
+  max-width: 600px; /* Reducido de 800px para no estirar */
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -140,6 +140,7 @@
   flex-direction: column;
   align-items: center;
   font-family: Arial, sans-serif;
+  width: 90%; /* Limita ancho para no ocupar toda la pantalla */
 }
 
 /* Título */
@@ -150,7 +151,7 @@
   text-align: center;
 }
 
-/* Botón de crear categoría (arriba, cerca del título) */
+/* Botón de crear categoría */
 .categorias-create-btn {
   background-color: rosybrown;
   color: white;
@@ -167,17 +168,17 @@
   background-color: #bc8f8f;
 }
 
-/* Lista de categorías (como productos-lista en EditarDestacados) */
+/* Lista de categorías */
 .categorias-list {
   list-style: none;
   padding: 0;
   width: 100%;
-  max-height: 400px; /* Scroll si hay muchas */
+  max-height: 400px;
   overflow-y: auto;
   margin-bottom: 20px;
 }
 
-/* Item individual de categoría (más atractivo con animación) */
+/* Item individual de categoría */
 .categoria-item {
   display: flex;
   align-items: center;
@@ -188,8 +189,8 @@
   border-radius: 5px;
   margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease; /* Transición suave para hover y cambios */
-  animation: fadeInItem 0.5s ease-in-out; /* Animación de entrada */
+  transition: all 0.3s ease;
+  animation: fadeInItem 0.5s ease-in-out;
 }
 
 @keyframes fadeInItem {
@@ -205,19 +206,19 @@
 
 .categoria-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: scale(1.02); /* Escala ligera al hover */
+  transform: scale(1.02);
 }
 
 /* Estilo para categorías inactivas */
 .categoria-inactiva {
-  opacity: 0.6; /* Menos opaco */
-  background-color: #f0f0f0; /* Fondo gris claro */
-  border-left: 5px solid #ccc; /* Borde izquierdo para indicar inactividad */
+  opacity: 0.6;
+  background-color: #f0f0f0;
+  border-left: 5px solid #ccc;
 }
 
 .categoria-inactiva:hover {
-  transform: none; /* Sin escala en hover para inactivas */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Imagen de la categoría */
@@ -228,7 +229,6 @@
   border-radius: 5px;
 }
 
-/* para ocupar el espacio necesario*/
 .categoria-info {
   flex: 1;
 }
@@ -240,25 +240,30 @@
 }
 
 .categoria-inactiva .categoria-info p {
-  color: #666; /* Texto más gris para inactivas */
+  color: #666;
 }
 
-/* Botones de acciones (como checkbox-label, pero con múltiples botones) */
+/* Botones de acciones - EN COLUMNA Y COMPACTOS */
 .categoria-buttons {
   display: flex;
-  gap: 10px;
+  flex-direction: column; /* En columna */
+  gap: 5px; /* Gap pequeño para no estirar */
+  align-items: stretch; /* Ocupa ancho completo */
+  width: 120px; /* Ancho fijo pequeño para no estirar */
 }
 
 .categoria-btn {
-  padding: 8px 16px;
+  padding: 6px 12px; /* Padding reducido */
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px; /* Fuente pequeña */
   transition: 0.3s;
   font-weight: bold;
   background-color: rosybrown;
   color: white;
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  text-align: center;
 }
 
 .categoria-btn:hover:not(:disabled) {
@@ -266,14 +271,14 @@
 }
 
 .categoria-btn:disabled {
-  background-color: #ccc; /* Gris para deshabilitados */
+  background-color: #ccc;
   color: #999;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
 .categoria-btn-edit {
-  background-color: #d2b48c; /* Más claro para editar */
+  background-color: #d2b48c;
 }
 
 .categoria-btn-edit:disabled {
@@ -285,14 +290,14 @@
 }
 
 .categoria-btn-delete {
-  background-color: #cd5c5c; /* Rojo sutil */
+  background-color: #cd5c5c;
 }
 
 .categoria-btn-delete:disabled {
   background-color: #f0f0f0;
 }
 
-/* Botones al final (como en EditarDestacados) */
+/* Botones al final */
 .btn-guardar, .categorias-back-btn {
   background-color: rosybrown;
   color: white;
@@ -309,11 +314,12 @@
   background-color: #bc8f8f;
 }
 
-/* Responsive: En móviles */
+/* Responsive */
 @media (max-width: 768px) {
-  .category-container {
+  .categorias-container2 { /* Cambiado a categorias-container */
     padding: 10px;
     max-width: 95%;
+    width: 95%;
   }
   .categoria-item {
     flex-direction: column;
@@ -321,15 +327,13 @@
     gap: 10px;
   }
   .categoria-buttons {
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+    flex-direction: column;
+    width: 100%; /* En móvil ocupa todo */
   }
   .categoria-btn {
-    flex: 1;
-    min-width: 80px;
+    width: 100%;
   }
   .categoria-inactiva {
-    border-left: 3px solid #ccc; /* Borde más delgado en móvil */
+    border-left: 3px solid #ccc;
   }
 }

@@ -228,7 +228,7 @@ export function Factura() {
               {entrega  /* Si se seleccionó entrega */ && (
                 <>
                   <label>
-                    <input className="email-input"
+                    <input className="email-input-factura"
                       placeholder="Email"
                       type="email"
                       value={email}

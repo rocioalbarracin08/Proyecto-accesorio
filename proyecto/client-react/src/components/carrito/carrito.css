@@ -114,8 +114,7 @@
   color: #333;
 }
 
-/* NUEVOS ESTILOS: Para el modal del carrito (agrega esto al final) */
-.modal-overlay {
+.modal-overlayCarrito {
   position: fixed;
   top: 0;
   left: 0;
@@ -128,7 +127,7 @@
   z-index: 1000;  /* Sobre todo lo demás */
 }
 
-.modal-content {
+.modal-contentC {
   background: white;
   border-radius: 8px;
   max-width: 500px;  /* Ancho máximo del modal */
@@ -140,7 +139,7 @@
 }
 
 /* Ajustes para .carrito-lateral dentro del modal (agrega esto para adaptarlo) */
-.modal-content .carrito-lateral {
+.modal-contentC .carrito-lateral {
   width: 100%;  /* Full width en modal */
   height: auto;  /* No fijo */
   position: relative;  /* No sticky en modal */

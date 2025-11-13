@@ -7,6 +7,7 @@
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
+  justify-content: center;
   flex-direction: column;
   gap: 2rem;
 }
@@ -57,7 +58,7 @@
 }
 
 .generoH {
-  grid-column: 2;
+  grid-column: 1;
   text-align: center;
   color: rosybrown;
   font-weight: bold;
@@ -65,7 +66,7 @@
 }
 
 .genero {
-  grid-column: 2;
+  grid-column: 1;
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -102,7 +103,7 @@
 }
 
 .btnRegist {
-  grid-column: span 2;
+  grid-column: 2;
   padding: 0.75rem;
   background: rosybrown;
   color: white;
@@ -189,30 +190,170 @@
 .empleado-item.inactivo .btn-toggle:hover {
   background: #c82333;
 }
-
-/* Modal */
-.modal-overlay {
+/* Modal corregido */
+.modal-overlayE {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(233, 200, 217, 0.7); /* Cambiado a rgba para opacidad (rosa semi-transparente) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que esté encima de todo */
+}
+
+.modal-contentEmp {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  max-width: 600px; /* Aumentado para mejor espacio */
+  width: 90%; /* Responsive */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-height: 80vh; /* Limita altura para scroll si es necesario */
+  overflow-y: auto; /* Scroll si el contenido es largo */
+}
+
+/* Estilos para el formulario del modal (copia de .formRegistrarEmpleado pero adaptado) */
+.formRegistrarEmpleado2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Mantiene 2 columnas como el original */
+  gap: 1rem;
+  align-items: end;
+}
+
+.formRegistrarEmpleado2 input,
+.formRegistrarEmpleado2 select {
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.formRegistrarEmpleado2 input:focus,
+.formRegistrarEmpleado2 select:focus {
+  border-color: rosybrown;
+  outline: none;
+}
+
+.formRegistrarEmpleado2 .input-password {
+  position: relative;
+  grid-column: 1 / -1; /* Ocupa toda la fila si es necesario */
+}
+
+.formRegistrarEmpleado2 .span-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+.formRegistrarEmpleado2 .genero {
+  grid-column: 1 / -1; /* Género ocupa toda la fila */
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.formRegistrarEmpleado2 .genero button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid rosybrown;
+  background: transparent;
+  color: rosybrown;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.formRegistrarEmpleado2 .genero button.active,
+.formRegistrarEmpleado2 .genero button:hover {
+  background: rosybrown;
+  color: white;
+}
+
+/* Botones del modal */
+.form-buttons {
+  grid-column: 1 / -1; /* Ocupa toda la fila */
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background: rosybrown;
+  color: white;
+}
+
+.btn-submit:hover {
+  background: #a55a5a;
+}
+
+.btn-cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.btn-cancel:hover {
+  background: #999;
+}
+
+/* Responsive para modal */
+@media (max-width: 768px) {
+  .formRegistrarEmpleado2 {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+  }
+
+  .formRegistrarEmpleado2 .genero {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
+  }
+}
+/* Modal */
+.modal-overlayE {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.modal-content {
+.modal-contentEmp {
   background: white;
   padding: 2rem;
   border-radius: 20px;
   max-width: 500px;
-  width: 90%;
+  width: 100%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content h2 {
+.modal-contentEmp h2 {
   color: rosybrown;
   text-align: center;
   margin-bottom: 1rem;
@@ -270,7 +411,7 @@
     padding: 1rem;
   }
 
-  .formRegistrarEmpleado {
+  .formRegistrarEmpleadoEmp {
     grid-template-columns: 1fr;
   }
 

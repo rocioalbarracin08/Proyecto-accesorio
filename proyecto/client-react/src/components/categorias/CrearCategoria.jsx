@@ -23,8 +23,8 @@ const CrearCategoria = ({ onCerrar }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlayCat">
+      <div className="modal-contentCat">
         <h2>Crear Categoría</h2>
         <form className="categoria-form" onSubmit={handleSubmit}>
           <input type="text" placeholder="Nombre de la categoría" value={form.categoria} onChange={e => setForm({...form, categoria: e.target.value})} required />
