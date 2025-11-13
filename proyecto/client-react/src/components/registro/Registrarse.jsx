@@ -109,7 +109,7 @@ export function Registrarse() {
   return (
     <>
       <section className="section-register">
-        <h1>Registrarse</h1>
+        <h1 className="h1-register">Registrarse</h1>
         {error && (
           <div className="error-message">
             <FaExclamationTriangle /> {error}

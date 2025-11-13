@@ -51,3 +51,4 @@ export const CategoriasProvider = ({ children }) => {
     </CategoriasContext.Provider>
   );
 };
+export {CategoriasContext}

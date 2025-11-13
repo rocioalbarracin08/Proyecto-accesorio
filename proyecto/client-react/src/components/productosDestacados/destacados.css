@@ -1,0 +1,44 @@
+.galeria-destacados {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  height: 350px;
+  gap: 0;
+  background-color: #fff;
+  overflow: hidden;
+}
+.destacado-title{
+  text-align: center;
+  color: rosybrown;
+}
+.item-destacado {
+  width: 16%;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.item-destacado img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: all 0.5s ease;
+}
+
+.item-destacado:hover {
+  width: 25%;
+  height: 100%;
+  z-index: 5;
+}
+
+.item-destacado:hover img {
+  cursor: crosshair;
+  opacity: 1;
+  filter: contrast(120%);
+}
