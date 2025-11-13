@@ -42,8 +42,10 @@ export default function CarruselPromociones() {
   return (
     <div className="carrusel-textual">
       <p className="promo-texto">
-        🛒 {promo.descripcion} | {promo.descuento}
-        {promo.tipo_descuento === "porcentaje" ? "%" : "$"} de descuento
+        🛒 {promo.descripcion} | 
+        {promo.tipo_descuento === "porcentaje" 
+          ? `${Math.round(promo.descuento)}%`  // Número adelante, % atrás
+          : `$${Math.round(promo.descuento)}`} 
         {promo.producto ? ` en ${promo.producto}` : ""}
         {promo.categoria ? ` (${promo.categoria})` : ""}
       </p>

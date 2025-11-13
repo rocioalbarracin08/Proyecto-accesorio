@@ -23,7 +23,7 @@ export function Registrarse() {
     setEmail,
   } = useAuth();
 
-  const [genero, setGenero] = useState("F");
+  const [genero, setGenero] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
@@ -60,21 +60,47 @@ export function Registrarse() {
   const handleClick = async (event) => {
     event.preventDefault();
     setError("");
-    setLoading(true);
 
-    // Validaciones
-    if (!usuarioName.trim()) return setError("El nombre es obligatorio.");
-    if (!usuarioApellido.trim()) return setError("El apellido es obligatorio.");
-    if (!email.trim()) return setError("El email es obligatorio.");
-    if (!validarEmail(email)) return setError("Ingresa un email válido (ej: usuario@dominio.com).");
-    if (!contraseña.trim()) return setError("La contraseña es obligatoria.");
+    // Validaciones (antes de cambiar el estado de loading)
+    if (!usuarioName.trim()) {
+      setError("El nombre es obligatorio.");
+      return;
+    }
+    if (!usuarioApellido.trim()) {
+      setError("El apellido es obligatorio.");
+      return;
+    }
+    if (!email.trim()) {
+      setError("El email es obligatorio.");
+      return;
+    }
+    if (!validarEmail(email)) {
+      setError("Ingresa un email válido (ej: usuario@dominio.com).");
+      return;
+    }
+    if (!contraseña.trim()) {
+      setError("La contraseña es obligatoria.");
+      return;
+    }
     const errorPwd = validarPassword(contraseña);
-    if (errorPwd) return setError(errorPwd);
-    if (!repetirContraseña.trim()) return setError("Debes confirmar la contraseña.");
-    if (contraseña !== repetirContraseña) return setError("Las contraseñas no coinciden.");
-    if (!genero) return setError("Selecciona tu género.");
+    if (errorPwd) {
+      setError(errorPwd);
+      return;
+    }
+    if (!repetirContraseña.trim()) {
+      setError("Debes confirmar la contraseña.");
+      return;
+    }
+    if (contraseña !== repetirContraseña) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (!genero) {
+      setError("Selecciona o escribe tu género.");
+      return;
+    }
 
-
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/usuarios/register", {
         method: "POST",
@@ -181,10 +207,12 @@ export function Registrarse() {
           </div>
         </form>
 
-        <button disabled={loading}//agregue la condicion para validar el formulario
-        onClick={handleClick} 
-        className="registro" 
-        data-testid="button" >
+        <button
+          disabled={loading}
+          onClick={handleClick}
+          className="registro"
+          data-testid="button"
+        >
           {loading ? "Registrando..." : "Registrarse"}
         </button>
 

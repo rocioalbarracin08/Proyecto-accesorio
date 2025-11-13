@@ -8,7 +8,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
 import "./productos.css";
 
-export function Productos() {
+export function Productos({ includeInactiveForEmployee = false }) {
   const { idCategoria } = useParams();  // Opcional: si hay, filtra por categoría
   const { promociones } = usePromociones();
   const { addItem, openCarrito } = useCarrito();
@@ -32,9 +32,25 @@ export function Productos() {
       let url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=10`;
       if (idCategoria) {
         url = `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`;
+        if (includeInactiveForEmployee && userRole === 'empleado') url += '&include_inactive=1';
+      }
+      // Para la vista general, si estamos en dashboard empleado y pedimos ver inactivos
+      if (!idCategoria && includeInactiveForEmployee && userRole === 'empleado') {
+        url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=10&include_inactive=1`;
       }
       const res = await axios.get(url, { withCredentials: true });
       const data = res.data;
+      // Si la API devuelve mensaje de categoría inactiva o no encontrada, manejar
+      if (res.status === 200 && data.mensaje) {
+        // mensajes informativos (no errores HTTP) pueden venir en 200; si contiene 'inact' mostrar como no disponible
+        if (String(data.mensaje).toLowerCase().includes('inact')) {
+          setProductos([]);
+          setCategoriaNombre('Categoría inactiva');
+          setTotalPages(1);
+          setPage(1);
+          return;
+        }
+      }
       setProductos(data.productos || []);
       setTotalPages(data.total_pages || 1);
       setPage(data.page || 1);
@@ -44,7 +60,15 @@ export function Productos() {
         setCategoriaNombre("Productos");
       }
     } catch (err) {
-      console.error("Error cargando productos:", err);
+      // Si la categoría está inactiva, el backend puede devolver 404 con mensaje
+      if (err.response && err.response.status === 404 && err.response.data && err.response.data.mensaje) {
+        setProductos([]);
+        setCategoriaNombre(err.response.data.mensaje || 'Categoría no disponible');
+        setTotalPages(1);
+        setPage(1);
+      } else {
+        console.error("Error cargando productos:", err);
+      }
     } finally {
       setLoading(false);
     }
@@ -175,9 +199,23 @@ export function Productos() {
                 {userRole === 'empleado' && (
                   <>
                     <p>Stock: {producto.stock || 0}</p>
-                    <button className='btn-empleado' onClick={() => handleEdit(producto)}>Editar</button>
-                    <button className='btn-empleado' onClick={() => handleDelete(getId(producto))}>Desactivar</button>
-                    <button className='btn-empleado' onClick={() => handleUpdateStock(getId(producto), producto.stock)}>Actualizar Stock</button>
+                    {producto.activo === 0 ? (
+                      // Si está desactivado, solo mostrar activar
+                      <button className='btn-empleado' onClick={async () => {
+                        await fetch(`http://localhost:5000/productos/activar/${getId(producto)}`, {
+                          method: 'PATCH',
+                          credentials: 'include'
+                        });
+                        cargarProductos();
+                      }}>Activar</button>
+                    ) : (
+                      // Producto activo: permitir editar/desactivar/actualizar stock
+                      <>
+                        <button className='btn-empleado' onClick={() => handleEdit(producto)}>Editar</button>
+                        <button className='btn-empleado' onClick={() => handleDelete(getId(producto))}>Desactivar</button>
+                        <button className='btn-empleado' onClick={() => handleUpdateStock(getId(producto), producto.stock)}>Actualizar Stock</button>
+                      </>
+                    )}
                   </>
                 )}
               </div>

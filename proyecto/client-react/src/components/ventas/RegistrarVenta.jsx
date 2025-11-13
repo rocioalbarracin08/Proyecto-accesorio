@@ -182,7 +182,6 @@ function RegistrarVenta() {
                 placeholder="Buscar productos..."
                 className="input-busqueda"
               />
-              <span className="lupa">🔍</span>
             </div>
             {productosFiltrados.map(p => {  // Cambiado a productosFiltrados
               const descuento = calcularDescuento(p);
