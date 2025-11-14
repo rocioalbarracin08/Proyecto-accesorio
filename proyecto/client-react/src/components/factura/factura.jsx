@@ -336,6 +336,8 @@ export function Factura() {
           ) : (
             <p style={{ color: "red" }}>
               Debes iniciar sesión para seleccionar el método de entrega.
+              <br />
+              <a href="/login" style={{ color: "red", fontWeight:"bold" }}>LOGUEATE ACÁ</a>
             </p>
           )}
         </div>
