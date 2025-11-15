@@ -6,6 +6,10 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+    },
     globals: true, // Para usar describe, it, expect globalmente
     environment: "jsdom", // Simula el navegador (necesario para React)
     setupFiles: ["./src/test/setupTests.jsx"], // Archivo para importaciones globales

@@ -5,8 +5,9 @@ import userEvent from "@testing-library/user-event"; // Para interacciones reali
 import CrearCategoria from "../CrearCategoria"; // Importamos el componente
 
 // Mockeamos axios para controlar las llamadas a la API
+import axios from 'axios';
 vi.mock('axios');
-const mockedAxios = vi.mocked(import('axios'));
+const mockedAxios = axios;
 
 // Mockeamos useCategorias para controlar el contexto
 vi.mock('../../contexts/CategoriasContext', () => ({

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { vi } from "vitest";
 
 // Importar contextos
 import { AuthProvider } from "../contexts/AuthContext";
@@ -30,12 +31,13 @@ const mockUseAuth = () => {
     setError,
   };
 };
+
 // Mockea el hook useAuth
 vi.mock("../../hooks/useAuth", () => ({
   default: mockUseAuth,
 }));
 
-// Render helper con todos tus providers
+// Render helper con todos tus providers (solo si necesitas providers reales)
 export function renderWithProviders(ui, { route = "/", ...options } = {}) {
   const Wrapper = ({ children }) => (
     <MemoryRouter initialEntries={[route]}>
@@ -51,19 +53,22 @@ export function renderWithProviders(ui, { route = "/", ...options } = {}) {
 
   return render(ui, { wrapper: Wrapper, ...options });
 }
-import { vi } from "vitest";
+
 // Crear funciones mockeables para contextos
 export const mockUseAuthContext = vi.fn(() => ({
   isLogged: false,
+  userRole: null,
+  authChecked: true,  // Agregado para evitar loading infinito
   logout: vi.fn(),
 }));
+
 export const mockUseCarrito = vi.fn(() => ({
   state: { totalItems: 0, showCarrito: false },
   toggleCarrito: vi.fn(),
   closeCarrito: vi.fn(),
 }));
 
-// En renderWithMockProviders
+// En renderWithMockProviders (uso esto para tests mockeados)
 export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
   const MockAuthProvider = ({ children }) => {
     const mockValue = mockUseAuthContext();
@@ -90,7 +95,7 @@ export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
   return render(ui, { wrapper: Wrapper, ...options });
 }
 
-// Importa AuthContext y CarritoContext en test-utils.jsx
+// Importa AuthContext y CarritoContext
 import { AuthContext } from "../contexts/AuthContext";
 import { CarritoContext } from "../contexts/CarritoContext";
 
