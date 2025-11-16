@@ -8,9 +8,12 @@ function EditarDestacados() {
   const navigate = useNavigate(); // <-- inicializalo
   const [productos, setProductos] = useState([]);
   const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const [productosTopVentas, setProductosTopVentas] = useState([]);
   const [busquedaProducto, setBusquedaProducto] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [showTopVentas, setShowTopVentas] = useState(false);
 
+  // Cargar productos normales
   useEffect(() => {
     if (!isLogged || !isOwner) {
       console.log(isLogged);
@@ -25,19 +28,38 @@ function EditarDestacados() {
     }
   }, [isLogged, isOwner]);
 
+  // Cargar productos con más ventas en la semana
+  useEffect(() => {
+    if (isLogged && isOwner) {
+      fetch("http://localhost:5000/productos/top-ventas-semana", { credentials: "include" })
+        .then(res => res.json())
+        .then(data => {
+          setProductosTopVentas(data.productos || []);
+        })
+        .catch(err => console.error("Error cargando top ventas:", err));
+    }
+  }, [isLogged, isOwner]);
+
   useEffect(() => {
     if (busquedaProducto.trim().length > 2) {
-      const filtrados = productos.filter(p =>
-        p.name.toLowerCase().includes(busquedaProducto.toLowerCase())
-      );
+      const filtrados = showTopVentas 
+        ? productosTopVentas.filter(p =>
+            p.name.toLowerCase().includes(busquedaProducto.toLowerCase())
+          )
+        : productos.filter(p =>
+            p.name.toLowerCase().includes(busquedaProducto.toLowerCase())
+          );
       setProductosFiltrados(filtrados);
     } else {
-      setProductosFiltrados(productos);
+      setProductosFiltrados(showTopVentas ? productosTopVentas : productos);
     }
-  }, [busquedaProducto, productos]);
+  }, [busquedaProducto, productos, productosTopVentas, showTopVentas]);
 
   const toggleDestacado = (id_producto) => {
     setProductos(prev => prev.map(p =>
+      p.id_producto === id_producto ? { ...p, destacado: !p.destacado } : p
+    ));
+    setProductosFiltrados(prev => prev.map(p =>
       p.id_producto === id_producto ? { ...p, destacado: !p.destacado } : p
     ));
   };
@@ -66,36 +88,65 @@ function EditarDestacados() {
       <h2>Editar Productos Destacados</h2>
       {mensaje && <div className={`mensaje ${mensaje.type}`}>{mensaje.text}</div>}
 
+      {/* Botones para filtrar vista */}
+      <div className="filter-buttons">
+        <button 
+          className={`filter-btn ${!showTopVentas ? 'active' : ''}`}
+          onClick={() => setShowTopVentas(false)}
+        >
+          Todos los Productos
+        </button>
+        <button 
+          className={`filter-btn top-ventas ${showTopVentas ? 'active' : ''}`}
+          onClick={() => setShowTopVentas(true)}
+        >
+          ⭐ Top Ventas Semana
+        </button>
+      </div>
+
+      {showTopVentas && productosTopVentas.length > 0 && (
+        <div className="info-top-ventas">
+          <p>✨ <strong>Guía recomendada:</strong> Estos son los productos con más ventas en los últimos 7 días. Considera destacarlos para aprovechar la demanda.</p>
+        </div>
+      )}
+
       <div className="busqueda-seccion">
         <input
           type="text"
           value={busquedaProducto}
           onChange={e => setBusquedaProducto(e.target.value)}
-          placeholder="Buscar productos..."
+          placeholder={showTopVentas ? "Buscar en top ventas..." : "Buscar productos..."}
           className="input-busqueda"
         />
         <span className="lupa">🔍</span>
       </div>
 
       <div className="productos-lista">
-        {productosFiltrados.map(p => (
-          <div key={p.id_producto} className="producto-item">
-            <img src={p.imagen_url} alt={p.name} className="producto-img" />
-            <div className="producto-info">
-              <span className="producto-nombre">{p.name}</span>
-              <span className="producto-precio">${p.precio.toFixed(2)}</span>
-              <span className="producto-stock">Stock: {p.stock || 0}</span>
+        {productosFiltrados.length > 0 ? (
+          productosFiltrados.map(p => (
+            <div key={p.id_producto} className={`producto-item ${showTopVentas ? 'top-ventas-item' : ''}`}>
+              <img src={p.imagen_url} alt={p.name} className="producto-img" />
+              <div className="producto-info">
+                <span className="producto-nombre">{p.name}</span>
+                <span className="producto-precio">${p.precio.toFixed(2)}</span>
+                <span className="producto-stock">Stock: {p.stock || 0}</span>
+                {showTopVentas && (
+                  <span className="producto-ventas">📊 Ventas: {p.total_ventas || 0}</span>
+                )}
+              </div>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={p.destacado || false}
+                  onChange={() => toggleDestacado(p.id_producto)}
+                />
+                Destacado
+              </label>
             </div>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={p.destacado || false}
-                onChange={() => toggleDestacado(p.id_producto)}
-              />
-              Destacado
-            </label>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="no-productos">No hay productos para mostrar</p>
+        )}
       </div>
 
       <button onClick={handleGuardar} className="btn-guardar">Guardar cambios</button>

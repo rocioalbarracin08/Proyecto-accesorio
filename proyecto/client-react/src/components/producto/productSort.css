@@ -9,9 +9,8 @@
 .sort-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background-color: #cd7f7f;
+  background-color: rosybrown;
   color: white;
   border: none;
   border-radius: 8px;
@@ -20,10 +19,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .sort-button:hover {
-  background-color: #a45d5d;
+  background-color: transparent;
+  color: rosybrown;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
@@ -50,7 +51,7 @@
   top: calc(100% + 0.5rem);
   left: 0;
   background-color: white;
-  border: 2px solid #cd7f7f;
+  border: 2px solid rosybrown;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 100;
@@ -91,13 +92,15 @@
 }
 
 .sort-option.active {
-  background-color: #cd7f7f;
+  background-color: rosybrown;
   color: white;
   font-weight: 600;
 }
 
 .sort-option.active:hover {
-  background-color: #a45d5d;
+  background-color: rgb(212, 193, 193);
+  color: white;
+  font-weight: bold;
   padding-left: 1.25rem;
 }
 

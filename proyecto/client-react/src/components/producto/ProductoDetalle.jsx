@@ -4,6 +4,7 @@ import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { usePromociones } from "../../contexts/PromocionesContext"; // Para promociones
 import ProductoItem from "./ProductoItem";  // Agrega esta importación (ajusta la ruta si es diferente)
+import { ProductStockDetailInfo } from "./ProductStockIndicator";
 
 import "./productoDetalle.css";
 
@@ -128,6 +129,9 @@ export default function ProductoDetalle() {
               <small>Válido hasta {new Date(cartelitoNaranja.fecha_fin).toLocaleDateString()}</small>
             </div>
           )}
+
+          {/* Info de Stock */}
+          <ProductStockDetailInfo stock={producto.stock} />
 
           {userRole === "empleado" && <p>Stock: {producto.stock || 0}</p>}
           

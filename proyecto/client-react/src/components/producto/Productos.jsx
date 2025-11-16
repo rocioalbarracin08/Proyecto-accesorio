@@ -7,6 +7,8 @@ import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
 import { ProductSort } from "./ProductSort";
+import { ProductStockIndicator } from "./ProductStockIndicator";
+import { CarruselPromociones } from "./CarruselPromociones";
 import "./productos.css";
 
 export function Productos({ includeInactiveForEmployee = false }) {
@@ -16,7 +18,6 @@ export function Productos({ includeInactiveForEmployee = false }) {
   const { userRole } = useAuthContext();
 
   const [productos, setProductos] = useState([]);
-  const [categoriaNombre, setCategoriaNombre] = useState("Todos los Productos");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -165,8 +166,9 @@ export function Productos({ includeInactiveForEmployee = false }) {
 
   return (
     <div className="productos-page">
-      <h2 className="tituloProducts">{categoriaNombre}</h2>
-
+      {/* Carrusel de Promociones */}
+      <CarruselPromociones productos={productos} />
+      
       {/* Componente de ordenamiento */}
       <ProductSort 
         onSortChange={setSortType} 
@@ -206,6 +208,9 @@ export function Productos({ includeInactiveForEmployee = false }) {
                     alt={producto.name}
                   />
                 </Link>
+                {/* Indicador de Stock */}
+                <ProductStockIndicator stock={producto.stock} />
+                
                 <h3>{producto.name}</h3>
                 <p className="producto-precio">
                   {promocionProducto ? (

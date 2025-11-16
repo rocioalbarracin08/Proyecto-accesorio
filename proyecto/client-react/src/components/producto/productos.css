@@ -73,12 +73,6 @@
   text-align: center;
 }
 
-.tituloProducts {
-  margin-top: 20px;
-  color: #333;
-  text-transform: uppercase; /*Hacer que todo se vea en mayuscula*/
-}
-
 /* Paginación */
 .paginacion {
   display: flex;

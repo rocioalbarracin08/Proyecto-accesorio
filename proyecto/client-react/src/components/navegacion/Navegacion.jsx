@@ -165,7 +165,7 @@ return (
           </div>
           {isSearchOpen && (
             loading && resultados.length === 0 ? (
-              <p className="buscador-loading">Buscando...</p>
+              <p className="buscador-empty">Buscando resultados...</p>
             ) : resultados.length > 0 ? (
               <ul className="buscador-dropdown">
                 {resultados.map((prod) => (

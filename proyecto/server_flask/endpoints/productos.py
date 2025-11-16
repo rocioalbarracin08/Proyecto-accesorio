@@ -5,6 +5,7 @@ from server_flask.utils.auth import solo_empleado  # Si lo tienes, sino quítalo
 from server_flask.endpoints.ventas import verificar_usuario  # Asegúrate de que la ruta sea correcta
 from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
 from server_flask.utils.auth import solo_empleado
+from datetime import datetime, timedelta
 
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
@@ -410,3 +411,88 @@ def actualizar_stock(id_producto):
     except Exception as e:
         g.db.rollback()
         return jsonify({"error": f"Error al actualizar stock: {e}"}), 500
+
+# PRODUCTOS CON MÁS VENTAS EN LA SEMANA (para el dueño - guía visual)
+@bp.route('/top-ventas-semana', methods=['GET'])
+@solo_dueno
+def top_ventas_semana():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    try:
+        # Obtener la fecha de hace 7 días
+        fecha_hace_7_dias = (datetime.now() - timedelta(days=7)).date()
+        fecha_hoy = datetime.now().date()
+        
+        # Query para obtener productos con más ventas en los últimos 7 días
+        g.db_cursor.execute("""
+            SELECT 
+                p.id_producto,
+                p.name,
+                p.precio,
+                p.imagen_url,
+                p.destacado,
+                SUM(df.cantidad) as total_ventas,
+                i.stock_actual as stock
+            FROM productos p
+            LEFT JOIN detalle_factura df ON p.id_producto = df.id_producto
+            LEFT JOIN factura f ON df.id_factura = f.id_factura
+            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = 1
+            WHERE p.activo = 1 AND (f.fecha IS NULL OR (f.fecha BETWEEN %s AND %s))
+            GROUP BY p.id_producto
+            ORDER BY total_ventas DESC, p.name ASC
+            LIMIT 20
+        """, (fecha_hace_7_dias, fecha_hoy))
+        
+        productos = g.db_cursor.fetchall()
+        
+        # Formatear respuesta para que sea clara
+        productos_formateados = []
+        for prod in productos:
+            productos_formateados.append({
+                'id_producto': prod['id_producto'],
+                'name': prod['name'],
+                'precio': prod['precio'],
+                'imagen_url': prod['imagen_url'],
+                'destacado': prod['destacado'],
+                'total_ventas': prod['total_ventas'] or 0,
+                'stock': prod['stock'] or 0
+            })
+        
+        return jsonify({"productos": productos_formateados, "periodo": "últimos 7 días"}), 200
+    
+    except Exception as err:
+        return jsonify({"error": f"Error al obtener top de ventas: {err}"}), 500
+
+# OBTENER STOCK DE UN PRODUCTO
+@bp.route('/<int:id_producto>/stock', methods=['GET'])
+def get_stock_producto(id_producto):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    try:
+        # Obtener usuario para saber su tienda
+        user, error, status = verificar_usuario()
+        if error:
+            id_tienda = 1  # Tienda por defecto
+        else:
+            id_tienda = user.get('id_tienda') or 1
+        
+        g.db_cursor.execute("""
+            SELECT stock_actual FROM inventario 
+            WHERE id_producto = %s AND id_tienda = %s
+        """, (id_producto, id_tienda))
+        
+        resultado = g.db_cursor.fetchone()
+        stock = resultado['stock_actual'] if resultado else 0
+        
+        return jsonify({
+            "id_producto": id_producto,
+            "stock": stock,
+            "hay_stock": stock > 0,
+            "ultimas_unidades": stock <= 3 and stock > 0,
+            "sin_stock": stock == 0
+        }), 200
+    
+    except Exception as err:
+        return jsonify({"error": f"Error al obtener stock: {err}"}), 500
