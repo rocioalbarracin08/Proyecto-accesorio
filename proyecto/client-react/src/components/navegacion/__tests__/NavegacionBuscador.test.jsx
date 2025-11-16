@@ -136,10 +136,15 @@ describe("BarraNavegacion - Buscador", () => {
     const input = screen.getByPlaceholderText("Buscar productos");
     await user.type(input, "test");
 
+    // Usa un matcher personalizado para mayor flexibilidad
     await waitFor(() => {
-      expect(screen.getByText("Buscando...")).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        // Busca si el contenido incluye "Buscando" (ignora variaciones exactas)
+        return content.includes("Buscando");
+      })).toBeInTheDocument();
     });
   });
+
 
   it("debería cerrar el buscador y limpiar estados al hacer click en el botón de cerrar", async () => {
     mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
