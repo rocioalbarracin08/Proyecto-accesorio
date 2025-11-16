@@ -1,0 +1,138 @@
+/* Contenedor principal del componente de ordenamiento */
+.product-sort-container {
+  position: relative;
+  display: inline-block;
+  margin: 1rem;
+}
+
+/* Botón principal de ordenamiento */
+.sort-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #cd7f7f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sort-button:hover {
+  background-color: #a45d5d;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.sort-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icono dentro del botón */
+.sort-icon {
+  font-size: 1.1rem;
+}
+
+/* Etiqueta del botón */
+.sort-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Dropdown de opciones de ordenamiento */
+.sort-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background-color: white;
+  border: 2px solid #cd7f7f;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  min-width: 220px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Opciones dentro del dropdown */
+.sort-option {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #6a4f4f;
+  transition: all 0.2s ease;
+}
+
+.sort-option:hover {
+  background-color: #f4e1e1;
+  color: #4a3333;
+  padding-left: 1.25rem;
+}
+
+.sort-option.active {
+  background-color: #cd7f7f;
+  color: white;
+  font-weight: 600;
+}
+
+.sort-option.active:hover {
+  background-color: #a45d5d;
+  padding-left: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sort-button {
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .sort-label {
+    display: none;
+  }
+
+  .sort-dropdown {
+    min-width: 180px;
+  }
+
+  .sort-option {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sort-button {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .sort-dropdown {
+    min-width: 150px;
+  }
+
+  .sort-option {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}

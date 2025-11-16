@@ -6,6 +6,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
+import { ProductSort } from "./ProductSort";
 import "./productos.css";
 
 export function Productos({ includeInactiveForEmployee = false }) {
@@ -23,6 +24,9 @@ export function Productos({ includeInactiveForEmployee = false }) {
   // Estados para empleados (de ProductoGrid)
   const [showModal, setShowModal] = useState(false);
   const [productoEditar, setProductoEditar] = useState(null);
+
+  // Estado para ordenamiento
+  const [sortType, setSortType] = useState('price-desc');
 
   console.log("UserRole actual:", userRole);  // Verifica en la consola 
 
@@ -81,6 +85,28 @@ export function Productos({ includeInactiveForEmployee = false }) {
   if (loading) return <div className="producto-grid">Cargando productos...</div>;
 
   const getId = (producto) => producto.id_producto || producto.id;
+
+  // Función para ordenar productos
+  const sortProducts = (productsToSort) => {
+    const sorted = [...productsToSort];
+    
+    switch(sortType) {
+      case 'price-asc':
+        // Menor a mayor precio
+        return sorted.sort((a, b) => a.precio - b.precio);
+      case 'price-desc':
+        // Mayor a menor precio (por defecto)
+        return sorted.sort((a, b) => b.precio - a.precio);
+      case 'name-asc':
+        // Alfabético A-Z
+        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'es'));
+      case 'name-desc':
+        // Alfabético Z-A
+        return sorted.sort((a, b) => (b.name || '').localeCompare(a.name || '', 'es'));
+      default:
+        return sorted;
+    }
+  };
 
   const goToPage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) setPage(newPage);
@@ -141,11 +167,17 @@ export function Productos({ includeInactiveForEmployee = false }) {
     <div className="productos-page">
       <h2 className="tituloProducts">{categoriaNombre}</h2>
 
+      {/* Componente de ordenamiento */}
+      <ProductSort 
+        onSortChange={setSortType} 
+        currentSort={sortType}
+      />
+
       <div className="producto-grid">
         {productos.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
-          productos.map((producto) => {
+          sortProducts(productos).map((producto) => {
             const promocionProducto = getPromocionForProducto(producto);  // Promoción específica del producto
             let precioFinal = producto.precio;
             let precioOriginal = producto.precio;

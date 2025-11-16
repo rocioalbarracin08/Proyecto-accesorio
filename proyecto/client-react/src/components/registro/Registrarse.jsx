@@ -1,9 +1,10 @@
 import useAuth from "../../hooks/useAuth";
 import "./register.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";  // Ícono para errores
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 
 export function Registrarse() {
   const navigate = useNavigate();
@@ -27,6 +28,21 @@ export function Registrarse() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
+  // Referencias para los inputs
+  const nombreRef = useRef(null);
+  const apellidoRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const repeatPasswordRef = useRef(null);
+
+  // Hook de navegación con Enter
+  useFormKeyboardNavigation(
+    [nombreRef, apellidoRef, emailRef, passwordRef, repeatPasswordRef],
+    () => {
+      handleClick({ preventDefault: () => {} });
+    }
+  );
 
   // Función para validar email
   const validarEmail = (email) => {
@@ -143,18 +159,21 @@ export function Registrarse() {
         )}
         <form className="formularioRegister">
           <input
+            ref={nombreRef}
             type="text"
             placeholder="Nombre"
             onChange={handleInputUsuario}
             value={usuarioName}
           />
           <input
+            ref={apellidoRef}
             type="text"
             placeholder="Apellido"
             onChange={(e) => setUsuarioApellido(e.target.value)}
             value={usuarioApellido}
           />
           <input
+            ref={emailRef}
             type="email"
             placeholder="Email"
             onChange={(event) => setEmail(event.target.value)}
@@ -162,6 +181,7 @@ export function Registrarse() {
           />
           <div className="input-password">
             <input
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               placeholder="Cree una contraseña"
               onChange={(event) => setContraseña(event.target.value)}
@@ -179,6 +199,7 @@ export function Registrarse() {
 
           <div className="input-password">
             <input
+              ref={repeatPasswordRef}
               type={showRepeatPassword ? "text" : "password"}
               placeholder="Repita la contraseña"
               onChange={(event) => setRepetirContraseña(event.target.value)}

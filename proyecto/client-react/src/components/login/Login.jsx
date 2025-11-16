@@ -2,9 +2,10 @@ import React from "react";
 import useAuth from '../../hooks/useAuth';
 import { useAuthContext } from '../../contexts/AuthContext'; //hook global
 import './login.css';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import { useFormKeyboardNavigation } from '../../hooks/useFormKeyboardNavigation';
 
 export function Login() {
   const { email, setEmail, contraseña, setContraseña, error, setError } =
@@ -13,6 +14,16 @@ export function Login() {
   const [loginError, setLoginError] = useState(""); // Aquí guardamos el error
   const navigate = useNavigate();
   const { login } = useAuthContext();
+
+  // Referencias para los inputs
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  // Hook de navegación con Enter
+  useFormKeyboardNavigation([emailRef, passwordRef], () => {
+    handleClick({ preventDefault: () => {} });
+  });
 
   const handleClick = async (event) => {
     event.preventDefault();
@@ -62,6 +73,7 @@ export function Login() {
         {loginError && <p style={{ color: 'red' }}>{loginError}</p>} {/* Muestra el error si existe */}
         <form className='formulario'>
           <input 
+            ref={emailRef}
             type="text" 
             placeholder='Email' 
             onChange={(e) => setEmail(e.target.value)}
@@ -70,6 +82,7 @@ export function Login() {
           />
           <div className='password-container'>
             <input 
+              ref={passwordRef}
               type={showPassword ? 'text' : 'password'} 
               placeholder='Contraseña' 
               onChange={event => setContraseña(event.target.value)}

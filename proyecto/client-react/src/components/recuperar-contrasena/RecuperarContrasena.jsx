@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 import "./recuperarContrasena.css";
 
 export default function RecuperarContrasena() {
@@ -8,6 +9,14 @@ export default function RecuperarContrasena() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetUrl, setResetUrl] = useState("");  // Para almacenar la URL del backend
+
+  // Referencia para el input
+  const emailRef = useRef(null);
+
+  // Hook de navegación con Enter
+  useFormKeyboardNavigation([emailRef], () => {
+    handleSubmit({ preventDefault: () => {} });
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +59,7 @@ export default function RecuperarContrasena() {
       {error && <p className="recuperar-error">{error}</p>}
       <form onSubmit={handleSubmit} className="recuperar-form">
         <input
+          ref={emailRef}
           type="email"
           placeholder="Tu email"
           value={email}
