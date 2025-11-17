@@ -30,7 +30,7 @@ vi.mock("../../hooks/useAuth", () => ({
 export function renderWithProviders(ui, { route = "/", ...options } = {}) {
   const Wrapper = ({ children }) => (
     <MemoryRouter initialEntries={[route]}>
-      <div>{children}</div>  // Sin providers reales, ya que todo es mockeado
+      <div>{children}</div> 
     </MemoryRouter>
   );
 

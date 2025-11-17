@@ -1,11 +1,15 @@
-// /test/setupTests.jsx - Setup global para Vitest
+import React from "react";
 import { afterEach } from "vitest"; //Importa lo básico
 import { cleanup } from "@testing-library/react";//Limpia luego de cada test
 import "@testing-library/jest-dom";
+import "@test/setupTests";
+
 
 // Limpia el DOM después de cada prueba
 afterEach(() => {
   cleanup();
+  // Resetea fetch global
+  globalThis.fetch = vi.fn(() => Promise.resolve({ ok: true, json: async () => ({}) }));
 });
 
 // Polyfill para window.matchMedia

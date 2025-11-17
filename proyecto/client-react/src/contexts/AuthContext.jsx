@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
       setIsOwner(false);
       setUserRole(null);
       setLoginTrigger(0);
-      useNavigate("/login")
+      navigate("/login")
     });
   };
 
