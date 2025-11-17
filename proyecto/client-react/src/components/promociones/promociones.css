@@ -10,6 +10,15 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.promocion-btn-activate {
+  background-color: #4CAF50; /* Verde para activar */
+  color: white;
+}
+
+.promocion-btn-activate:hover {
+  background-color: #45a049;
+}
+
 .promociones-title {
   text-align: center;
   color: rosybrown; /* Color principal */

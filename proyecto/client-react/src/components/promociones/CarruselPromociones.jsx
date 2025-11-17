@@ -1,36 +1,58 @@
 import { useState, useEffect } from 'react';
-import { usePromociones } from '../../contexts/PromocionesContext';  // Importa el contexto
-import './carruselPromociones.css';  // Importa el CSS específico
+import { usePromociones } from '../../contexts/PromocionesContext';
+import './carruselPromociones.css';
 
 const CarruselPromociones = () => {
-  const { promociones, loading, error } = usePromociones();  // Accede a promociones desde el contexto
-  const [indiceActual, setIndiceActual] = useState(0);  // Estado para el índice actual
+  const { promociones, loading, error } = usePromociones();
+  const [indiceActual, setIndiceActual] = useState(0);
 
-  // Filtra promociones activas
-  const promocionesActivas = promociones.filter(p => p.activo && new Date(p.fecha_fin) >= new Date());
+  // Función auxiliar para obtener la fecha actual como Date (sin hora)
+  const getFechaActual = () => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);  // Resetea horas para comparar solo fechas
+    return hoy;
+  };
+
+  // Filtra promociones activas: activo=true, fecha_inicio <= hoy <= fecha_fin
+  const promocionesActivas = promociones.filter(p => {
+    // Maneja activo como int (0/1), string ("0"/"1") o bool
+    const isActiva = p.activo === 1 || p.activo === "1" || p.activo === true;
+    if (!isActiva) return false;
+
+    const hoy = getFechaActual();
+    const inicio = new Date(p.fecha_inicio);  // Convierte string a Date
+    const fin = new Date(p.fecha_fin);
+
+    // Verifica que las fechas sean válidas y estén en rango
+    if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) return false;  // Si no son fechas válidas, excluye
+
+    // Compara fechas (sin horas)
+    inicio.setHours(0, 0, 0, 0);
+    fin.setHours(0, 0, 0, 0);
+
+    return inicio <= hoy && hoy <= fin;
+  });
 
   useEffect(() => {
-    if (promocionesActivas.length === 0) return;  // Si no hay promociones, no hace nada
+    if (promocionesActivas.length === 0) return;
 
-    // Cambia al siguiente índice cada 3 segundos
     const timer = setInterval(() => {
-      setIndiceActual((prev) => (prev + 1) % promocionesActivas.length);  // Cicla al siguiente
-    }, 3000);  // 3000 ms = 3 segundos
+      setIndiceActual((prev) => (prev + 1) % promocionesActivas.length);
+    }, 3000);
 
-    return () => clearInterval(timer);  // Limpia el timer al desmontar
+    return () => clearInterval(timer);
   }, [promocionesActivas.length]);
 
   if (loading) return <div className="carrusel-loading">Cargando promociones...</div>;
   if (error) return <div className="carrusel-error">{error}</div>;
   if (promocionesActivas.length === 0) return <div className="carrusel-vacio">No hay promociones activas</div>;
 
-  const promocionActual = promocionesActivas[indiceActual];  // Obtiene la promoción actual
+  const promocionActual = promocionesActivas[indiceActual];
 
   return (
     <div className="carrusel-promociones">
       <div className="carrusel-imagen" style={{ backgroundImage: `url(${promocionActual.img_url || '/default-image.jpg'})` }}>
         <div className="carrusel-contenido">
-          
           <h2>{promocionActual.descripcion}</h2>
           <p>Descuento: {promocionActual.descuento} ({promocionActual.tipo_descuento})</p>
         </div>
@@ -49,6 +71,5 @@ const CarruselPromociones = () => {
     </div>
   );
 };
-
 
 export default CarruselPromociones;

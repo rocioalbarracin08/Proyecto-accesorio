@@ -7,7 +7,7 @@ import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
 import { ProductSort } from "./ProductSort";
-import { ProductStockIndicator } from "./ProductStockIndicator";
+import { ProductStockDetailInfo, ProductStockIndicator } from "./ProductStockIndicator";
 import { CarruselPromociones } from "./CarruselPromociones";
 import "./productos.css";
 
@@ -16,6 +16,8 @@ export function Productos({ includeInactiveForEmployee = false }) {
   const { promociones } = usePromociones();
   const { addItem, openCarrito } = useCarrito();
   const { userRole } = useAuthContext();
+  const [categoriaNombre, setCategoriaNombre] = useState("Productos");
+
 
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -207,10 +209,6 @@ export function Productos({ includeInactiveForEmployee = false }) {
                     src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
                     alt={producto.name}
                   />
-                </Link>
-                {/* Indicador de Stock */}
-                <ProductStockIndicator stock={producto.stock} />
-                
                 <h3>{producto.name}</h3>
                 <p className="producto-precio">
                   {promocionProducto ? (
@@ -223,6 +221,8 @@ export function Productos({ includeInactiveForEmployee = false }) {
                     `$${precioFinal.toFixed(2)}`
                   )}
                 </p>
+                <ProductStockDetailInfo stock={producto.stock} className="cartelStock"/>
+                </Link>
                 <button
                   className="agregar-carrito"
                   onClick={() => {

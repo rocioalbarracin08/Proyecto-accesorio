@@ -39,9 +39,9 @@ export function ProductStockDetailInfo({ stock, className = "" }) {
       {stock > 3 ? (
         <p className="stock-available">
           <span className="dot-green"></span>
-          En stock: {stock} unidades
+          Hay unidades en stock
         </p>
-      ) : stock > 0 ? (
+      ) : stock > 0 || stock === 3? (
         <p className="stock-last-units">
           <span className="dot-gold"></span>
           ⚠️ Últimas unidades: {stock}

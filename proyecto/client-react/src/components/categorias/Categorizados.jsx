@@ -28,7 +28,7 @@ export function Categorizados() {
 
   return (
     <main className="category-section">
-      <div className="categorias-container">
+      <div className="categorias-containerC">
         {categorias.length === 0 ? (
           <p>No hay categorías disponibles.</p>
         ) : (
@@ -51,8 +51,8 @@ export function Categorizados() {
                 </button>
                 {userRole === 'dueño' && (
                   <div style={{ textAlign: 'center' }}>
-                    <small style={{ display: 'block' }}>{cat.activo ? 'Activa' : 'Inactiva'}</small>
-                    <button
+                    <small className="estado" style={{ display: 'block' }}>{cat.activo ? 'Activa' : 'Inactiva'}</small>
+                    <button className="cambiar-estado"
                       onClick={async () => {
                         try {
                           await fetch(`http://localhost:5000/categoria/${cat.id_category}/estado`, {
