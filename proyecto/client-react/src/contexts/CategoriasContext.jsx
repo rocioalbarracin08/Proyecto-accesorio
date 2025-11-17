@@ -12,7 +12,7 @@ export const CategoriasProvider = ({ children }) => {
 
   const cargarCategorias = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/categoria', { withCredentials: true });
+      const res = await axios.get('http://localhost:5000/categoria/', { withCredentials: true });
       setCategorias(res.data);
       setLoading(false);
     } catch (err) {
@@ -51,4 +51,4 @@ export const CategoriasProvider = ({ children }) => {
     </CategoriasContext.Provider>
   );
 };
-export {CategoriasContext}
+//export {CategoriasContext}

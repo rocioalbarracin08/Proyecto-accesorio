@@ -214,4 +214,4 @@ export const useCarrito = () => { //custom hook que facilita acceder al contexto
   }
   return context;
 };
-export { CarritoContext };
+//export { CarritoContext };

@@ -1,5 +1,5 @@
 // /test/setupTests.jsx - Setup global para Vitest
-import { expect, afterEach } from "vitest"; //Importa lo básico
+import { afterEach } from "vitest"; //Importa lo básico
 import { cleanup } from "@testing-library/react";//Limpia luego de cada test
 import "@testing-library/jest-dom";
 

@@ -76,4 +76,4 @@ export const usePromociones = () => {
   }
   return context;
 };
-export { PromocionesContext };
+//export { PromocionesContext };

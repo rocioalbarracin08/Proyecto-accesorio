@@ -1,9 +1,8 @@
 import React from "react";
-import { renderWithMockProviders, screen } from "../../../test/test-utils";
+import { renderWithMockProviders, screen, mockUseAuthContext } from "../../../test/test-utils";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import CambiarContrasena from "../CambiarContrasena";
-import { mockUseAuthContext } from "../../../test/test-utils"; // Importa el mock
 
 // Mock de useNavigate
 const mockNavigate = vi.fn();
@@ -15,11 +14,16 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
+// Mock de useFormKeyboardNavigation
+vi.mock("../../hooks/useFormKeyboardNavigation", () => ({
+  useFormKeyboardNavigation: vi.fn(),  // Mockea el hook
+}));
+
 describe("CambiarContrasena Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock fetch para evitar llamadas reales
-    global.fetch = vi.fn(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
         json: async () => ({ mensaje: "Contraseña cambiada" }),

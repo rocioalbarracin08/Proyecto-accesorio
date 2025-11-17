@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, g
 bp = Blueprint('categoria', __name__, url_prefix='/categoria')
 
 ########################### M O S T R A R TODAS ###########################
-@bp.route("")
+@bp.route("/")
 def categorias():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
