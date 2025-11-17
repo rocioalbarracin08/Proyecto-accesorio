@@ -148,8 +148,6 @@ export function CarruselPromociones({ productos = [] }) {
           />
         ))}
       </div>
-
-      <div className="carrusel-progress-bar" />
     </div>
   );
 }

@@ -268,8 +268,8 @@
 }
 
 .carrusel-dot.active {
-  background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
-  border-color: #DAA520;
+  background: linear-gradient(135deg, rosybrown 0%, rosybrown 100%);
+  border-color: rosybrown;
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
