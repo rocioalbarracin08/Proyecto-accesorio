@@ -3,6 +3,8 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv 
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
 from flask_cors import CORS
 from flask_mail import Mail
 from server_flask.utils.config import SECRET_KEY

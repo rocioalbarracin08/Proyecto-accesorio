@@ -23,7 +23,7 @@ import DashboardEmpleado from "./components/empleados/DashboardEmpleado";
 import EditarDestacados from './components/productosDestacados/EditarDestacados';
 import ProductoDetalle from './components/producto/ProductoDetalle';
 import Categorias from "./components/categorias/Categorias";
-
+import AsistenciaEmpleados from "./components/grafico-matplot-db/AsistenciaEmpleados";
 
 function App() {
   return (
@@ -77,7 +77,16 @@ function App() {
         <PiePagina />
         </>} 
         />
-
+      <Route
+        path="/asistencia-empleados"
+        element={
+          <>
+            <BarraNavegacion />
+            <AsistenciaEmpleados />
+            <PiePagina />
+          </>
+        }
+      />
       <Route
       path="/nosotros"
       element={

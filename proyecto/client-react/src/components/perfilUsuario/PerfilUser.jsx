@@ -59,6 +59,7 @@
              <Link to="/promociones" className="linkPromos">Gestión promociones</Link>
              <Link to="/admin/destacados" className="linkPromos">Editar destacados</Link>
              <Link to="/gestionCategorias" className="linkPromos">Gestión Categorias</Link>
+             <Link to="/asistencia-empleados" className="linkPromos">GRAFICOS</Link>
            </div>
          )}
        </div>
