@@ -1,3 +1,14 @@
+.carrito-color-select {
+  background-color: #f8d7da; /* Color de fondo rosado claro */
+  border-radius: 16px; /* Bordes redondeados */
+  padding: 20px; /* Espaciado interno */
+  width: 350px; /* Ancho fijo del carrito */
+  max-height: 90vh; /* Altura máxima con scroll */
+  overflow-y: auto; /* Habilita scroll si el contenido excede la altura */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2); /* Sombra para resaltar */
+  animation: slideIn 0.3s ease; /* Animación de entrada */
+}
+
 .btn-eliminar-producto {
   background: transparent; 
   border: 1px solid rgb(255, 255, 255);
@@ -114,33 +125,32 @@
   color: #333;
 }
 
-/* NUEVOS ESTILOS: Para el modal del carrito (agrega esto al final) */
-.modal-overlay {
+.modal-overlayCarrito {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);  /* Fondo semi-transparente */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;  /* Sobre todo lo demás */
+  z-index: 5001;  /* <-- Aumentado para quedar por encima del header (antes 1000) */
 }
 
-.modal-content {
+.modal-contentC {
   background: white;
   border-radius: 8px;
-  max-width: 500px;  /* Ancho máximo del modal */
-  width: 90%;  /* Responsive */
-  max-height: 80vh;  /* Altura máxima con scroll */
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);  /* Sombra para resaltar */
-  padding: 0;  /* Sin padding extra, usa el de .carrito-lateral */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  z-index: 5002; /* <-- Asegura el contenido encima del overlay */
 }
-
 /* Ajustes para .carrito-lateral dentro del modal (agrega esto para adaptarlo) */
-.modal-content .carrito-lateral {
+.modal-contentC .carrito-lateral {
   width: 100%;  /* Full width en modal */
   height: auto;  /* No fijo */
   position: relative;  /* No sticky en modal */
@@ -150,17 +160,17 @@
 
 /* Overlay del carrito (fondo oscuro) */
 .carrito-overlay {
-  position: fixed;  /* Fijo en pantalla */
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;  /* Ocupa todo el ancho */
-  height: 100%;  /* Ocupa toda la altura */
-  background-color: rgba(0, 0, 0, 0.4);  /* Fondo semi-transparente */
-  display: flex;  /* Centra el contenido */
-  justify-content: flex-end;  /* Alinea el carrito a la derecha */
-  align-items: flex-start;  /* Alinea el carrito en la parte superior */
-  padding: 20px;  /* Espaciado interno */
-  z-index: 1000;  /* Alto z-index para estar encima de otros elementos */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 20px;
+  z-index: 5001; /* <-- Aumentado para quedar por encima del header (antes 1000) */
 }
 
 /* Contenedor del carrito */

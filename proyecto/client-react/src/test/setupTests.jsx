@@ -1,26 +1,26 @@
-// /test/setupTests.jsx - Setup global para Vitest
-// Este archivo se ejecuta antes de todas las pruebas. Aquí van polyfills y configuraciones globales.
-import { expect, afterEach } from "vitest"; // Importa lo básico de Vitest
-import { cleanup } from "@testing-library/react"; // Limpia después de cada test
-import "@testing-library/jest-dom"; // Agrega matchers como toBeInTheDocument
-import "./test-utils.jsx";
+import React from "react";
+import { afterEach } from "vitest"; //Importa lo básico
+import { cleanup } from "@testing-library/react";//Limpia luego de cada test
+import "@testing-library/jest-dom";
+import "@test/setupTests";
 
-// Limpia el DOM después de cada prueba para evitar interferencias
+
+// Limpia el DOM después de cada prueba
 afterEach(() => {
   cleanup();
+  // Resetea fetch global
+  globalThis.fetch = vi.fn(() => Promise.resolve({ ok: true, json: async () => ({}) }));
 });
 
-// Polyfill para window.matchMedia (útil para carruseles o componentes que lo usan)
-// Simula la API del navegador para consultas de media (ej. @media queries).
-
+// Polyfill para window.matchMedia
 if (typeof window !== "undefined" && !window.matchMedia) {
   window.matchMedia = function (query) {
     return {
       matches: false,
       media: query,
       onchange: null,
-      addListener: function () {}, // deprecated
-      removeListener: function () {}, // deprecated
+      addListener: function () {},
+      removeListener: function () {},
       addEventListener: function () {},
       removeEventListener: function () {},
       dispatchEvent: function () {
@@ -30,7 +30,7 @@ if (typeof window !== "undefined" && !window.matchMedia) {
   };
 }
 
-// Polyfill para MutationObserver (si algún componente lo requiere)
+// Polyfill para MutationObserver
 if (
   typeof window !== "undefined" &&
   typeof window.MutationObserver === "undefined"
@@ -45,7 +45,7 @@ if (
   };
 }
 
-// Polyfill para requestAnimationFrame (algunas librerías lo esperan)
+// Polyfill para requestAnimationFrame
 if (typeof window !== "undefined" && !window.requestAnimationFrame) {
   window.requestAnimationFrame = function (cb) {
     return setTimeout(cb, 0);
@@ -55,7 +55,7 @@ if (typeof window !== "undefined" && !window.requestAnimationFrame) {
   };
 }
 
-// Stub global para fetch (evita errores si no mockeás fetch en cada test)
+//Global para fetch
 if (typeof globalThis.fetch === "undefined") {
   globalThis.fetch = async () => ({
     ok: true,
@@ -64,7 +64,7 @@ if (typeof globalThis.fetch === "undefined") {
   });
 }
 
-// In your test setup file (e.g., setupTests.ts or a global setup file)
+//Mock para localStorage
 const localStorageMock = (() => {
   let store = {};
   return {
@@ -83,6 +83,5 @@ const localStorageMock = (() => {
 
 Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
-  writable: true, // Make it writable for mocking
+  writable: true,
 });
-

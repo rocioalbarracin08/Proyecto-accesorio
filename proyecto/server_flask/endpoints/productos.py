@@ -4,6 +4,8 @@ from server_flask.utils.auth import solo_empleado  # Si lo tienes, sino quítalo
 # Importar la función de ventas.py para verificar usuario y obtener tienda
 from server_flask.endpoints.ventas import verificar_usuario  # Asegúrate de que la ruta sea correcta
 from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
+from server_flask.utils.auth import solo_empleado
+from datetime import datetime, timedelta
 
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
@@ -23,12 +25,13 @@ def get_producto(id_producto):
     
     try:
         # Obtener el producto con stock de la tienda del usuario
+        # Asegurarse que si el producto tiene categoría, la categoría esté activa
         g.db_cursor.execute("""
-            SELECT p.id_producto, p.name, p.descripcion, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock, c.categoria
+            SELECT p.id_producto, p.name, p.descripcion, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock, c.categoria, c.activo AS categoria_activa
             FROM productos p
             LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
             LEFT JOIN categoria c ON p.id_categoria = c.id_category
-            WHERE p.id_producto = %s AND p.activo = 1
+            WHERE p.id_producto = %s AND p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)
         """, (id_tienda_usuario, id_producto))
         
         producto = g.db_cursor.fetchone()
@@ -45,7 +48,13 @@ def get_destacados():
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
     try:
-        g.db_cursor.execute("SELECT id_producto, name, precio, imagen_url FROM productos WHERE destacado = 1 AND activo = 1")
+        # Mostrar solo productos cuyo producto y su categoria (si tienen) estén activos
+        g.db_cursor.execute("""
+            SELECT p.id_producto, p.name, p.precio, p.imagen_url
+            FROM productos p
+            LEFT JOIN categoria c ON p.id_categoria = c.id_category
+            WHERE p.destacado = 1 AND p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)
+        """)
         destacados = g.db_cursor.fetchall()
         return jsonify({"destacados": destacados})
     except Exception as err:
@@ -63,7 +72,8 @@ def get_productos_para_destacados():
             SELECT p.id_producto, p.name, p.precio, p.imagen_url, p.destacado, i.stock_actual AS stock
             FROM productos p
             LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = 1  # Ajusta id_tienda si el dueño tiene una específica
-            WHERE p.activo = 1
+            LEFT JOIN categoria c ON p.id_categoria = c.id_category
+            WHERE p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)
         """)
         productos = g.db_cursor.fetchall()
         return jsonify({"productos": productos}), 200
@@ -105,23 +115,43 @@ def productos():
     else:
         # Si es empleado, usar su tienda; si cliente, tienda 1
         id_tienda_usuario = user.get('id_tienda') or 1  # id_tienda de empleado, o 1 para online
+    is_employee = False
+    if not error and user and user.get('id_empleado'):
+        is_employee = True
     
     try:
         page = int(request.args.get('page', 1))
         per_page = int(request.args.get('per_page', 10))
         offset = (page - 1) * per_page
 
-        # Filtra productos activos y une con inventario usando la tienda del usuario
-        g.db_cursor.execute("""
-            SELECT p.id_producto, p.name, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock
-            FROM productos p
-            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
-            WHERE p.activo = 1
-            LIMIT %s OFFSET %s
-        """, (id_tienda_usuario, per_page, offset))
+        # Filtra productos. Por defecto solo productos activos y cuya categoría (si exista) esté activa.
+        include_inactive = request.args.get('include_inactive', '0') == '1' and is_employee
+        if include_inactive:
+            # Empleado solicita ver productos incluso inactivos (no filtramos por p.activo ni por c.activo)
+            g.db_cursor.execute("""
+                SELECT p.id_producto, p.name, p.id_categoria, p.precio, p.imagen_url, p.activo, i.stock_actual AS stock
+                FROM productos p
+                LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
+                LEFT JOIN categoria c ON p.id_categoria = c.id_category
+                LIMIT %s OFFSET %s
+            """, (id_tienda_usuario, per_page, offset))
+        else:
+            # Público/cliente: solo productos activos y cuya categoría (si exista) esté activa
+            g.db_cursor.execute("""
+                SELECT p.id_producto, p.name, p.id_categoria, p.precio, p.imagen_url, p.activo, i.stock_actual AS stock
+                FROM productos p
+                LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
+                LEFT JOIN categoria c ON p.id_categoria = c.id_category
+                WHERE p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)
+                LIMIT %s OFFSET %s
+            """, (id_tienda_usuario, per_page, offset))
         productos_list = g.db_cursor.fetchall()
 
-        g.db_cursor.execute("SELECT COUNT(*) AS total FROM productos WHERE activo = 1")
+        # Contar total teniendo en cuenta si incluimos inactivos (solo para empleados)
+        if include_inactive:
+            g.db_cursor.execute("SELECT COUNT(*) AS total FROM productos p")
+        else:
+            g.db_cursor.execute("SELECT COUNT(*) AS total FROM productos p LEFT JOIN categoria c ON p.id_categoria = c.id_category WHERE p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)")
         total_result = g.db_cursor.fetchone()
         total_productos = total_result['total'] if total_result else 0
 
@@ -148,17 +178,43 @@ def productosXcategoria(id_categoria):
         per_page = int(request.args.get('per_page', 10))
         offset = (page - 1) * per_page
 
-        g.db_cursor.execute("SELECT COUNT(*) as total FROM productos WHERE id_categoria = %s AND activo = 1", (id_categoria,))
+        # Verificar que la categoría exista y esté activa (salvo que empleado solicite incluir inactivos)
+        include_inactive = request.args.get('include_inactive', '0') == '1'
+        user, error, status = verificar_usuario()
+        is_employee = False
+        if not error and user and user.get('id_empleado'):
+            is_employee = True
+
+        g.db_cursor.execute("SELECT id_category, categoria, activo FROM categoria WHERE id_category = %s", (id_categoria,))
+        categoria_row = g.db_cursor.fetchone()
+        if not categoria_row:
+            return jsonify({"mensaje": "Categoría no encontrada"}), 404
+        if categoria_row.get('activo') == 0 and not (include_inactive and is_employee):
+            return jsonify({"mensaje": "Categoría inactiva"}), 404
+        # Contar productos; si empleado pidió incluir inactivos, contar todos los de la categoría
+        if include_inactive and is_employee:
+            g.db_cursor.execute("SELECT COUNT(*) as total FROM productos WHERE id_categoria = %s", (id_categoria,))
+        else:
+            g.db_cursor.execute("SELECT COUNT(*) as total FROM productos WHERE id_categoria = %s AND activo = 1", (id_categoria,))
         total_result = g.db_cursor.fetchone()
         total_productos = total_result['total'] if total_result else 0
 
-        g.db_cursor.execute("""
-            SELECT p.*, c.categoria 
-            FROM productos p 
-            INNER JOIN categoria c ON c.id_category = p.id_categoria 
-            WHERE p.id_categoria = %s AND p.activo = 1
-            LIMIT %s OFFSET %s
-        """, (id_categoria, per_page, offset))
+        if include_inactive and is_employee:
+            g.db_cursor.execute("""
+                SELECT p.*, c.categoria 
+                FROM productos p 
+                INNER JOIN categoria c ON c.id_category = p.id_categoria 
+                WHERE p.id_categoria = %s
+                LIMIT %s OFFSET %s
+            """, (id_categoria, per_page, offset))
+        else:
+            g.db_cursor.execute("""
+                SELECT p.*, c.categoria 
+                FROM productos p 
+                INNER JOIN categoria c ON c.id_category = p.id_categoria 
+                WHERE p.id_categoria = %s AND p.activo = 1 AND c.activo = 1
+                LIMIT %s OFFSET %s
+            """, (id_categoria, per_page, offset))
         productos_list = g.db_cursor.fetchall()
         print(productos_list)
         total_pages = (total_productos + per_page - 1) // per_page
@@ -186,22 +242,36 @@ def buscar_productos():
         id_tienda_usuario = 1
     else:
         id_tienda_usuario = user.get('id_tienda') or 1
+    is_employee = False
+    if not error and user and user.get('id_empleado'):
+        is_employee = True
     
     query = request.args.get('q', '').strip()
     if not query or len(query) < 2:
         return jsonify({"resultados": []}), 200
     
     try:
+        include_inactive = request.args.get('include_inactive', '0') == '1' and is_employee
         # Cambiar INNER JOIN a LEFT JOIN para incluir productos sin categoría
         # Ajustar WHERE para que productos sin categoría aparezcan si coinciden por name
-        g.db_cursor.execute("""
-            SELECT p.id_producto, p.name, p.precio, p.imagen_url, c.categoria, i.stock_actual AS stock
-            FROM productos p
-            LEFT JOIN categoria c ON p.id_categoria = c.id_category
-            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
-            WHERE p.activo = 1 AND (p.name LIKE %s OR (c.categoria IS NOT NULL AND c.categoria LIKE %s))
-            LIMIT 10 
-        """, (id_tienda_usuario, f'%{query}%', f'%{query}%'))
+        if include_inactive:
+            g.db_cursor.execute("""
+                SELECT p.id_producto, p.name, p.precio, p.imagen_url, p.activo, c.categoria, i.stock_actual AS stock
+                FROM productos p
+                LEFT JOIN categoria c ON p.id_categoria = c.id_category
+                LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
+                WHERE (p.name LIKE %s OR (c.categoria IS NOT NULL AND c.categoria LIKE %s))
+                LIMIT 10 
+            """, (id_tienda_usuario, f'%{query}%', f'%{query}%'))
+        else:
+            g.db_cursor.execute("""
+                SELECT p.id_producto, p.name, p.precio, p.imagen_url, p.activo, c.categoria, i.stock_actual AS stock
+                FROM productos p
+                LEFT JOIN categoria c ON p.id_categoria = c.id_category
+                LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
+                WHERE p.activo = 1 AND (p.name LIKE %s OR (c.categoria IS NOT NULL AND c.categoria LIKE %s))
+                LIMIT 10 
+            """, (id_tienda_usuario, f'%{query}%', f'%{query}%'))
         
         resultados = g.db_cursor.fetchall()
         return jsonify({"resultados": resultados}), 200
@@ -288,6 +358,21 @@ def desactivar_producto(id_producto):
         g.db.rollback()
         return jsonify({"error": f"Error al desactivar producto: {e}"}), 500
 
+
+# ACTIVAR (solo empleados)
+@bp.route("/activar/<int:id_producto>", methods=["PATCH"])
+@solo_empleado
+def activar_producto(id_producto):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    try:
+        g.db_cursor.execute("UPDATE productos SET activo = 1 WHERE id_producto = %s", (id_producto,))
+        g.db.commit()
+        return jsonify({"mensaje": "Producto activado"}), 200
+    except Exception as e:
+        g.db.rollback()
+        return jsonify({"error": f"Error al activar producto: {e}"}), 500
+
 # ACTUALIZAR STOCK (solo empleados, solo en su tienda)
 @bp.route("/actualizar_stock/<int:id_producto>", methods=["PATCH"])
 @solo_empleado
@@ -326,3 +411,88 @@ def actualizar_stock(id_producto):
     except Exception as e:
         g.db.rollback()
         return jsonify({"error": f"Error al actualizar stock: {e}"}), 500
+
+# PRODUCTOS CON MÁS VENTAS EN LA SEMANA (para el dueño - guía visual)
+@bp.route('/top-ventas-semana', methods=['GET'])
+@solo_dueno
+def top_ventas_semana():
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    try:
+        # Obtener la fecha de hace 7 días
+        fecha_hace_7_dias = (datetime.now() - timedelta(days=7)).date()
+        fecha_hoy = datetime.now().date()
+        
+        # Query para obtener productos con más ventas en los últimos 7 días
+        g.db_cursor.execute("""
+            SELECT 
+                p.id_producto,
+                p.name,
+                p.precio,
+                p.imagen_url,
+                p.destacado,
+                SUM(df.cantidad) as total_ventas,
+                i.stock_actual as stock
+            FROM productos p
+            LEFT JOIN detalle_factura df ON p.id_producto = df.id_producto
+            LEFT JOIN factura f ON df.id_factura = f.id_factura
+            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = 1
+            WHERE p.activo = 1 AND (f.fecha IS NULL OR (f.fecha BETWEEN %s AND %s))
+            GROUP BY p.id_producto
+            ORDER BY total_ventas DESC, p.name ASC
+            LIMIT 20
+        """, (fecha_hace_7_dias, fecha_hoy))
+        
+        productos = g.db_cursor.fetchall()
+        
+        # Formatear respuesta para que sea clara
+        productos_formateados = []
+        for prod in productos:
+            productos_formateados.append({
+                'id_producto': prod['id_producto'],
+                'name': prod['name'],
+                'precio': prod['precio'],
+                'imagen_url': prod['imagen_url'],
+                'destacado': prod['destacado'],
+                'total_ventas': prod['total_ventas'] or 0,
+                'stock': prod['stock'] or 0
+            })
+        
+        return jsonify({"productos": productos_formateados, "periodo": "últimos 7 días"}), 200
+    
+    except Exception as err:
+        return jsonify({"error": f"Error al obtener top de ventas: {err}"}), 500
+
+# OBTENER STOCK DE UN PRODUCTO
+@bp.route('/<int:id_producto>/stock', methods=['GET'])
+def get_stock_producto(id_producto):
+    if g.db_cursor is None:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+    
+    try:
+        # Obtener usuario para saber su tienda
+        user, error, status = verificar_usuario()
+        if error:
+            id_tienda = 1  # Tienda por defecto
+        else:
+            id_tienda = user.get('id_tienda') or 1
+        
+        g.db_cursor.execute("""
+            SELECT stock_actual FROM inventario 
+            WHERE id_producto = %s AND id_tienda = %s
+        """, (id_producto, id_tienda))
+        
+        resultado = g.db_cursor.fetchone()
+        stock = resultado['stock_actual'] if resultado else 0
+        
+        return jsonify({
+            "id_producto": id_producto,
+            "stock": stock,
+            "hay_stock": stock > 0,
+            "ultimas_unidades": stock <= 3 and stock > 0,
+            "sin_stock": stock == 0
+        }), 200
+    
+    except Exception as err:
+        return jsonify({"error": f"Error al obtener stock: {err}"}), 500

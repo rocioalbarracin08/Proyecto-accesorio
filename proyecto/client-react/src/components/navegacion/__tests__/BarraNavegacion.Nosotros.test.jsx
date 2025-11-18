@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { renderWithMockProviders, screen } from "../test-utils"; // Usa helpers
-import { BarraNavegacion } from "./BarraNavegacion";
+import { renderWithMockProviders, screen } from "../../../test/test-utils"; // Usa helpers
+import { BarraNavegacion } from "../Navegacion";
 
 describe("BarraNavegacion - Submenu + INFO (Nosotros)", () => {
   it("muestra el enlace 'Nosotros' en el submenu", () => {

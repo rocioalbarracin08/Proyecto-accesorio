@@ -1,77 +1,170 @@
 import React from "react";
-import { renderWithProviders, screen } from "../../../test/test-utils.jsx"; //función personalizada para renderizar componentes dentro de los providers (por ejemplo: contextos, router) -> No seria necesario si no uso conxtetos y solo usaría render de @testing-library/react
-//No recibe con @, ubicaciòn no aceptada por "no existir"
-import { describe, it, expect, vi } from "vitest";
-//Sin esto no puedo correr los tests ni usar la funciones necesarias para test
-import userEvent from "@testing-library/user-event";  
-import CambiarContrasena from "../CambiarContrasena"; //Objeto de prueba
+import { renderWithMockProviders, screen, mockUseAuthContext, waitFor } from "../../../test/test-utils";  // Agrega waitFor aquí
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import userEvent from "@testing-library/user-event";
+import CambiarContrasena  from "../CambiarContrasena";
 
-vi.mock("../../../contexts/AuthContext", () => ({
-  useAuthContext: () => ({ logout: vi.fn() }),
+// Mock de useNavigate
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    Link: ({ to, children }) => <a href={to}>{children}</a>,
+  };
+});
+
+// Mock de useFormKeyboardNavigation
+vi.mock("../../hooks/useFormKeyboardNavigation", () => ({
+  useFormKeyboardNavigation: vi.fn(),
 }));
 
 describe("CambiarContrasena Component", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Mock fetch para cubrir tanto /cambiar_contrasena como /logout
+    globalThis.fetch = vi.fn((url) => {
+      if (url.includes("/usuarios/cambiar_contrasena")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ mensaje: "Contraseña cambiada exitosamente." }),
+        });
+      }
+      if (url.includes("/usuarios/logout")) {
+        return Promise.resolve({
+          ok: true,  // Simula logout exitoso
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+      });
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("renderiza el formulario de cambio de contraseña", () => {
-    renderWithProviders(<CambiarContrasena />);
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
+    renderWithMockProviders(<CambiarContrasena />);
     expect(screen.getByPlaceholderText(/contraseña actual/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/^Nueva Contraseña$/i)).toBeInTheDocument(); //Con los símbolos busca la coincidencia exacta con el nombre en el plaHolder
+    expect(screen.getByPlaceholderText(/^Nueva Contraseña$/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /confirmar cambio/i })).toBeInTheDocument();
   });
 
   it("el botón de envío está habilitado inicialmente", () => {
-    renderWithProviders(<CambiarContrasena />);
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
+    renderWithMockProviders(<CambiarContrasena />);
     const submitButton = screen.getByRole("button", { name: /confirmar cambio/i });
     expect(submitButton).not.toBeDisabled();
   });
-  // Tests de validaciones de errores (reemplaza el test vacío con estos)----------------
+
   it("muestra error si la contraseña actual está vacía", async () => {
-    const user = userEvent.setup();  // Inicializa userEvent
-    renderWithProviders(<CambiarContrasena />);
-    // Llena solo los campos de nueva contraseña (deja actual vacío)
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
+    const user = userEvent.setup();
+    renderWithMockProviders(<CambiarContrasena />);
+    
     await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "nueva123");
     await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "nueva123");
-    // Envía el formulario
+    
     await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
-    // Verifica que aparezca el mensaje de error
+    
     expect(screen.getByText("La contraseña actual es obligatoria.")).toBeInTheDocument();
   });
-  //por nueva contraseña no ingresada 
+
   it("muestra error si la nueva contraseña está vacía", async () => {
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
     const user = userEvent.setup();
-    renderWithProviders(<CambiarContrasena />);
-    // Llena contraseña actual y confirmar (deja nueva vacía)
+    renderWithMockProviders(<CambiarContrasena />);
+    
     await user.type(screen.getByPlaceholderText(/contraseña actual/i), "actual123");
     await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "confirm123");
-    // Envía el formulario
+    
     await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
-    // Verifica error
+    
     expect(screen.getByText("La nueva contraseña es obligatoria.")).toBeInTheDocument();
   });
 
   it("muestra error si la nueva contraseña tiene menos de 6 caracteres", async () => {
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
     const user = userEvent.setup();
-    renderWithProviders(<CambiarContrasena />);
-    // Llena con contraseña corta
+    renderWithMockProviders(<CambiarContrasena />);
+    
     await user.type(screen.getByPlaceholderText(/contraseña actual/i), "actual123");
-    await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "123");  // Menos de 6
+    await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "123");
     await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "123");
-    // Envía el formulario
+    
     await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
-    // Verifica error
+    
     expect(screen.getByText("La nueva contraseña debe tener al menos 6 caracteres.")).toBeInTheDocument();
   });
 
   it("muestra error si las contraseñas nuevas no coinciden", async () => {
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
     const user = userEvent.setup();
-    renderWithProviders(<CambiarContrasena />);
-    // Llena con contraseñas que no coinciden
+    renderWithMockProviders(<CambiarContrasena />);
+    
     await user.type(screen.getByPlaceholderText(/contraseña actual/i), "actual123");
     await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "nueva123");
     await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "distinta123");
-    // Envía el formulario
+    
     await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
-    // Verifica error
+    
     expect(screen.getByText("Las contraseñas no coinciden.")).toBeInTheDocument();
+  });
+
+  it("cambia contraseña exitosamente y redirige a login", async () => {
+    const mockLogout = vi.fn();
+    mockUseAuthContext.mockReturnValue({ logout: mockLogout });
+    
+    const user = userEvent.setup();
+    renderWithMockProviders(<CambiarContrasena />);
+    
+    await user.type(screen.getByPlaceholderText(/contraseña actual/i), "actual123");
+    await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "nueva123");
+    await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "nueva123");
+    
+    await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText("Contraseña cambiada exitosamente.")).toBeInTheDocument();
+      expect(mockLogout).toHaveBeenCalled();  // Verifica que logout se llame
+      expect(mockNavigate).toHaveBeenCalledWith("/login");  // Verifica navegación
+    });
+  });
+
+  it("muestra error si la API falla", async () => {
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    
+    // Sobrescribe fetch para este test específico
+    globalThis.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: false,
+        json: async () => ({ error: "Contraseña incorrecta" }),
+      })
+    );
+    
+    const user = userEvent.setup();
+    renderWithMockProviders(<CambiarContrasena />);
+    
+    await user.type(screen.getByPlaceholderText(/contraseña actual/i), "wrong123");
+    await user.type(screen.getByPlaceholderText(/^Nueva Contraseña$/i), "nueva123");
+    await user.type(screen.getByPlaceholderText(/^Confirmar Nueva Contraseña$/i), "nueva123");
+    
+    await user.click(screen.getByRole("button", { name: /confirmar cambio/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText("Contraseña incorrecta")).toBeInTheDocument();
+    });
   });
 });

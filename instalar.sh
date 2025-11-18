@@ -8,9 +8,7 @@ pip install flask-cors
 
 #Ojo con estas especificaciones de instalacion
 pip install dotenv
-pip install flask-cors
 pip install werkzeug
 pip install PyJWT
 npm install react-leaflet leaflet
-pip install flask-mail
 pip install Flask-Mail

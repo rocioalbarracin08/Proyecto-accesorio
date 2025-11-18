@@ -4,6 +4,7 @@ import { useCarrito } from "../../contexts/CarritoContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { usePromociones } from "../../contexts/PromocionesContext"; // Para promociones
 import ProductoItem from "./ProductoItem";  // Agrega esta importación (ajusta la ruta si es diferente)
+import { ProductStockDetailInfo } from "./ProductStockIndicator";
 
 import "./productoDetalle.css";
 
@@ -129,6 +130,9 @@ export default function ProductoDetalle() {
             </div>
           )}
 
+          {/* Info de Stock */}
+          <ProductStockDetailInfo stock={producto.stock} />
+
           {userRole === "empleado" && <p>Stock: {producto.stock || 0}</p>}
           
           <button
@@ -144,11 +148,11 @@ export default function ProductoDetalle() {
         </div>
       </div>
       {productosRelacionados.length > 0 && (
-        <div className="carrusel-relacionados-full">
+        <div className="carrusel-relacionados-fullD">
           <h2>Productos Relacionados</h2>
           <div className="carrusel-container">
           <button 
-            className="carrusel-btn" 
+            className="carrusel-btnD" 
             onClick={prevSlide} 
             disabled={productosRelacionados.length <= 4 || currentIndex === 0} // Deshabilita si no hay suficientes para deslizar
           >
@@ -164,7 +168,7 @@ export default function ProductoDetalle() {
             ))}
           </div>
           <button 
-            className="carrusel-btn" 
+            className="carrusel-btnD" 
             onClick={nextSlide} 
             disabled={productosRelacionados.length <= 4 || currentIndex >= productosRelacionados.length - 4} // Deshabilita si no hay más para deslizar
           >

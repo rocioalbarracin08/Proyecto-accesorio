@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [isLogged, setIsLogged] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [loginTrigger, setLoginTrigger] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,6 +48,9 @@ export function AuthProvider({ children }) {
         setIsLogged(false);
         setIsOwner(false);
         setUserRole(null);
+      })
+      .finally(() => {
+        setAuthChecked(true);
       });
   }, [loginTrigger]);  // Solo depende de loginTrigger
 
@@ -69,12 +73,12 @@ export function AuthProvider({ children }) {
       setIsOwner(false);
       setUserRole(null);
       setLoginTrigger(0);
-      useNavigate("/login")
+      navigate("/login")
     });
   };
 
   return (
-    <AuthContext.Provider value={{ isLogged, isOwner, userRole, login, logout }}>
+    <AuthContext.Provider value={{ isLogged, isOwner, userRole, authChecked, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -83,3 +87,4 @@ export function AuthProvider({ children }) {
 export function useAuthContext() {
   return useContext(AuthContext);
 }
+//export { AuthContext };

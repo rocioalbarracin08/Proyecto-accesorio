@@ -1,9 +1,10 @@
 import useAuth from "../../hooks/useAuth";
 import "./register.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";  // Ícono para errores
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 
 export function Registrarse() {
   const navigate = useNavigate();
@@ -23,10 +24,25 @@ export function Registrarse() {
     setEmail,
   } = useAuth();
 
-  const [genero, setGenero] = useState("F");
+  const [genero, setGenero] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
+  // Referencias para los inputs
+  const nombreRef = useRef(null);
+  const apellidoRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const repeatPasswordRef = useRef(null);
+
+  // Hook de navegación con Enter
+  useFormKeyboardNavigation(
+    [nombreRef, apellidoRef, emailRef, passwordRef, repeatPasswordRef],
+    () => {
+      handleClick({ preventDefault: () => {} });
+    }
+  );
 
   // Función para validar email
   const validarEmail = (email) => {
@@ -60,21 +76,47 @@ export function Registrarse() {
   const handleClick = async (event) => {
     event.preventDefault();
     setError("");
-    setLoading(true);
 
-    // Validaciones
-    if (!usuarioName.trim()) return setError("El nombre es obligatorio.");
-    if (!usuarioApellido.trim()) return setError("El apellido es obligatorio.");
-    if (!email.trim()) return setError("El email es obligatorio.");
-    if (!validarEmail(email)) return setError("Ingresa un email válido (ej: usuario@dominio.com).");
-    if (!contraseña.trim()) return setError("La contraseña es obligatoria.");
+    // Validaciones (antes de cambiar el estado de loading)
+    if (!usuarioName.trim()) {
+      setError("El nombre es obligatorio.");
+      return;
+    }
+    if (!usuarioApellido.trim()) {
+      setError("El apellido es obligatorio.");
+      return;
+    }
+    if (!email.trim()) {
+      setError("El email es obligatorio.");
+      return;
+    }
+    if (!validarEmail(email)) {
+      setError("Ingresa un email válido (ej: usuario@dominio.com).");
+      return;
+    }
+    if (!contraseña.trim()) {
+      setError("La contraseña es obligatoria.");
+      return;
+    }
     const errorPwd = validarPassword(contraseña);
-    if (errorPwd) return setError(errorPwd);
-    if (!repetirContraseña.trim()) return setError("Debes confirmar la contraseña.");
-    if (contraseña !== repetirContraseña) return setError("Las contraseñas no coinciden.");
-    if (!genero) return setError("Selecciona tu género.");
+    if (errorPwd) {
+      setError(errorPwd);
+      return;
+    }
+    if (!repetirContraseña.trim()) {
+      setError("Debes confirmar la contraseña.");
+      return;
+    }
+    if (contraseña !== repetirContraseña) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (!genero) {
+      setError("Selecciona o escribe tu género.");
+      return;
+    }
 
-
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/usuarios/register", {
         method: "POST",
@@ -109,7 +151,7 @@ export function Registrarse() {
   return (
     <>
       <section className="section-register">
-        <h1>Registrarse</h1>
+        <h1 className="h1-register">Registrarse</h1>
         {error && (
           <div className="error-message">
             <FaExclamationTriangle /> {error}
@@ -117,18 +159,21 @@ export function Registrarse() {
         )}
         <form className="formularioRegister">
           <input
+            ref={nombreRef}
             type="text"
             placeholder="Nombre"
             onChange={handleInputUsuario}
             value={usuarioName}
           />
           <input
+            ref={apellidoRef}
             type="text"
             placeholder="Apellido"
             onChange={(e) => setUsuarioApellido(e.target.value)}
             value={usuarioApellido}
           />
           <input
+            ref={emailRef}
             type="email"
             placeholder="Email"
             onChange={(event) => setEmail(event.target.value)}
@@ -136,6 +181,7 @@ export function Registrarse() {
           />
           <div className="input-password">
             <input
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               placeholder="Cree una contraseña"
               onChange={(event) => setContraseña(event.target.value)}
@@ -153,6 +199,7 @@ export function Registrarse() {
 
           <div className="input-password">
             <input
+              ref={repeatPasswordRef}
               type={showRepeatPassword ? "text" : "password"}
               placeholder="Repita la contraseña"
               onChange={(event) => setRepetirContraseña(event.target.value)}
@@ -181,10 +228,12 @@ export function Registrarse() {
           </div>
         </form>
 
-        <button disabled={loading}//agregue la condicion para validar el formulario
-        onClick={handleClick} 
-        className="registro" 
-        data-testid="button" >
+        <button
+          disabled={loading}
+          onClick={handleClick}
+          className="registro"
+          data-testid="button"
+        >
           {loading ? "Registrando..." : "Registrarse"}
         </button>
 

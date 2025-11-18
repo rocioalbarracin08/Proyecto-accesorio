@@ -3,7 +3,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import './historialVentas.css';
 
 export default function HistorialVentas() {
-  const { isLogged, userRole } = useAuthContext();
+  const { isLogged, userRole, authChecked } = useAuthContext();
   const [ventas, setVentas] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -11,6 +11,7 @@ export default function HistorialVentas() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!authChecked) return; // esperar a que sepamos si está autenticado
     if (!isLogged || userRole !== 'empleado') {
       window.location.href = '/login';
     } else {

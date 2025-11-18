@@ -2,7 +2,6 @@ import "./App.css";
 import { Login } from "./components/login/Login";
 import { BarraNavegacion } from "./components/navegacion/Navegacion";
 import { PiePagina } from "./components/piePagina/PiePag";
-import { Destacado } from "./components/productosDestacados/Destacado";
 import { Destacados } from "./components/productosDestacados/Destacados";
 import { Routes, Route } from "react-router-dom";
 import { Registrarse } from "./components/registro/Registrarse";
@@ -54,10 +53,9 @@ function App() {
           <>
             <BarraNavegacion />
             <CarruselPromociones />
-            <Destacado />
             <Categorizados /> {/* Muestra categorías en home */}
-            <DiseñoMain />
             <Destacados/>
+            <DiseñoMain />
             <PiePagina />
           </>
         }

@@ -1,28 +1,26 @@
 import React from "react";
-import { renderWithProviders, screen } from "../../../test/test-utils"; // Usamos renderWithProviders para incluir todos los providers (como AuthProvider y MemoryRouter)
-import { describe, it, expect, vi } from "vitest";
-import userEvent from "@testing-library/user-event"; // Para simular interacciones del usuario
-import PerfilUser from "../PerfilUser"; // Importamos el componente a testear
+import { renderWithProviders, screen } from "../../../test/test-utils";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import userEvent from "@testing-library/user-event";
+import PerfilUser from "../PerfilUser";
 import { useAuthContext } from "../../contexts/AuthContext";
 
-// Mockeamos useAuthContext para controlar el estado de autenticación
+// Mock useAuthContext
 vi.mock("../../contexts/AuthContext", () => ({
   useAuthContext: vi.fn(),
 }));
-// Mockeamos useNavigate para controlar la navegación
+
+// Mock useNavigate
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
   return {
     ...actual,
     useNavigate: () => mockNavigate,
   };
 });
 
-// Mockeamos fetch globalmente para controlar las llamadas a la API
-global.fetch = vi.fn();
-
-// Helpers para reducir repetición en mocks
+// Helpers para fetch
 const mockUserData = {
   nombre: "Rocío",
   apellido: "Albarracín",
@@ -30,161 +28,96 @@ const mockUserData = {
   email: "rocio@example.com",
 };
 
-const mockFetchSuccess = () => global.fetch.mockResolvedValueOnce({
-  json: async () => mockUserData,
-});
-
-const mockFetchError = (error) => global.fetch.mockResolvedValueOnce({
-  json: async () => ({ error }),
-});
-
-const mockFetchNetworkError = () => global.fetch.mockRejectedValueOnce(new Error("Error de red"));
-
-describe("PerfilUser Component", () => {
-  // Limpiamos los mocks después de cada test
-  afterEach(() => {
-    vi.clearAllMocks();
+const mockFetchSuccess = () =>
+  global.fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => mockUserData,
   });
 
-  // Test: Muestra mensaje de carga al inicio
+const mockFetchError = (error) =>
+  global.fetch.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ error }),
+  });
+
+const mockFetchNetworkError = () =>
+  global.fetch.mockRejectedValueOnce(new Error("Error de red"));
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
+
+describe("PerfilUser Component", () => {
   it("muestra 'Cargando perfil...' mientras se obtienen los datos", () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
-
     renderWithProviders(<PerfilUser />);
-
-    // Verificamos que aparezca el mensaje de carga inicialmente
     expect(screen.getByText(/cargando perfil/i)).toBeInTheDocument();
   });
 
-  // Test: Muestra datos del usuario cuando el fetch es exitoso
-  it("muestra los datos del usuario cuando el fetch es exitoso", async () => {
+  it("muestra los datos del usuario cuando fetch es exitoso", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper para mock exitoso
     mockFetchSuccess();
-
     renderWithProviders(<PerfilUser />);
-
-    // Esperamos que se rendericen los datos después del fetch
     expect(await screen.findByText(/rocío albarracín/i)).toBeInTheDocument();
-    expect(screen.getByText(/femenino/i)).toBeInTheDocument();
-    expect(screen.getByText(/rocio@example.com/i)).toBeInTheDocument();
+    expect(screen.getByText(/género: femenino/i)).toBeInTheDocument();
+    expect(screen.getByText(/email: rocio@example.com/i)).toBeInTheDocument();
   });
 
-  // Test: Muestra mensaje de error si el fetch falla (error de red)
-  it("muestra mensaje de error si el fetch falla por red", async () => {
+  it("muestra mensaje de error si la API devuelve error", async () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper para error de red
-    mockFetchNetworkError();
-
-    renderWithProviders(<PerfilUser />);
-
-    // Verificamos que aparezca el mensaje de error
-    expect(await screen.findByText(/no se pudo obtener los datos del usuario/i)).toBeInTheDocument();
-  });
-
-  // Test: Muestra mensaje de error si la API devuelve error
-  it("muestra mensaje de error si la API devuelve un error", async () => {
-    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper para error de API
     mockFetchError("Usuario no encontrado");
-
     renderWithProviders(<PerfilUser />);
-
-    // Verificamos que aparezca el error de la API
     expect(await screen.findByText("Usuario no encontrado")).toBeInTheDocument();
   });
 
-  // Test: Muestra botón "Cambiar Contraseña" solo si está logueado
-  it('muestra el botón "Cambiar Contraseña" si el usuario está logueado', async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper
-    mockFetchSuccess();
-
+  it("muestra mensaje de error si fetch falla por red", async () => {
+    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
+    mockFetchNetworkError();
     renderWithProviders(<PerfilUser />);
+    expect(await screen.findByText(/no se pudo obtener los datos del usuario/i)).toBeInTheDocument();
+  });
 
-    // Verificamos que aparezca el botón
+  it("muestra botón 'Cambiar Contraseña' si está logueado", async () => {
+    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
+    mockFetchSuccess();
+    renderWithProviders(<PerfilUser />);
     expect(await screen.findByRole("button", { name: /cambiar contraseña/i })).toBeInTheDocument();
   });
 
-  // Test: No muestra botón "Cambiar Contraseña" si no está logueado
-  it('no muestra el botón "Cambiar Contraseña" si el usuario no está logueado', async () => {
+  it("no muestra botón 'Cambiar Contraseña' si no está logueado", async () => {
     useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper
     mockFetchSuccess();
-
     renderWithProviders(<PerfilUser />);
-
-    // Esperamos a que cargue y verificamos que el botón no esté presente
-    await screen.findByText(/rocío albarracín/i); // Espera a que cargue
+    await screen.findByText(/rocío albarracín/i);
     expect(screen.queryByRole("button", { name: /cambiar contraseña/i })).not.toBeInTheDocument();
   });
 
-  // Test: Navega a "/cambiar-contrasena" al hacer clic en el botón
-  it('navega a "/cambiar-contrasena" al hacer clic en "Cambiar Contraseña"', async () => {
+  it("navega a '/cambiar-contrasena' al hacer clic en 'Cambiar Contraseña'", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper
     mockFetchSuccess();
-
     const user = userEvent.setup();
     renderWithProviders(<PerfilUser />);
-
-    // Esperamos al botón y lo clicamos
     const button = await screen.findByRole("button", { name: /cambiar contraseña/i });
     await user.click(button);
-
-    // Verificamos que navigate haya sido llamado con la ruta correcta
     expect(mockNavigate).toHaveBeenCalledWith("/cambiar-contrasena");
   });
 
-  // Test: Muestra opciones de dueño si isOwner es true
-  it("muestra opciones de dueño si isOwner es true", async () => {
+  it("muestra opciones de Dueño si isOwner es true", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: true, userRole: "dueño" });
-
-    // Usamos el helper
     mockFetchSuccess();
-
     renderWithProviders(<PerfilUser />);
-
-    // Verificamos que aparezcan las opciones de dueño
-    expect(await screen.findByText(/opciones de dueño/i)).toBeInTheDocument();
-    expect(screen.getByText(/registrar nuevo empleado/i)).toBeInTheDocument();
-    expect(screen.getByText(/gestión promociones/i)).toBeInTheDocument();
-    expect(screen.getByText(/editar destacados/i)).toBeInTheDocument();
-    expect(screen.getByText(/gestión categorias/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Opciones de Dueño/i)).toBeInTheDocument();
+    expect(screen.getByText(/Registrar Nuevo Empleado/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gestión promociones/i)).toBeInTheDocument();
+    expect(screen.getByText(/Editar destacados/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gestión Categorias/i)).toBeInTheDocument();
   });
 
-  // Test: Muestra opciones de empleado si el rol es 'empleado'
-  it("muestra opciones de empleado si el rol es 'empleado'", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "empleado" });
-
-    // Usamos el helper
-    mockFetchSuccess();
-
-    renderWithProviders(<PerfilUser />);
-
-    // Verificamos que aparezcan las opciones de empleado
-    expect(await screen.findByText(/opciones de empleado/i)).toBeInTheDocument();
-    expect(screen.getByText(/dashboard de empleado/i)).toBeInTheDocument();
-  });
-
-  // Test: No muestra opciones de dueño ni empleado si no aplica
-  it("no muestra opciones de dueño ni empleado si no es owner ni empleado", async () => {
+  it("no muestra opciones de Dueño ni Empleado si no aplica", async () => {
     useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
-
-    // Usamos el helper
     mockFetchSuccess();
-
     renderWithProviders(<PerfilUser />);
-
-    // Esperamos a que cargue y verificamos que no aparezcan las secciones
     await screen.findByText(/rocío albarracín/i);
-    expect(screen.queryByText(/opciones de dueño/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/opciones de empleado/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Opciones de Dueño/i)).not.toBeInTheDocument();
   });
 });

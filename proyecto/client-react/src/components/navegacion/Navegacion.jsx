@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useCarrito } from "../../contexts/CarritoContext";
 import { ComprasCarrito } from "../carrito/ComprasCarrito";
 import CarruselPromociones from "./PromosBanner";
@@ -14,6 +14,7 @@ export function BarraNavegacion() {
   const [busqueda, setBusqueda] = useState("");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
+  const loadingTimer = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { state, toggleCarrito, closeCarrito } = useCarrito();
   const [perfil, setPerfil] = useState({}); 
@@ -53,16 +54,39 @@ export function BarraNavegacion() {
       setResultados([]);
       return;
     }
+    // Mostrar loading y asegurar mínima duración visual para evitar parpadeos
     setLoading(true);
+    const start = Date.now();
     try {
-      const res = await fetch(`http://localhost:5000/productos/buscar?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`http://localhost:5000/productos/buscar?q=${encodeURIComponent(query)}`, { credentials: 'include' });
       const data = await res.json();
-      setResultados(data.resultados || []);
+      const items = data.resultados || [];
+      setResultados(items);
+      // Si llegaron resultados, quitar el loading inmediatamente
+      if (items.length > 0) {
+        if (loadingTimer.current) {
+          clearTimeout(loadingTimer.current);
+          loadingTimer.current = null;
+        }
+        setLoading(false);
+        return;
+      }
     } catch (err) {
       console.error("Error en búsqueda:", err);
-      setResultados(["ERROR DE BÚSQUEDA"]);
+      setResultados([]);
     } finally {
-      setLoading(false);
+      // Si no llegaron resultados, mantener el indicador por un tiempo mínimo para evitar parpadeos
+      const elapsed = Date.now() - start;
+      const minVis = 600; // ms mínimos para mostrar "Buscando..."
+      if (elapsed < minVis) {
+        // guardar el timer para poder cancelarlo si llegan resultados
+        loadingTimer.current = setTimeout(() => {
+          setLoading(false);
+          loadingTimer.current = null;
+        }, minVis - elapsed);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -72,12 +96,21 @@ export function BarraNavegacion() {
       return () => clearTimeout(timeout);
     } else {
       setResultados([]);
+      if (loadingTimer.current) {
+        clearTimeout(loadingTimer.current);
+        loadingTimer.current = null;
+      }
     }
   }, [busqueda, isSearchOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handleBuscar(busqueda);
+  };
+
+  const capitalize = (s) => {
+    if (!s) return '';
+    return String(s).charAt(0).toUpperCase() + String(s).slice(1);
   };
 
   const handleMouseEnter = () => {
@@ -92,8 +125,10 @@ export function BarraNavegacion() {
 
 return (
   <>
-    <CarruselPromociones />
     <header className={`encabezado ${isSearchOpen ? 'search-active' : ''} ${isLogged ? 'logged-in' : 'not-logged-in'}`}>
+      <div className="promos-banner">
+        <CarruselPromociones />
+      </div>
       {/* Logo: ocupa 2 filas a la izquierda */}
       <Link to="/" className="logo-link">
         <img src="/logo.png" className="miLogo" alt="Logo de la tienda" />
@@ -109,7 +144,7 @@ return (
             <input
               className="buscador"
               type="text"
-              placeholder="Buscar producto o categoría"
+              placeholder="Buscar productos"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               autoFocus={isSearchOpen}
@@ -128,33 +163,44 @@ return (
               </button>
             )}
           </div>
-          {isSearchOpen && resultados.length > 0 && (
-            <ul className="buscador-dropdown">
-              {resultados.map((prod) => (
-                <li key={prod.id_producto} className="buscador-item">
-                  <Link
-                    to={`/producto/${prod.id_producto}`}
-                    onClick={() => {
-                      setBusqueda("");
-                      setResultados([]);
-                      setIsSearchOpen(false);
-                    }}
-                    className="buscador-link"
-                  >
-                    <img
-                      src={prod.imagen_url || "/default.jpg"}
-                      alt={prod.name}
-                      className="buscador-img"
-                    />
-                    <div>
-                      <strong>{prod.categoria}</strong>: {prod.name}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {isSearchOpen && (
+            loading && resultados.length === 0 ? (
+              <p className="buscador-empty">Buscando resultados...</p>
+            ) : resultados.length > 0 ? (
+              <ul className="buscador-dropdown">
+                {resultados.map((prod) => (
+                  <li key={prod.id_producto} className="buscador-item">
+                    <Link
+                      to={`/producto/${prod.id_producto}`}
+                      onClick={() => {
+                        setBusqueda("");
+                        setResultados([]);
+                        setIsSearchOpen(false);
+                      }}
+                      className="buscador-link"
+                    >
+                      <img
+                        src={prod.imagen_url || "/default.jpg"}
+                        alt={prod.name}
+                        className="buscador-img"
+                      />
+                      <div className="result-text">
+                        {prod.categoria && (
+                          <div className="result-category">{String(prod.categoria).toUpperCase()}</div>
+                        )}
+                        <div className="result-name">{capitalize(prod.name)}</div>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              // No hay resultados y no está buscando
+              busqueda.length >= 1 && (
+                <p className="buscador-empty">Buscando resultados...</p>
+              )
+            )
           )}
-          {isSearchOpen && loading && <p className="buscador-loading">Buscando...</p>}
         </div>
         <div className="user-section">
           {isLogged ? (

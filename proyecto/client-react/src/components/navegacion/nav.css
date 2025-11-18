@@ -1,6 +1,21 @@
 /* Header con Grid: 2 filas */
-header{
+.encabezado {
+  /* Asegura que el header quede siempre encima de otros contenidos */
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000; /* Alto para cubrir la mayoría de overlays */
+}
+
+.promos-banner {
+  position: absolute;
+  top: 0; /* Coloca el banner dentro de la parte superior del header */
+  left: 0;
+  right: 0;
+  z-index: 4100; /* Por encima del header */
+  height: var(--banner-height);
+  overflow: hidden;
 }
 .encabezado {
   display: grid;
@@ -9,11 +24,21 @@ header{
   align-items: center; /* Centrar verticalmente */
   justify-items: center; /* Centrar horizontalmente en celdas */
   width: 100%;
-  position: relative;
   background-color: rosybrown;
   padding: 5px 15px; /* Padding reducido para menos separación */
-  gap: 5px; /* Gap reducido aún más para filas más juntas */
   min-height: 50px; /* Altura mínima reducida para menos espacio */
+}
+
+:root {
+  --banner-height: 60px;
+  --header-content-height: 85px;/*Arregla el espacio entre el encabzado y los componentes de abajo, sin un alto largo, queda encime de otros componentes*/
+  --header-height: calc(var(--banner-height) + var(--header-content-height));
+}
+body { padding-top: var(--header-height); }
+
+/* Reservar espacio dentro del header para el banner */
+.encabezado {
+  padding-top: var(--banner-height);
 }
 
 /* Logo: ocupa fila 1 y 2, columna 1 */
@@ -26,8 +51,9 @@ header{
 }
 
 .miLogo {
-  width: 80px; /* Tamaño reducido para no ocupar tanto */
-  border-radius: 10px;
+  width: 70px; /* Tamaño reducido para no ocupar tanto */
+  max-width: 70px;
+  border-radius: 8px;
 }
 
 /* Centro fila 1: buscador y user section */
@@ -36,7 +62,7 @@ header{
   grid-column: 2;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 15px; /* Gap reducido */
 }
 
@@ -103,7 +129,7 @@ header{
   position: relative;
   width: 40px;
   transition: 0.3s ease;
-  overflow: hidden;
+  overflow: visible; /* permitir que el botón cerrar quede visible fuera del wrapper */
 }
 
 .buscador-wrapper.open {
@@ -141,12 +167,24 @@ header{
   transition: 0.3s ease;
   position: absolute;
   left: 40px;
-  z-index: 1;
+  z-index: 3001; /* Encima del grid y de otros elementos */
 }
 
 .buscador-wrapper.open .buscador {
   width: 220px; /* Ancho reducido */
   opacity: 1;
+}
+
+/* Posicionamiento absoluto del botón cerrar para garantizar visibilidad */
+.buscador-wrapper .buscador-cerrar {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border-radius: 6px;
+  padding: 2px 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
 .buscador-cerrar {
@@ -157,7 +195,7 @@ header{
   color: #a05252;
   transition: color 0.2s;
   margin-left: 5px;
-  z-index: 2;
+  z-index: 4002; /* sobre el buscador */
   flex-shrink: 0;
 }
 
@@ -167,27 +205,27 @@ header{
 
 .buscador-dropdown {
   position: absolute;
-  top: 100%; /* Posiciona justo abajo del buscador */
-  left: 0;
-  width: 280px; /* Ancho reducido */
+  top: calc(100% + 6px); /* Directamente debajo del input */
+  left: 40px; /* Alinea con el input */
+  width: 220px; /* Match input width */
   list-style: none;
   padding: 0;
   margin: 0;
   background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 200px;
+  border: 1px solid #e6e0e0;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  max-height: 220px;
   overflow-y: auto;
-  z-index: 2000; /* Alto para estar por encima de todo */
+  z-index: 4000;
 }
 
 .buscador-item {
-  position: absolute;
-  padding: 10px;
-  border-top: 1px solid #eee;
-  transition: 0.2s ease;
-  z-index: 2; /* Agregado para estar encima del dropdown y otros elementos */
+  position: relative; /* Evita salir del flujo del dropdown */
+  padding: 8px 10px;
+  border-top: 1px solid #f5f5f5;
+  transition: 0.15s ease;
+  z-index: 4001; /* Sobre el dropdown */
 }
 
 .buscador-item:hover {
@@ -208,18 +246,51 @@ header{
   object-fit: cover;
 }
 
+.result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-category {
+  font-size: 0.7rem;
+  color: rgba(160, 107, 107, 0.8); /* muted rosybrown */
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.result-name {
+  font-size: 0.95rem;
+  color: #2b2b2b;
+  font-weight: 600;
+  text-transform: none;
+}
+
 .buscador-loading {
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 280px; /* Ancho reducido */
-  padding: 10px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
+  top: calc(100% + 6px);
+  left: 40px; /* Alinea justo debajo del input */
+  padding: 6px 12px;
+  background: #a05252; /* color rosado oscuro */
+  color: white;
+  border-radius: 14px; /* Más compacto */
+  font-weight: 600;
+  z-index: 4000;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  white-space: nowrap;
+}
+
+.buscador-empty {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 40px;
+  padding: 8px 12px;
+  background: #fff7f7;
   color: #a05252;
-  z-index: 2000; /* Alto para consistencia */
+  border-radius: 10px;
+  border: 1px solid #f1dede;
+  z-index: 4000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
 /* Saludo y perfil */
@@ -274,8 +345,8 @@ header{
 }
 
 .carrito img {
-  width: 70px;
-  height: 70px; /* Altura ajustada para ocupar mismo espacio que otros iconos y estar centrado */
+  width: 40px;
+  height: 40px; /* Ajuste para iconos */
   object-fit: contain;
   display: block;
   border: none;
@@ -412,6 +483,11 @@ header{
     padding: 5px 10px;
     min-height: 50px; /* Altura reducida */
   }
+  :root {
+  --banner-height: 60px;
+  --header-content-height: 85px;/*Arregla el espacio entre el encabzado y los componentes de abajo, sin un alto largo, queda encime de otros componentes*/
+  --header-height: calc(var(--banner-height) + var(--header-content-height));
+  }
 
   .header-center {
     order: 2;
@@ -432,15 +508,15 @@ header{
   }
 
   .buscador-wrapper.open {
-    width: 250px;
+    width: 200px;
   }
 
   .buscador-wrapper.open .buscador {
-    width: 190px;
+    width: 160px;
   }
 
   .buscador-dropdown, .buscador-loading {
-    width: 250px;
+    width: 200px;
   }
 
   .saludo-texto {
@@ -511,15 +587,15 @@ header{
   }
 
   .buscador-wrapper.open {
-    width: 200px;
+    width: 160px;
   }
 
   .buscador-wrapper.open .buscador {
-    width: 140px;
+    width: 120px;
   }
 
   .buscador-dropdown, .buscador-loading {
-    width: 200px;
+    width: 160px;
   }
 
   .buscador-img {

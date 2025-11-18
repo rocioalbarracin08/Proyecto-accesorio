@@ -16,7 +16,7 @@ def categorias():
         return jsonify({"error": f"Hubo un problema al consultar las categorías: {e}"}), 500
 
 ########################### Mostrar por ID ###########################
-@bp.route("/<int:id_category>", methods=['GET'])
+@bp.route("/<int:id_category>")
 def mostrarSegunId(id_category):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500

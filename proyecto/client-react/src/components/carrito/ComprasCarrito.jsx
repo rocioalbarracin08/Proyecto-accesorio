@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"; // Para redireccionar
 import "./carrito.css";
 
 export function ComprasCarrito() {
-  const { state, updateQuantity, removeItem, clearCart, toggleCarrito } = useCarrito();
+  const { state, updateQuantity, updateItem, removeItem, clearCart, toggleCarrito } = useCarrito();
   const navigate = useNavigate(); // hook de react-router
 
   if (!state.showCarrito) return null;
@@ -21,6 +21,10 @@ export function ComprasCarrito() {
 
   const calcularSubtotal = (item) =>
     (item.cantidad * parseFloat(item.producto.precio || 0)).toFixed(2);
+
+  const handleColorChange = (id, value) => {
+    updateItem(id, { selectedColor: value });
+  };
 
   const finalizarCompra = () => {
     toggleCarrito(); // Cierra el modal
@@ -53,6 +57,52 @@ export function ComprasCarrito() {
                     <div className="carrito-item-info">
                       <h3>{item.producto.nombre || item.producto.name}</h3>
                       <p>{item.producto.precio}</p>
+                        {/* Selector/entrada para color */}
+                        <div className="carrito-color-select">
+                          {(() => {
+                            const raw = item.producto.colores 
+                            let options = [];
+                            if (Array.isArray(raw)) options = raw;
+                            else if (typeof raw === 'string' && raw.includes(',')) options = raw.split(',').map(s => s.trim()).filter(Boolean);
+                            else if (typeof raw === 'string' && raw.trim()) options = [raw.trim()];
+
+                            if (options.length > 0) {
+                              return (
+                                <div>
+                                  <label>Color: </label>
+                                  <select value={item.selectedColor || ''} onChange={(e) => handleColorChange(id, e.target.value)}>
+                                    <option value="">Seleccionar</option>
+                                    {options.map((c) => (
+                                      <option key={c} value={c}>{c}</option>
+                                    ))}
+                                    <option value="otro">Otro...</option>
+                                  </select>
+                                  {item.selectedColor === 'otro' && (
+                                    <input
+                                      type="text"
+                                      placeholder="Ingrese color"
+                                      value={item.selectedColor !== 'otro' ? (item.selectedColor || '') : ''}
+                                      onChange={(e) => handleColorChange(id, e.target.value)}
+                                    />
+                                  )}
+                                </div>
+                              );
+                            }
+
+                            // Si no hay opciones conocidas mostrar un input libre
+                            return (
+                              <div>
+                                <label>Color: </label>
+                                <input
+                                  type="text"
+                                  placeholder="Color (opcional)"
+                                  value={item.selectedColor || ''}
+                                  onChange={(e) => handleColorChange(id, e.target.value)}
+                                />
+                              </div>
+                            );
+                          })()}
+                        </div>
                       <div className="carrito-controles">
                         <button onClick={() => handleDecrement(id)}>-</button>
                         <span>{item.cantidad}</span>

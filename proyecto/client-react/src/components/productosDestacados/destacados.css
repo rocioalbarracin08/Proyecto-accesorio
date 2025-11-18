@@ -1,37 +1,44 @@
-.seccion-img{
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    height: 350px;
-    gap: 0rem;
-    background-color: white;
-    
-  }
+.galeria-destacados {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  height: 350px;
+  gap: 0;
+  background-color: #fff;
+  overflow: hidden;
+}
+.destacado-title{
+  text-align: center;
+  color: rosybrown;
+}
+.item-destacado {
+  width: 16%;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
 
-.img-container {
-    /* Contenedor fijo para cada imagen, para consistencia */
-    width: 16%; /* Mismo ancho relativo que antes */
-    height: 80%; /* Mismo alto relativo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Evita que imágenes grandes sobresalgan */
+.item-destacado img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: all 0.5s ease;
 }
-.seccion-img img{
-    /*Estilo a las imagenes*/
-    width: 16%;
-    height: 80%;
-    flex-grow: 2;
-    object-fit: cover; /*Cubre todo el espacio*/
-    opacity: .8;/*control de opacidad*/
-    transition: .5s ease; /*transicion para la animacion*/
+
+.item-destacado:hover {
+  width: 25%;
+  height: 100%;
+  z-index: 5;
 }
-.seccion-img img:hover{
-    cursor: crosshair; /*Cambio de cursor por una cruz*/
-    width:30%;
-    height: 85%;
-    opacity: 1; /*Devolvemos su opacidad*/
-    filter: contrast(120%); /*Subimos su contraste*/
+
+.item-destacado:hover img {
+  cursor: crosshair;
+  opacity: 1;
+  filter: contrast(120%);
 }

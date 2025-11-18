@@ -4,6 +4,13 @@
     display: flex;
     flex-direction: column;
 }
+
+/* Cuando estamos en el dashboard, evitamos el padding-top global del header
+   que se aplica mediante :root/body. Esto hace que el contenido del dashboard
+   se alinee con la parte superior de la ventana y evitamos un espacio vacío. */
+body.dashboard-page {
+  padding-top: 0 !important;
+}
 .perfil-info{
   display: flex;
   justify-content: center;
@@ -20,6 +27,12 @@
   background: transparent; /* Mantuve rojo, pero podrías cambiar a rosybrown si prefieres */
   border-color: red;
   color: red;
+}
+.title-empleado {
+  text-align: center;
+  font-size: 2rem;
+  margin: 1rem 0;
+  color: rosybrown;
 }
 .volver {
   margin: 1rem auto;

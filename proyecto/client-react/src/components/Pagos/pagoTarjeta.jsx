@@ -58,7 +58,7 @@ export default function PagoTarjeta() {
         },
       };
 
-      const res = await fetch("http://localhost:5000/pagos/procesar_tarjeta", {
+      const res = await fetch("http://localhost:5000/pago/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

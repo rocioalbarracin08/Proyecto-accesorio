@@ -6,16 +6,20 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
+import { ProductSort } from "./ProductSort";
+import { ProductStockDetailInfo, ProductStockIndicator } from "./ProductStockIndicator";
+import { CarruselPromociones } from "./CarruselPromociones";
 import "./productos.css";
 
-export function Productos() {
+export function Productos({ includeInactiveForEmployee = false }) {
   const { idCategoria } = useParams();  // Opcional: si hay, filtra por categoría
   const { promociones } = usePromociones();
   const { addItem, openCarrito } = useCarrito();
   const { userRole } = useAuthContext();
+  const [categoriaNombre, setCategoriaNombre] = useState("Productos");
+
 
   const [productos, setProductos] = useState([]);
-  const [categoriaNombre, setCategoriaNombre] = useState("Todos los Productos");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -24,17 +28,36 @@ export function Productos() {
   const [showModal, setShowModal] = useState(false);
   const [productoEditar, setProductoEditar] = useState(null);
 
+  // Estado para ordenamiento
+  const [sortType, setSortType] = useState('price-desc');
+
   console.log("UserRole actual:", userRole);  // Verifica en la consola 
 
   const cargarProductos = async () => {
     setLoading(true);
     try {
-      let url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=10`;
+      let url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=12`;
       if (idCategoria) {
         url = `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`;
+        if (includeInactiveForEmployee && userRole === 'empleado') url += '&include_inactive=1';
+      }
+      // Para la vista general, si estamos en dashboard empleado y pedimos ver inactivos
+      if (!idCategoria && includeInactiveForEmployee && userRole === 'empleado') {
+        url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=10&include_inactive=1`;
       }
       const res = await axios.get(url, { withCredentials: true });
       const data = res.data;
+      // Si la API devuelve mensaje de categoría inactiva o no encontrada, manejar
+      if (res.status === 200 && data.mensaje) {
+        // mensajes informativos (no errores HTTP) pueden venir en 200; si contiene 'inact' mostrar como no disponible
+        if (String(data.mensaje).toLowerCase().includes('inact')) {
+          setProductos([]);
+          setCategoriaNombre('Categoría inactiva');
+          setTotalPages(1);
+          setPage(1);
+          return;
+        }
+      }
       setProductos(data.productos || []);
       setTotalPages(data.total_pages || 1);
       setPage(data.page || 1);
@@ -44,7 +67,15 @@ export function Productos() {
         setCategoriaNombre("Productos");
       }
     } catch (err) {
-      console.error("Error cargando productos:", err);
+      // Si la categoría está inactiva, el backend puede devolver 404 con mensaje
+      if (err.response && err.response.status === 404 && err.response.data && err.response.data.mensaje) {
+        setProductos([]);
+        setCategoriaNombre(err.response.data.mensaje || 'Categoría no disponible');
+        setTotalPages(1);
+        setPage(1);
+      } else {
+        console.error("Error cargando productos:", err);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,6 +88,28 @@ export function Productos() {
   if (loading) return <div className="producto-grid">Cargando productos...</div>;
 
   const getId = (producto) => producto.id_producto || producto.id;
+
+  // Función para ordenar productos
+  const sortProducts = (productsToSort) => {
+    const sorted = [...productsToSort];
+    
+    switch(sortType) {
+      case 'price-asc':
+        // Menor a mayor precio
+        return sorted.sort((a, b) => a.precio - b.precio);
+      case 'price-desc':
+        // Mayor a menor precio (por defecto)
+        return sorted.sort((a, b) => b.precio - a.precio);
+      case 'name-asc':
+        // Alfabético A-Z
+        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'es'));
+      case 'name-desc':
+        // Alfabético Z-A
+        return sorted.sort((a, b) => (b.name || '').localeCompare(a.name || '', 'es'));
+      default:
+        return sorted;
+    }
+  };
 
   const goToPage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) setPage(newPage);
@@ -115,13 +168,20 @@ export function Productos() {
 
   return (
     <div className="productos-page">
-      <h2 className="tituloProducts">{categoriaNombre}</h2>
+      {/* Carrusel de Promociones */}
+      <CarruselPromociones productos={productos} />
+      
+      {/* Componente de ordenamiento */}
+      <ProductSort 
+        onSortChange={setSortType} 
+        currentSort={sortType}
+      />
 
       <div className="producto-grid">
         {productos.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
-          productos.map((producto) => {
+          sortProducts(productos).map((producto) => {
             const promocionProducto = getPromocionForProducto(producto);  // Promoción específica del producto
             let precioFinal = producto.precio;
             let precioOriginal = producto.precio;
@@ -149,7 +209,6 @@ export function Productos() {
                     src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
                     alt={producto.name}
                   />
-                </Link>
                 <h3>{producto.name}</h3>
                 <p className="producto-precio">
                   {promocionProducto ? (
@@ -162,6 +221,8 @@ export function Productos() {
                     `$${precioFinal.toFixed(2)}`
                   )}
                 </p>
+                <ProductStockDetailInfo stock={producto.stock} className="cartelStock"/>
+                </Link>
                 <button
                   className="agregar-carrito"
                   onClick={() => {
@@ -175,9 +236,23 @@ export function Productos() {
                 {userRole === 'empleado' && (
                   <>
                     <p>Stock: {producto.stock || 0}</p>
-                    <button className='btn-empleado' onClick={() => handleEdit(producto)}>Editar</button>
-                    <button className='btn-empleado' onClick={() => handleDelete(getId(producto))}>Desactivar</button>
-                    <button className='btn-empleado' onClick={() => handleUpdateStock(getId(producto), producto.stock)}>Actualizar Stock</button>
+                    {producto.activo === 0 ? (
+                      // Si está desactivado, solo mostrar activar
+                      <button className='btn-empleado' onClick={async () => {
+                        await fetch(`http://localhost:5000/productos/activar/${getId(producto)}`, {
+                          method: 'PATCH',
+                          credentials: 'include'
+                        });
+                        cargarProductos();
+                      }}>Activar</button>
+                    ) : (
+                      // Producto activo: permitir editar/desactivar/actualizar stock
+                      <>
+                        <button className='btn-empleado' onClick={() => handleEdit(producto)}>Editar</button>
+                        <button className='btn-empleado' onClick={() => handleDelete(getId(producto))}>Desactivar</button>
+                        <button className='btn-empleado' onClick={() => handleUpdateStock(getId(producto), producto.stock)}>Actualizar Stock</button>
+                      </>
+                    )}
                   </>
                 )}
               </div>

@@ -268,9 +268,9 @@ export default function Nosotros() {
               <section className="carrusel">
                 {dataNosotros.imagenes.length > 0 ? (
                   <>
-                    <button className="carrusel-btn" onClick={() => setCurrent((current - 1 + dataNosotros.imagenes.length) % dataNosotros.imagenes.length)}>&lt;</button>
+                    <button className="carrusel-btnN" onClick={() => setCurrent((current - 1 + dataNosotros.imagenes.length) % dataNosotros.imagenes.length)}>&lt;</button>
                     <img className="carrusel-img" src={dataNosotros.imagenes[current]} alt={`slide-${current}`} />
-                    <button className="carrusel-btn" onClick={() => setCurrent((current + 1) % dataNosotros.imagenes.length)}>&gt;</button>
+                    <button className="carrusel-btnN" onClick={() => setCurrent((current + 1) % dataNosotros.imagenes.length)}>&gt;</button>
                   </>
                 ) : (
                   <p>No hay imágenes disponibles</p>

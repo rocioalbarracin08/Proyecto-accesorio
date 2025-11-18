@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Productos } from "../producto/Productos";// Componente unificado para productos
 import RegistrarVenta from "../ventas/RegistrarVenta";  // Para registrar ventas
 import HistorialVentas from '../ventas/HistorialVentas';
@@ -14,6 +14,7 @@ export default function DashboardEmpleado() {
   const [nombreTienda, setNombreTienda] = useState('Asignada'); 
 
   const navigate = useNavigate()
+  const location = useLocation();
 
   useEffect(() => {
     fetch("http://localhost:5000/usuarios/perfil", { credentials: "include" })
@@ -30,6 +31,18 @@ export default function DashboardEmpleado() {
             .catch(err => console.error('Error obteniendo tienda:', err));
         }
       });
+    document.body.classList.add('dashboard-page');
+    try {
+      const params = new URLSearchParams(location.search);
+      const section = params.get('section');
+      if (section) setSeccionActiva(section);
+    } catch (e) {
+      // ignora
+    }
+
+    return () => {
+      document.body.classList.remove('dashboard-page');
+    }
   }, []);
   const handleLogout = async () => {
     await fetch("http://localhost:5000/usuarios/logout", {
@@ -43,7 +56,7 @@ export default function DashboardEmpleado() {
   const renderSeccion = () => {
     switch (seccionActiva) {
       case 'productos':
-        return <Productos />;  // Grilla de productos con botones para empleados
+        return <Productos includeInactiveForEmployee={true} />;  // Grilla de productos con botones para empleados
       case 'ventas':
         return <RegistrarVenta />;  // Formulario de venta
       case 'historial':
@@ -55,9 +68,10 @@ export default function DashboardEmpleado() {
 
   return (
     <div className="dashboard-empleado">
-      <h1>Panel de Empleado</h1>
+      <h1 className="title-empleado">Panel de Empleado</h1>
       <div className="perfil-info">
         <span className="tienda">Tienda: {nombreTienda || 'Asignada'}</span>  
+        <span className="usuario">Usuario: {perfil.nombre || 'Cargando...'}</span>
         <button onClick={handleLogout} className="btn-cerrarS">Cerrar Sesión</button>
       </div>
 

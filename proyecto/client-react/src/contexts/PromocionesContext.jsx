@@ -10,7 +10,8 @@ export const PromocionesProvider = ({ children }) => {
 
   const cargarPromociones = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/promociones', { withCredentials: true });
+      // Quita ?activas=true para cargar TODAS las promociones (activas, inactivas, vencidas)
+      const response = await axios.get('http://localhost:5000/promociones/', { withCredentials: true });
       setPromociones(response.data);
     } catch (err) {
       setError('Error al cargar promociones');
@@ -19,11 +20,12 @@ export const PromocionesProvider = ({ children }) => {
     }
   };
 
+  // Resto igual...
   const eliminarPromocion = async (id) => {
     if (window.confirm('¿Eliminar promoción?')) {
       try {
         await axios.delete(`http://localhost:5000/promociones/${id}`, { withCredentials: true });
-        cargarPromociones();
+        cargarPromociones();  // Recarga después de eliminar
       } catch (err) {
         setError('Error al eliminar');
       }
@@ -33,9 +35,18 @@ export const PromocionesProvider = ({ children }) => {
   const desactivarPromocion = async (id) => {
     try {
       await axios.patch(`http://localhost:5000/promociones/${id}/desactivar`, {}, { withCredentials: true });
-      cargarPromociones();
+      cargarPromociones();  // Recarga después de desactivar
     } catch (err) {
       setError('Error al desactivar');
+    }
+  };
+
+  const activarPromocion = async (id) => {
+    try {
+      await axios.patch(`http://localhost:5000/promociones/${id}/activar`, {}, { withCredentials: true });
+      cargarPromociones();  // Recarga después de activar
+    } catch (error) {
+      console.error('Error activando promoción:', error);
     }
   };
 
@@ -49,7 +60,8 @@ export const PromocionesProvider = ({ children }) => {
     error,
     cargarPromociones,
     eliminarPromocion,
-    desactivarPromocion
+    desactivarPromocion,
+    activarPromocion
   };
 
   return (

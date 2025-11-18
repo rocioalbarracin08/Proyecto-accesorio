@@ -1,8 +1,9 @@
 import React from 'react';
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 import "./cambiarContrasena.css";
 
 export default function CambiarContrasena() {
@@ -19,6 +20,16 @@ export default function CambiarContrasena() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const navigate = useNavigate();
+
+  // Referencias para los inputs
+  const actualRef = useRef(null);
+  const nuevaRef = useRef(null);
+  const confirmRef = useRef(null);
+
+  // Hook de navegación con Enter
+  useFormKeyboardNavigation([actualRef, nuevaRef, confirmRef], () => {
+    handleSubmit({ preventDefault: () => {} });
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,6 +94,7 @@ export default function CambiarContrasena() {
       <form className="cambiar-form" onSubmit={handleSubmit}noValidate> {/*Para deshabilitar la validación automáticamente del navegador*/}
         <div className="password-container">
           <input
+            ref={actualRef}
             type={showActual ? "text" : "password"}
             placeholder="Contraseña Actual"
             value={contrasenaActual}
@@ -96,6 +108,7 @@ export default function CambiarContrasena() {
 
         <div className="password-container">
           <input
+            ref={nuevaRef}
             type={showNueva ? "text" : "password"}
             placeholder="Nueva Contraseña"
             value={nuevaContrasena}
@@ -109,6 +122,7 @@ export default function CambiarContrasena() {
 
         <div className="password-container">
           <input
+            ref={confirmRef}
             type={showConfirm ? "text" : "password"}
             placeholder="Confirmar Nueva Contraseña"
             value={confirmPassword}

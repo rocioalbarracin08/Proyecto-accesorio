@@ -1,0 +1,525 @@
+.carrusel-promociones-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto 50px;
+  padding: 0 20px;
+}
+
+.carrusel-titulo {
+  text-align: center;
+  font-size: 28px;
+  color: #6a4f4f;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  animation: fadeInDown 0.6s ease;
+}
+
+.carrusel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  background: linear-gradient(135deg, #f4e1e1 0%, #faf7f3 100%);
+  border-radius: 20px;
+  padding: 30px 15px;
+  box-shadow: 0 8px 32px rgba(205, 127, 127, 0.15);
+  overflow: visible;
+}
+
+.carrusel-slide {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 350px;
+}
+
+.carrusel-image-container {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  border-radius: 15px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 10px 30px rgba(205, 127, 127, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carrusel-image-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 15px 40px rgba(205, 127, 127, 0.3);
+}
+
+.carrusel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carrusel-link {
+  text-decoration: none;
+}
+
+/* ========================================
+   BADGE DE DESCUENTO
+   ======================================== */
+
+.carrusel-badge-descuento {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+  color: #6a4f4f;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   INFORMACIÓN DEL PRODUCTO
+   ======================================== */
+
+.carrusel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeInRight 0.6s ease;
+}
+
+.carrusel-nombre {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6a4f4f;
+  line-height: 1.2;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(205, 127, 127, 0.1);
+}
+
+/* ========================================
+   PRECIOS
+   ======================================== */
+
+.carrusel-precio {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carrusel-precio-original {
+  font-size: 20px;
+  color: #999;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.carrusel-precio-final {
+  font-size: 36px;
+  font-weight: 800;
+  color: #cd7f7f;
+  display: inline-flex;
+  gap: 10px;
+}
+
+/* Animación del precio */
+@keyframes priceGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(205, 127, 127, 0);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(205, 127, 127, 0.5);
+  }
+}
+
+.carrusel-precio-final {
+  animation: priceGlow 2s ease-in-out infinite;
+}
+
+/* ========================================
+   METODO DE PAGO
+   ======================================== */
+
+.carrusel-metodo-pago {
+  font-size: 14px;
+  color: #6a4f4f;
+  background: rgba(205, 127, 127, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 4px solid #cd7f7f;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ========================================
+   BOTÓN VER PRODUCTO
+   ======================================== */
+
+.carrusel-btn-ver {
+  background: linear-gradient(135deg, #cd7f7f 0%, #a45d5d 100%);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(205, 127, 127, 0.3);
+  text-align: center;
+}
+
+.carrusel-btn-ver:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(205, 127, 127, 0.4);
+  background: linear-gradient(135deg, #a45d5d 0%, #8a4a4a 100%);
+}
+
+.carrusel-btn-ver:active {
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   BOTONES DE NAVEGACIÓN
+   ======================================== */
+
+.carrusel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #cd7f7f 0%, #a45d5d 100%);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(205, 127, 127, 0.3);
+  font-weight: bold;
+}
+
+.carrusel-btn:hover {
+  background: linear-gradient(135deg, #a45d5d 0%, #8a4a4a 100%);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 25px rgba(205, 127, 127, 0.5);
+}
+
+.carrusel-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carrusel-btn-prev {
+  left: -25px;
+}
+
+.carrusel-btn-next {
+  right: -25px;
+}
+
+/* ========================================
+   INDICADORES (DOTS)
+   ======================================== */
+
+.carrusel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.carrusel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #cd7f7f;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.carrusel-dot:hover {
+  background: rgba(205, 127, 127, 0.3);
+  transform: scale(1.2);
+}
+
+.carrusel-dot.active {
+  background: linear-gradient(135deg, rosybrown 0%, rosybrown 100%);
+  border-color: rosybrown;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* ========================================
+   BARRA DE PROGRESO
+   ======================================== */
+
+.carrusel-progress-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #cd7f7f 0%, #FFD700 100%);
+  border-radius: 3px;
+  margin-top: 15px;
+  animation: carruselProgress 5s linear infinite;
+  box-shadow: 0 2px 8px rgba(205, 127, 127, 0.2);
+}
+
+@keyframes carruselProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .carrusel-wrapper {
+    padding: 25px 10px;
+  }
+
+  .carrusel-slide {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    min-height: auto;
+  }
+
+  .carrusel-image-container {
+    height: 300px;
+  }
+
+  .carrusel-nombre {
+    font-size: 24px;
+  }
+
+  .carrusel-precio-final {
+    font-size: 28px;
+  }
+
+  .carrusel-btn-prev,
+  .carrusel-btn-next {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .carrusel-btn-prev {
+    left: -15px;
+  }
+
+  .carrusel-btn-next {
+    right: -15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carrusel-promociones-container {
+    margin: 30px auto 40px;
+  }
+
+  .carrusel-titulo {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .carrusel-wrapper {
+    padding: 20px 5px;
+    gap: 10px;
+  }
+
+  .carrusel-slide {
+    min-height: auto;
+  }
+
+  .carrusel-image-container {
+    height: 250px;
+  }
+
+  .carrusel-nombre {
+    font-size: 20px;
+  }
+
+  .carrusel-precio-original {
+    font-size: 16px;
+  }
+
+  .carrusel-precio-final {
+    font-size: 24px;
+  }
+
+  .carrusel-btn-ver {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .carrusel-btn-prev,
+  .carrusel-btn-next {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .carrusel-btn-prev {
+    left: -18px;
+  }
+
+  .carrusel-btn-next {
+    right: -18px;
+  }
+
+  .carrusel-badge-descuento {
+    padding: 10px 16px;
+    font-size: 14px;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carrusel-promociones-container {
+    padding: 0 10px;
+  }
+
+  .carrusel-titulo {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .carrusel-wrapper {
+    padding: 15px 0;
+    border-radius: 12px;
+  }
+
+  .carrusel-slide {
+    gap: 15px;
+  }
+
+  .carrusel-image-container {
+    height: 200px;
+    border-radius: 10px;
+  }
+
+  .carrusel-nombre {
+    font-size: 16px;
+  }
+
+  .carrusel-precio-original {
+    font-size: 14px;
+  }
+
+  .carrusel-precio-final {
+    font-size: 20px;
+  }
+
+  .carrusel-metodo-pago {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .carrusel-btn-ver {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .carrusel-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .carrusel-btn-prev {
+    left: -12px;
+  }
+
+  .carrusel-btn-next {
+    right: -12px;
+  }
+
+  .carrusel-badge-descuento {
+    padding: 8px 12px;
+    font-size: 12px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .carrusel-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .carrusel-dots {
+    gap: 8px;
+    margin-top: 15px;
+  }
+}
+
+/* ========================================
+   ANIMACIÓN DE TRANSICIÓN (cuando cambia slide)
+   ======================================== */
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.carrusel-slide {
+  animation: slideInLeft 0.5s ease;
+}

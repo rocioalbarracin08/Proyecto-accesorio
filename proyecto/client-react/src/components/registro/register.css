@@ -79,7 +79,7 @@
     margin-bottom: 40px;
   }
   
-  h1 {
+  .h1-register {
     margin: 0 0 20px 0;
     color: white;
     font-size: 2rem;
@@ -180,17 +180,19 @@
   @media (max-width: 600px) {
     .section-register {
       max-width: 90%;
+      height: 100%;
       padding: 2rem;
       min-height: 60vh;
       gap: 1rem;
     }
   
-    .formularioRegister {
+    .formularioRegister .input-password {
       width: 100%;
       gap: 1rem;
+      align-items: center;
     }
   
-    h1 {
+    .h1-register {
       font-size: 1.5rem;
     }
   

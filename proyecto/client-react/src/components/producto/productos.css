@@ -5,7 +5,9 @@
   gap: 20px; /* Espacio entre los elementos */
   padding: 20px; /* Espacio alrededor del grid */
 }
-
+.cartelStock{
+  margin-top: auto;
+}
 /* Estilos para cada item de producto */
 /* Corrección: Cambié la clase de .productoP-item a .producto-itemP para que coincida con la clase usada en el JSX (producto-itemP).
    Esto asegura que los estilos se apliquen correctamente y los elementos del grid tengan alturas uniformes basadas en min-height. */
@@ -71,12 +73,6 @@
 /* Títulos de la página de productos */
 .productos-page {
   text-align: center;
-}
-
-.tituloProducts {
-  margin-top: 20px;
-  color: #333;
-  text-transform: uppercase; /*Hacer que todo se vea en mayuscula*/
 }
 
 /* Paginación */
