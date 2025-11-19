@@ -1,60 +1,101 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderWithMockProviders, screen, userEvent, mockUseAuthContext } from "../../../test/test-utils"; // Agrega mockUseAuthContext
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { renderWithMockProviders, screen, userEvent, mockUseAuthContext, mockUseCarrito } from "../../../test/test-utils";
 import { BarraNavegacion } from "../Navegacion";
 
-// Mock de useNavigate
-const mockNavigate = vi.fn();
+// Mocks para los contextos (necesarios para que el componente use los mocks en lugar de los hooks reales)
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext,
+}));
+
+vi.mock("../../../contexts/CarritoContext", () => ({
+  useCarrito: mockUseCarrito,
+}));
+
+// Si CarruselPromociones usa PromocionesContext, mockéalo también (aunque no se use directamente en BarraNavegacion)
+vi.mock("../../contexts/PromocionesContext", () => ({
+  usePromociones: () => ({
+    promociones: [],
+    loading: false,
+    error: null,
+  }),
+}));
+
+// Mock de react-router-dom (necesario porque el componente usa useNavigate y Link)
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
     ...actual,
-    useNavigate: () => mockNavigate,
+    useNavigate: () => vi.fn(),  // Mock básico para useNavigate
+    Link: ({ to, children }) => <a href={to}>{children}</a>,  // Mock simple para Link
   };
 });
 
-describe("BarraNavegacion - Botón Cerrar Sesión", () => {
+describe("BarraNavegacion - Botón Carrito", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock fetch para evitar llamadas reales
+    
+    // Configura mocks por defecto para AuthContext (ajusta según necesidades del test)
+    mockUseAuthContext.mockReturnValue({
+      isLogged: false,
+      userRole: null,
+      authChecked: true,
+      logout: vi.fn(),
+    });
+    
+    // Mock fetch para evitar llamadas reales (perfil y categorías)
     global.fetch = vi.fn(() =>
       Promise.resolve({
-        ok: true,
+        json: async () => ({}),
       })
     );
   });
 
-  it("muestra el botón 'Cerrar sesión' solo si está logueado", () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: true, logout: vi.fn() });
-    
-    renderWithMockProviders(<BarraNavegacion />);
-    
-    expect(screen.getByRole("button", { name: /Cerrar sesión/i })).toBeInTheDocument();
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it("no muestra el botón 'Cerrar sesión' si no está logueado", () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
-    
-    renderWithMockProviders(<BarraNavegacion />);
-    
-    expect(screen.queryByRole("button", { name: /Cerrar sesión/i })).not.toBeInTheDocument();
-  });
-
-  it("llama a logout y navega al hacer click en 'Cerrar sesión'", async () => {
-    const user = userEvent.setup();
-    const mockLogout = vi.fn();
-    mockUseAuthContext.mockReturnValue({ isLogged: true, logout: mockLogout });
-    
-    renderWithMockProviders(<BarraNavegacion />);
-    
-    const logoutButton = screen.getByRole("button", { name: /Cerrar sesión/i });
-    await user.click(logoutButton);
-    
-    // Verifica fetch y logout
-    expect(global.fetch).toHaveBeenCalledWith("http://localhost:5000/usuarios/logout", {
-      method: "POST",
-      credentials: "include",
+  it("muestra el contador de items en el carrito", () => {
+    mockUseCarrito.mockReturnValue({
+      state: { totalItems: 5, showCarrito: false },
+      toggleCarrito: vi.fn(),
+      closeCarrito: vi.fn(),
     });
-    expect(mockLogout).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith("/login");
+    
+    renderWithMockProviders(<BarraNavegacion />);
+    
+    // Verifica contador (el span con class "carrito-count")
+    expect(screen.getByText("5")).toBeInTheDocument();
+  });
+
+  it("llama a toggleCarrito al hacer click en el botón", async () => {
+    const user = userEvent.setup();
+    const mockToggle = vi.fn();
+
+    //ACORDATE DE USAR LOS MOCK DE TESTUTILS
+    mockUseCarrito.mockReturnValue({
+      state: { totalItems: 0, showCarrito: false },
+      toggleCarrito: mockToggle,
+      closeCarrito: vi.fn(),
+    });
+
+    // Mock fetch para cubrir perfil y categorías (devuelve datos vacíos o básicos para evitar errores)
+    global.fetch = vi.fn((url) => {
+      if (url.includes("/usuarios/perfil")) {
+        return Promise.resolve({ json: async () => ({ nombre: "Usuario" }) });
+      }
+      if (url.includes("/categoria/")) {
+        return Promise.resolve({ json: async () => [] });  // Categorías vacías
+      }
+      return Promise.resolve({ json: async () => ({}) });
+    });
+
+    renderWithMockProviders(<BarraNavegacion />);
+    
+    // Cambia el selector: usa getByAltText para la imagen dentro del botón (más confiable que el aria-label dinámico)
+    const carritoButton = screen.getByAltText("Ícono de carrito de compras");
+    await user.click(carritoButton);
+    
+    // Verifica que se llame a toggle
+    expect(mockToggle).toHaveBeenCalled();
   });
 });

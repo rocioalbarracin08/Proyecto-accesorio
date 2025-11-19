@@ -1,16 +1,8 @@
 import React from "react";
-import { renderWithProviders, screen } from "../../../test/test-utils"; // Usamos renderWithProviders para consistencia
-import { describe, it, expect, vi } from "vitest";
+import { renderWithMockProviders, screen, mockUseAuthContext } from "../../../test/test-utils"; // Cambia a renderWithMockProviders para consistencia con mocks
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event"; // Para interacciones realistas
-import GestionProducto from "../GestionProducto"; // Importamos el componente
-
-// Mockeamos useAuthContext para controlar el estado de autenticación
-vi.mock("../../contexts/AuthContext", () => ({
-  useAuthContext: vi.fn(),
-}));
-
-// Importamos el mock para configurarlo
-import { useAuthContext } from "../../contexts/AuthContext";
+import GestionProductos from "../GestionProducto"; // Corrige el nombre del componente (exporta como GestionProductos)
 
 // Mockeamos fetch globalmente para controlar todas las llamadas a la API
 global.fetch = vi.fn();
@@ -65,10 +57,7 @@ describe("GestionProducto Component", () => {
 
   // Configuración por defecto antes de cada test
   beforeEach(() => {
-    useAuthContext.mockReturnValue({ userRole: "empleado" });
-    // Mock por defecto: categorías y perfil
-    mockFetchCategorias();
-    mockFetchPerfil();
+    mockUseAuthContext.mockReturnValue({ userRole: "empleado" });
   });
 
   // Props mockeadas
@@ -77,15 +66,18 @@ describe("GestionProducto Component", () => {
 
   // Test: No renderiza si userRole no es 'empleado'
   it("no renderiza si userRole no es 'empleado'", () => {
-    useAuthContext.mockReturnValue({ userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ userRole: "cliente" });
 
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
     expect(screen.queryByText(/agregar producto/i)).not.toBeInTheDocument();
   });
 
   // Test: Renderiza el modal para agregar producto
   it("renderiza el modal para agregar producto", async () => {
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    mockFetchCategorias();
+    mockFetchPerfil();
+
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera a que cargue
     await screen.findByText("Agregar Producto");
@@ -100,7 +92,10 @@ describe("GestionProducto Component", () => {
 
   // Test: Renderiza el modal para editar producto
   it("renderiza el modal para editar producto", async () => {
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} productoEditar={mockProductoEditar} />);
+    mockFetchCategorias();
+    mockFetchPerfil();
+
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} productoEditar={mockProductoEditar} />);
 
     // Espera a que cargue
     await screen.findByText("Editar Producto");
@@ -111,7 +106,10 @@ describe("GestionProducto Component", () => {
 
   // Test: Carga categorías en el select
   it("carga y muestra categorías en el select", async () => {
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    mockFetchCategorias();
+    mockFetchPerfil();
+
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera a que aparezcan las opciones
     await screen.findByText("Lentes");
@@ -119,23 +117,14 @@ describe("GestionProducto Component", () => {
     expect(screen.getByText("Aritos")).toBeInTheDocument();
   });
 
-  // Test: Actualiza id_tienda desde el perfil
-  it("actualiza id_tienda desde el perfil del usuario", async () => {
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
-
-    // El form debería tener id_tienda: 5 (desde mockPerfil)
-    // No se puede verificar directamente, pero el envío lo usará
-    await screen.findByText("Agregar Producto");
-    // Asumimos que funciona; en un test más avanzado, podrías spy on setForm
-  });
-
   // Test: Envía formulario para agregar producto exitosamente
   it("envía formulario para agregar producto exitosamente", async () => {
-    // Mock envío
+    mockFetchCategorias();
+    mockFetchPerfil();
     mockFetchInsertar();
 
     const user = userEvent.setup();
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera y llena el form
     await screen.findByLabelText(/nombre/i);
@@ -166,11 +155,12 @@ describe("GestionProducto Component", () => {
 
   // Test: Envía formulario para editar producto exitosamente
   it("envía formulario para editar producto exitosamente", async () => {
-    // Mock envío
+    mockFetchCategorias();
+    mockFetchPerfil();
     mockFetchModificar();
 
     const user = userEvent.setup();
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} productoEditar={mockProductoEditar} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} productoEditar={mockProductoEditar} />);
 
     // Espera y edita
     await screen.findByDisplayValue("Producto Test");
@@ -200,14 +190,15 @@ describe("GestionProducto Component", () => {
 
   // Test: Maneja error en envío
   it("maneja error en envío del formulario", async () => {
-    // Mock error
+    mockFetchCategorias();
+    mockFetchPerfil();
     mockFetchError("Producto ya existe");
 
     // Mock alert
     const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     const user = userEvent.setup();
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera y llena mínimo
     await screen.findByLabelText(/nombre/i);
@@ -225,12 +216,15 @@ describe("GestionProducto Component", () => {
 
   // Test: Cierra modal al hacer clic en overlay
   it("cierra modal al hacer clic en overlay", async () => {
+    mockFetchCategorias();
+    mockFetchPerfil();
+
     const user = userEvent.setup();
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera y clic en overlay
     await screen.findByText("Agregar Producto");
-    const overlay = screen.getByTestId ? screen.getByTestId("modal-overlay") : screen.getByClass("modal-overlay"); // Agrega data-testid si no está
+    const overlay = document.querySelector(".modal-overlay");
     await user.click(overlay);
 
     expect(mockOnClose).toHaveBeenCalled();
@@ -238,8 +232,11 @@ describe("GestionProducto Component", () => {
 
   // Test: Cierra modal al hacer clic en "Cancelar"
   it("cierra modal al hacer clic en 'Cancelar'", async () => {
+    mockFetchCategorias();
+    mockFetchPerfil();
+
     const user = userEvent.setup();
-    renderWithProviders(<GestionProducto onClose={mockOnClose} onSave={mockOnSave} />);
+    renderWithMockProviders(<GestionProductos onClose={mockOnClose} onSave={mockOnSave} />);
 
     // Espera y clic en cancelar
     await screen.findByRole("button", { name: /cancelar/i });

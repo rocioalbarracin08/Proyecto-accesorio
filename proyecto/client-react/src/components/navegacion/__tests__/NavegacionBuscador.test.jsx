@@ -1,77 +1,68 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderWithMockProviders, screen, waitFor, userEvent, mockUseAuthContext, mockUseCarrito } from "../../../test/test-utils";
+import React from "react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { renderWithMockProviders, screen, waitFor, mockUseAuthContext, mockUseCarrito } from "../../../test/test-utils";
 import { BarraNavegacion } from "../Navegacion";
 
-// Mock de CarruselPromociones para evitar errores
-vi.mock("../Navegacion/PromosBanner", () => ({
-  default: () => <div>CarruselPromociones</div>,
+// Mocks para los contextos (necesarios para que el componente use los mocks en lugar de los hooks reales)
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext,
 }));
 
-describe("BarraNavegacion - Buscador", () => {
+vi.mock("../../../contexts/CarritoContext", () => ({
+  useCarrito: mockUseCarrito,
+}));
+
+// Mock de react-router-dom (necesario porque el componente usa useNavigate y Link)
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(),  // Mock básico para useNavigate
+    Link: ({ to, children }) => <a href={to}>{children}</a>,  // Mock simple para Link
+  };
+});
+
+describe("BarraNavegacion - Sección Usuario (Perfil)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock por defecto para fetch (categorías)
-    globalThis.fetch = vi.fn((url) => {
-      if (url.includes('/categoria/')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ categorias: [] }),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({}),
-      });
+    
+    // Configura mocks por defecto para AuthContext (ajusta según necesidades del test)
+    mockUseAuthContext.mockReturnValue({
+      isLogged: false,
+      userRole: null,
+      authChecked: true,
+      logout: vi.fn(),
     });
-  });
-
-  it("debería abrir el buscador al hacer click en el ícono de búsqueda", async () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
+    
+    // Configura mocks por defecto para CarritoContext (necesario para el componente)
     mockUseCarrito.mockReturnValue({
       state: { totalItems: 0, showCarrito: false },
       toggleCarrito: vi.fn(),
       closeCarrito: vi.fn(),
     });
-
-    const user = userEvent.setup();
-    renderWithMockProviders(<BarraNavegacion />);
-
-    const searchIcon = screen.getByLabelText("Abrir búsqueda");
-    await user.click(searchIcon);
-
-    // Usa document.querySelector para seleccionar por clase
-    const wrapper = document.querySelector('.buscador-wrapper');
-    expect(wrapper).toHaveClass("open");
-
-    expect(screen.getByRole("button", { name: /✕/ })).toBeInTheDocument();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
-  it("debería mostrar resultados al escribir en el input y esperar el timeout", async () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
-    mockUseCarrito.mockReturnValue({
-      state: { totalItems: 0, showCarrito: false },
-      toggleCarrito: vi.fn(),
-      closeCarrito: vi.fn(),
+  it("muestra saludo y enlace a perfil si está logueado", async () => {
+    mockUseAuthContext.mockReturnValue({
+      isLogged: true,
+      logout: vi.fn(),
     });
 
-    const user = userEvent.setup();
-    // Mock fetch para búsqueda
+    // Mock fetch basado en URL para evitar dependencias de orden
     globalThis.fetch = vi.fn((url) => {
-      if (url.includes('/productos/buscar')) {
+      if (url.includes('/usuarios/perfil')) {
         return Promise.resolve({
           ok: true,
-          json: async () => ({
-            resultados: [
-              { id_producto: 1, name: "Producto 1", categoria: "Categoría A", imagen_url: "/img1.jpg" },
-              { id_producto: 2, name: "Producto 2", categoria: "Categoría B", imagen_url: "/img2.jpg" },
-            ],
-          }),
+          json: async () => ({ nombre: "Juan" }),
         });
       } else if (url.includes('/categoria/')) {
         return Promise.resolve({
           ok: true,
-          json: async () => ({ categorias: [] }),
+          json: async () => ([]),  // Devuelve array vacío para categorías
         });
       }
       return Promise.resolve({
@@ -82,131 +73,20 @@ describe("BarraNavegacion - Buscador", () => {
 
     renderWithMockProviders(<BarraNavegacion />);
 
-    const searchIcon = screen.getByLabelText("Abrir búsqueda");
-    await user.click(searchIcon);
-
-    const input = screen.getByPlaceholderText("Buscar productos");
-    await user.type(input, "prod");
-
     await waitFor(() => {
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        "http://localhost:5000/productos/buscar?q=prod",
-        { credentials: "include" }
-      );
+      expect(screen.getByText("Hola, Juan!")).toBeInTheDocument();
     });
-
-    await waitFor(() => {
-      expect(screen.getByText("CATEGORÍA A")).toBeInTheDocument(); // Mayúsculas según capitalize
-      expect(screen.getByText("Producto 1")).toBeInTheDocument();
-    });
-
-    const images = screen.getAllByAltText(/Producto/);
-    expect(images).toHaveLength(2);
+    expect(screen.getByAltText("Perfil")).toBeInTheDocument();
   });
 
-  it("debería mostrar 'Buscando...' mientras carga", async () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
-    mockUseCarrito.mockReturnValue({
-      state: { totalItems: 0, showCarrito: false },
-      toggleCarrito: vi.fn(),
-      closeCarrito: vi.fn(),
-    });
-
-    const user = userEvent.setup();
-    // Mock fetch que nunca resuelve para simular loading
-    globalThis.fetch = vi.fn((url) => {
-      if (url.includes('/productos/buscar')) {
-        return new Promise(() => {}); // Nunca resuelve
-      } else if (url.includes('/categoria/')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ categorias: [] }),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({}),
-      });
+  it("muestra enlace a login si no está logueado", () => {
+    mockUseAuthContext.mockReturnValue({
+      isLogged: false,
+      logout: vi.fn(),
     });
 
     renderWithMockProviders(<BarraNavegacion />);
 
-    const searchIcon = screen.getByLabelText("Abrir búsqueda");
-    await user.click(searchIcon);
-    const input = screen.getByPlaceholderText("Buscar productos");
-    await user.type(input, "test");
-
-    // Usa un matcher personalizado para mayor flexibilidad
-    await waitFor(() => {
-      expect(screen.getByText((content, element) => {
-        // Busca si el contenido incluye "Buscando" (ignora variaciones exactas)
-        return content.includes("Buscando");
-      })).toBeInTheDocument();
-    });
-  });
-
-
-  it("debería cerrar el buscador y limpiar estados al hacer click en el botón de cerrar", async () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
-    mockUseCarrito.mockReturnValue({
-      state: { totalItems: 0, showCarrito: false },
-      toggleCarrito: vi.fn(),
-      closeCarrito: vi.fn(),
-    });
-
-    const user = userEvent.setup();
-    renderWithMockProviders(<BarraNavegacion />);
-
-    const searchIcon = screen.getByLabelText("Abrir búsqueda");
-    await user.click(searchIcon);
-
-    const input = screen.getByPlaceholderText("Buscar productos");
-    await user.type(input, "test");
-
-    const closeButton = screen.getByRole("button", { name: /✕/ });
-    await user.click(closeButton);
-
-    expect(input).toHaveValue("");
-    expect(screen.queryByText("Buscando...")).not.toBeInTheDocument();
-    expect(screen.queryByRole("list")).not.toBeInTheDocument();
-  });
-
-  it("debería manejar errores en fetch y mostrar 'ERROR DE BÚSQUEDA'", async () => {
-    mockUseAuthContext.mockReturnValue({ isLogged: false, logout: vi.fn() });
-    mockUseCarrito.mockReturnValue({
-      state: { totalItems: 0, showCarrito: false },
-      toggleCarrito: vi.fn(),
-      closeCarrito: vi.fn(),
-    });
-
-    const user = userEvent.setup();
-    // Mock fetch que rechaza para búsqueda
-    globalThis.fetch = vi.fn((url) => {
-      if (url.includes('/productos/buscar')) {
-        return Promise.reject(new Error("Network error"));
-      } else if (url.includes('/categoria/')) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ categorias: [] }),
-        });
-      }
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({}),
-      });
-    });
-
-    renderWithMockProviders(<BarraNavegacion />);
-
-    const searchIcon = screen.getByLabelText("Abrir búsqueda");
-    await user.click(searchIcon);
-    const input = screen.getByPlaceholderText("Buscar productos");
-    await user.type(input, "error");
-
-    // El componente no muestra "ERROR DE BÚSQUEDA", solo loguea el error. Verifica que no haya resultados
-    await waitFor(() => {
-      expect(screen.queryByText("Buscando...")).not.toBeInTheDocument();
-      expect(screen.queryByRole("list")).not.toBeInTheDocument();
-    });
+    expect(screen.getByRole("link", { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 });

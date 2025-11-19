@@ -1,13 +1,12 @@
 import React from "react";
-import { renderWithProviders, screen } from "../../../test/test-utils";
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { renderWithMockProviders, screen, mockUseAuthContext } from "../../../test/test-utils";
 import userEvent from "@testing-library/user-event";
 import PerfilUser from "../PerfilUser";
-import { useAuthContext } from "../../contexts/AuthContext";
 
-// Mock useAuthContext
-vi.mock("../../contexts/AuthContext", () => ({
-  useAuthContext: vi.fn(),
+// Mock useAuthContext usando el de test-utils
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext,
 }));
 
 // Mock useNavigate
@@ -17,6 +16,7 @@ vi.mock("react-router-dom", async () => {
   return {
     ...actual,
     useNavigate: () => mockNavigate,
+    Link: ({ to, children }) => <a href={to}>{children}</a>,
   };
 });
 
@@ -43,69 +43,94 @@ const mockFetchError = (error) =>
 const mockFetchNetworkError = () =>
   global.fetch.mockRejectedValueOnce(new Error("Error de red"));
 
-afterEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("PerfilUser Component", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    
+    // Configura mocks por defecto para AuthContext
+    mockUseAuthContext.mockReturnValue({
+      isLogged: false,
+      isOwner: false,
+      userRole: "cliente",
+    });
+    
+    // Mock por defecto para fetch (perfil)
+    global.fetch = vi.fn((url) => {
+      if (url.includes('/usuarios/perfil')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({}),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+      });
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("muestra 'Cargando perfil...' mientras se obtienen los datos", () => {
-    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
-    renderWithProviders(<PerfilUser />);
+    mockUseAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
+    renderWithMockProviders(<PerfilUser />);
     expect(screen.getByText(/cargando perfil/i)).toBeInTheDocument();
   });
 
   it("muestra los datos del usuario cuando fetch es exitoso", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
     mockFetchSuccess();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     expect(await screen.findByText(/rocío albarracín/i)).toBeInTheDocument();
     expect(screen.getByText(/género: femenino/i)).toBeInTheDocument();
     expect(screen.getByText(/email: rocio@example.com/i)).toBeInTheDocument();
   });
 
   it("muestra mensaje de error si la API devuelve error", async () => {
-    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
     mockFetchError("Usuario no encontrado");
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     expect(await screen.findByText("Usuario no encontrado")).toBeInTheDocument();
   });
 
   it("muestra mensaje de error si fetch falla por red", async () => {
-    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
     mockFetchNetworkError();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     expect(await screen.findByText(/no se pudo obtener los datos del usuario/i)).toBeInTheDocument();
   });
 
   it("muestra botón 'Cambiar Contraseña' si está logueado", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
     mockFetchSuccess();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     expect(await screen.findByRole("button", { name: /cambiar contraseña/i })).toBeInTheDocument();
   });
 
   it("no muestra botón 'Cambiar Contraseña' si no está logueado", async () => {
-    useAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: false, isOwner: false, userRole: "cliente" });
     mockFetchSuccess();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     await screen.findByText(/rocío albarracín/i);
     expect(screen.queryByRole("button", { name: /cambiar contraseña/i })).not.toBeInTheDocument();
   });
 
   it("navega a '/cambiar-contrasena' al hacer clic en 'Cambiar Contraseña'", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
     mockFetchSuccess();
     const user = userEvent.setup();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     const button = await screen.findByRole("button", { name: /cambiar contraseña/i });
     await user.click(button);
     expect(mockNavigate).toHaveBeenCalledWith("/cambiar-contrasena");
   });
 
   it("muestra opciones de Dueño si isOwner es true", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: true, userRole: "dueño" });
+    mockUseAuthContext.mockReturnValue({ isLogged: true, isOwner: true, userRole: "dueño" });
     mockFetchSuccess();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     expect(await screen.findByText(/Opciones de Dueño/i)).toBeInTheDocument();
     expect(screen.getByText(/Registrar Nuevo Empleado/i)).toBeInTheDocument();
     expect(screen.getByText(/Gestión promociones/i)).toBeInTheDocument();
@@ -114,9 +139,9 @@ describe("PerfilUser Component", () => {
   });
 
   it("no muestra opciones de Dueño ni Empleado si no aplica", async () => {
-    useAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
+    mockUseAuthContext.mockReturnValue({ isLogged: true, isOwner: false, userRole: "cliente" });
     mockFetchSuccess();
-    renderWithProviders(<PerfilUser />);
+    renderWithMockProviders(<PerfilUser />);
     await screen.findByText(/rocío albarracín/i);
     expect(screen.queryByText(/Opciones de Dueño/i)).not.toBeInTheDocument();
   });
