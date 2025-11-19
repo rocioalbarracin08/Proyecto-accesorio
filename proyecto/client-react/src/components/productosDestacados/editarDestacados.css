@@ -27,7 +27,77 @@
     color: #721c24;
   }
   
-  .busqueda-seccion {
+  /* Botones de filtro */
+.filter-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 12px 24px;
+  border: 2px solid #cd7f7f;
+  background-color: #f4e1e1;
+  color: #6a4f4f;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background-color: #e6ccc8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(205, 127, 127, 0.3);
+}
+
+.filter-btn.active {
+  background-color: #cd7f7f;
+  color: white;
+  box-shadow: 0 4px 12px rgba(205, 127, 127, 0.5);
+}
+
+.filter-btn.top-ventas.active {
+  background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+  border-color: #DAA520;
+  color: #6a4f4f;
+}
+
+.filter-btn.top-ventas:hover {
+  background: linear-gradient(135deg, #FFE700 0%, #FFD700 100%);
+}
+
+/* Info sobre top ventas */
+.info-top-ventas {
+  background: linear-gradient(135deg, #fffbf0 0%, #fff8e7 100%);
+  border-left: 4px solid #FFD700;
+  border-radius: 6px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #6a4f4f;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.info-top-ventas strong {
+  color: #cd7f7f;
+}
+
+.busqueda-seccion {
     margin-bottom: 20px;
     position: relative;
   }
@@ -57,9 +127,26 @@
   .producto-item {
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #eee;
     gap: 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .producto-item:hover {
+    background-color: #fafafa;
+  }
+
+  .producto-item.top-ventas-item {
+    background: linear-gradient(135deg, #fffbf0 0%, #fff8e7 100%);
+    border-left: 4px solid #FFD700;
+    border-radius: 8px;
+  }
+
+  .producto-item.top-ventas-item:hover {
+    background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
+    box-shadow: 0 2px 8px rgba(218, 165, 32, 0.3);
   }
   
   .producto-img {
@@ -71,25 +158,58 @@
   
   .producto-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
   
   .producto-nombre {
     font-weight: bold;
+    color: #333;
   }
   
   .producto-precio {
     color: #28a745;
+    font-weight: 600;
   }
   
   .producto-stock {
-    font-size: 14px;
+    font-size: 13px;
     color: #6c757d;
+  }
+
+  .producto-ventas {
+    font-size: 13px;
+    color: #cd7f7f;
+    font-weight: 600;
+  }
+
+  .no-productos {
+    text-align: center;
+    color: #6c757d;
+    padding: 40px 20px;
+    font-size: 16px;
   }
   
   .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .checkbox-label:hover {
+    background-color: #e8e8e8;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
   }
 
  

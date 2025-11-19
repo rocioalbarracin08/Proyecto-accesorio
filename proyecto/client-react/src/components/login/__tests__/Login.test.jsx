@@ -1,103 +1,132 @@
 import React from "react";
-import { renderWithProviders, screen, fireEvent, waitFor } from "../../../test/test-utils";
-import { vi, describe, it, expect } from "vitest";
+import { renderWithMockProviders, screen, userEvent, waitFor, mockUseAuthContext } from "../../test/test-utils";  // Ruta corregida: sube 2 niveles a src/, luego test/
+import { vi, describe, it, beforeEach } from "vitest";
 import { Login } from "../Login";
 
-// Mockea el hook/contexto para evitar dependencias reales. Necesario si Login usa useAuthContext.
-vi.mock("../../contexts/AuthContext", () => ({
-  useAuthContext: () => ({ login: vi.fn() }),
-}));
+// Mocks observables
+const mockNavigate = vi.fn();
+const mockLogin = vi.fn();
+
+// Mock de react-router-dom (useNavigate + Link sencilla)
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    Link: ({ to, children }) => <a href={to}>{children}</a>,
+  };
+});
+
+// Reemplazamos el hook local useAuth para que setEmail/setContraseña actualicen estado real
+vi.mock("../../hooks/useAuth", () => {
+  const React = require("react");
+  return {
+    default: () => {
+      const [email, setEmail] = React.useState("");
+      const [contraseña, setContraseña] = React.useState("");
+      const [error, setError] = React.useState(false);
+      return { email, setEmail, contraseña, setContraseña, error, setError };
+    },
+  };
+});
 
 describe("Login Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock básico para fetches generales (incluyendo /usuarios/perfil en AuthProvider)
-    global.fetch = vi.fn((url) => {
-      if (url.includes("/usuarios/perfil")) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ id_usuario: 1 }),
-        });
-      }
-      // Valor por defecto para evitar errores en otras llamadas
-      return Promise.resolve({
+    
+    // Sobrescribimos el mock de useAuthContext para que login sea observable
+    // mockUseAuthContext viene de test-utils; lo configuramos aquí
+    mockUseAuthContext.mockReturnValue({ 
+      login: mockLogin,  // Función mockeada para verificar llamadas
+      logout: vi.fn(), 
+      isLogged: false,
+      userRole: null,  // Agregado por si el componente lo usa
+      authChecked: true  // Agregado por consistencia
+    });
+
+    // Mock global para fetch (neutro por defecto; tests lo sobrescriben si necesitan)
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
         ok: true,
         json: async () => ({}),
-      });
-    });
+      })
+    );
   });
 
-  it("Renderiza formulario y botón", () => {
-    renderWithProviders(<Login />);
-    // Queries accesibles. getByRole es preferible para botones. Necesarios para seleccionar elementos.
+  it("renderiza inputs y botón", () => {
+    renderWithMockProviders(<Login />);
     expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/contraseña/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 
-  it("Muestra error si email o contraseña están vacíos al hacer click", async () => {
-    renderWithProviders(<Login />);
-    fireEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
-    expect(screen.getByText(/por favor, complete todos los campos/i)).toBeInTheDocument();
+  it("muestra mensaje de error si email o contraseña están vacíos al hacer click", async () => {
+    renderWithMockProviders(<Login />);
+    await userEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/por favor, complete todos los campos/i)).toBeInTheDocument();
+    });
   });
 
-  it("muestra error si la contraseña es incorrecta", async () => {
-    // Reasigna fetch para mockear específicamente /usuarios/login
+  it("muestra error cuando la API responde contraseña incorrecta", async () => {
+    // Sobrescribimos fetch para simular error de contraseña
     global.fetch = vi.fn((url) => {
-      if (url.includes("/usuarios/perfil")) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ id_usuario: 1 }),
-        });
-      }
-      if (url.includes("/usuarios/login")) {
+      if (String(url).includes("/usuarios/login")) {
         return Promise.resolve({
           ok: false,
           json: async () => ({ error: "La contraseña es incorrecta" }),
         });
       }
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({}),
-      });
+      return Promise.resolve({ ok: true, json: async () => ({}) });
     });
 
-    renderWithProviders(<Login />);
-    fireEvent.change(screen.getByPlaceholderText(/email/i), { target: { value: "test@mail.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: "wrongpass" } });
-    fireEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
+    renderWithMockProviders(<Login />);
+    await userEvent.type(screen.getByPlaceholderText(/email/i), "test@mail.com");
+    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), "wrongpass");
+    await userEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/contraseña incorrecta/i)).toBeInTheDocument();
     });
   });
 
-  it("muestra error si hay problema de conexión", async () => {
-    // Reasigna fetch para mockear específicamente /usuarios/login con error de red
+  it("muestra error cuando la petición falla (network error)", async () => {
+    // Sobrescribimos fetch para simular error de red
     global.fetch = vi.fn((url) => {
-      if (url.includes("/usuarios/perfil")) {
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ id_usuario: 1 }),
-        });
-      }
-      if (url.includes("/usuarios/login")) {
+      if (String(url).includes("/usuarios/login")) {
         return Promise.reject(new Error("Network error"));
       }
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({}),
-      });
+      return Promise.resolve({ ok: true, json: async () => ({}) });
     });
 
-    renderWithProviders(<Login />);
-    fireEvent.change(screen.getByPlaceholderText(/email/i), { target: { value: "test@mail.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/contraseña/i), { target: { value: "123456" } });
-    fireEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
+    renderWithMockProviders(<Login />);
+    await userEvent.type(screen.getByPlaceholderText(/email/i), "test@mail.com");
+    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), "123456");
+    await userEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/error de conexión con el servidor/i)).toBeInTheDocument();
     });
   });
-  it("Redireccion a home si hay login exitoso",()=>{})
+
+  it("llama a login() y navega a / cuando el login es exitoso", async () => {
+    // Sobrescribimos fetch para simular éxito
+    global.fetch = vi.fn((url) => {
+      if (String(url).includes("/usuarios/login")) {
+        return Promise.resolve({ ok: true });
+      }
+      return Promise.resolve({ ok: true, json: async () => ({}) });
+    });
+
+    renderWithMockProviders(<Login />);
+    await userEvent.type(screen.getByPlaceholderText(/email/i), "ok@mail.com");
+    await userEvent.type(screen.getByPlaceholderText(/contraseña/i), "correctpass");
+    await userEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
+
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalled();  // Verifica que login() del contexto se llamó
+      expect(mockNavigate).toHaveBeenCalledWith("/");  // Verifica navegación
+    });
+  });
 });

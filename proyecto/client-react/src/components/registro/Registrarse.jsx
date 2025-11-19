@@ -1,6 +1,6 @@
 import useAuth from "../../hooks/useAuth";
 import "./register.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";  // Ícono para errores
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,61 @@ export function Registrarse() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
+  // Referencias para los inputs
+  const nombreRef = useRef(null);
+  const apellidoRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const repeatPasswordRef = useRef(null);
+
+  // Función para manejar Enter en nombre: enfoca apellido
+  const handleNombreKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (apellidoRef.current) {
+        apellidoRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en apellido: enfoca email
+  const handleApellidoKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (emailRef.current) {
+        emailRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en email: enfoca password
+  const handleEmailKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (passwordRef.current) {
+        passwordRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en password: enfoca repeatPassword
+  const handlePasswordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (repeatPasswordRef.current) {
+        repeatPasswordRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en repeatPassword: ejecuta submit
+  const handleRepeatPasswordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleClick(e); // Llama a handleClick directamente
+    }
+  };
 
   // Función para validar email
   const validarEmail = (email) => {
@@ -143,28 +198,36 @@ export function Registrarse() {
         )}
         <form className="formularioRegister">
           <input
+            ref={nombreRef}
             type="text"
             placeholder="Nombre"
             onChange={handleInputUsuario}
+            onKeyDown={handleNombreKeyDown}  // Maneja Enter aquí
             value={usuarioName}
           />
           <input
+            ref={apellidoRef}
             type="text"
             placeholder="Apellido"
             onChange={(e) => setUsuarioApellido(e.target.value)}
+            onKeyDown={handleApellidoKeyDown}  // Maneja Enter aquí
             value={usuarioApellido}
           />
           <input
+            ref={emailRef}
             type="email"
             placeholder="Email"
             onChange={(event) => setEmail(event.target.value)}
+            onKeyDown={handleEmailKeyDown}  // Maneja Enter aquí
             value={email}
           />
           <div className="input-password">
             <input
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               placeholder="Cree una contraseña"
               onChange={(event) => setContraseña(event.target.value)}
+              onKeyDown={handlePasswordKeyDown}  // Maneja Enter aquí
               value={contraseña}
             />
             <span onClick={() => setShowPassword((prev) => !prev)} className="span-eye">
@@ -179,9 +242,11 @@ export function Registrarse() {
 
           <div className="input-password">
             <input
+              ref={repeatPasswordRef}
               type={showRepeatPassword ? "text" : "password"}
               placeholder="Repita la contraseña"
               onChange={(event) => setRepetirContraseña(event.target.value)}
+              onKeyDown={handleRepeatPasswordKeyDown}  // Maneja Enter aquí
               value={repetirContraseña}
             />
             <span onClick={() => setShowRepeatPassword((prev) => !prev)} className="span-eye">

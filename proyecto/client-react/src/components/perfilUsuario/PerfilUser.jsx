@@ -59,14 +59,7 @@
              <Link to="/promociones" className="linkPromos">Gestión promociones</Link>
              <Link to="/admin/destacados" className="linkPromos">Editar destacados</Link>
              <Link to="/gestionCategorias" className="linkPromos">Gestión Categorias</Link>
-           </div>
-         )}
-
-         {/* Apartado condicional para empleado */}
-         {userRole === 'empleado' && (
-           <div className="apartado-empleado">
-             <h2>Opciones de Empleado</h2>
-             <Link to="/dashboard-empleado" className="linkPromos">Ir al Dashboard de Empleado</Link>
+             <Link to="/asistencia-empleados" className="linkPromos">GRAFICOS</Link>
            </div>
          )}
        </div>

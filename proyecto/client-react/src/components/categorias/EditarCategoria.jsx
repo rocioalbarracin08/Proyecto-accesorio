@@ -14,10 +14,12 @@ const EditarCategoria = ({ categoria, onCerrar }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/categoria/${categoria.id_category}`, form, { withCredentials: true });
+      const payload = { ...form, activo: form.activo ? 1 : 0 };
+      await axios.put(`http://localhost:5000/categoria/${categoria.id_category}`, payload, { withCredentials: true });
       cargarCategorias();
       onCerrar();
     } catch (err) {
+      console.error(err);
       alert('Error al editar');
     }
   };
@@ -35,7 +37,7 @@ const EditarCategoria = ({ categoria, onCerrar }) => {
           </label>
           <div className="form-buttons">
             <button type="submit" className="btn-submit">Actualizar</button>
-            <button onClick={onCerrar} className="btn-cancel">Cancelar</button>
+            <button type="button" onClick={onCerrar} className="btn-cancel">Cancelar</button>
           </div>
         </form>
       </div>

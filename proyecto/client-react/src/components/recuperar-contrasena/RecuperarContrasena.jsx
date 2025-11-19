@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./recuperarContrasena.css";
 
@@ -8,6 +8,17 @@ export default function RecuperarContrasena() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetUrl, setResetUrl] = useState("");  // Para almacenar la URL del backend
+
+  // Referencia para el input
+  const emailRef = useRef(null);
+
+  // Función para manejar Enter en email: ejecuta submit
+  const handleEmailKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e); // Llama a handleSubmit directamente
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,10 +61,12 @@ export default function RecuperarContrasena() {
       {error && <p className="recuperar-error">{error}</p>}
       <form onSubmit={handleSubmit} className="recuperar-form">
         <input
+          ref={emailRef}
           type="email"
           placeholder="Tu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleEmailKeyDown}  // Maneja Enter
           required
           className="recuperar-input"
         />

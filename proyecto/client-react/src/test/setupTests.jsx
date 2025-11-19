@@ -1,88 +1,61 @@
-// /test/setupTests.jsx - Setup global para Vitest
-// Este archivo se ejecuta antes de todas las pruebas. Aquí van polyfills y configuraciones globales.
-import { expect, afterEach } from "vitest"; // Importa lo básico de Vitest
-import { cleanup } from "@testing-library/react"; // Limpia después de cada test
-import "@testing-library/jest-dom"; // Agrega matchers como toBeInTheDocument
-import "./test-utils.jsx";
+// src/test/setupTests.jsx
+import "@testing-library/jest-dom";
+import { afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import path from "path"
 
-// Limpia el DOM después de cada prueba para evitar interferencias
+
+console.log("setup loaded")
+// Guardar fetch original para restaurarlo
+const originalFetch = globalThis.fetch;
+
+// Limpia el DOM y restaura mocks después de cada prueba
 afterEach(() => {
   cleanup();
+  // Restaurar mocks de vi
+  vi.restoreAllMocks();
+  // Restaurar fetch global al comportamiento por defecto (si no existe, dejar un mock básico)
+  globalThis.fetch = originalFetch ?? vi.fn(() => Promise.resolve({ ok: true, json: async () => ({}) }));
 });
 
-// Polyfill para window.matchMedia (útil para carruseles o componentes que lo usan)
-// Simula la API del navegador para consultas de media (ej. @media queries).
-
+// Polyfills para jsdom si son necesarios (matchMedia, MutationObserver, rAF, localStorage)
 if (typeof window !== "undefined" && !window.matchMedia) {
-  window.matchMedia = function (query) {
+  window.matchMedia = function () {
     return {
       matches: false,
-      media: query,
-      onchange: null,
-      addListener: function () {}, // deprecated
-      removeListener: function () {}, // deprecated
-      addEventListener: function () {},
-      removeEventListener: function () {},
-      dispatchEvent: function () {
-        return false;
-      },
+      addListener() {},
+      removeListener() {},
+      addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() { return false; },
     };
   };
 }
 
-// Polyfill para MutationObserver (si algún componente lo requiere)
-if (
-  typeof window !== "undefined" &&
-  typeof window.MutationObserver === "undefined"
-) {
+if (typeof window !== "undefined" && typeof window.MutationObserver === "undefined") {
   window.MutationObserver = class {
     constructor() {}
     disconnect() {}
     observe() {}
-    takeRecords() {
-      return [];
-    }
+    takeRecords() { return []; }
   };
 }
 
-// Polyfill para requestAnimationFrame (algunas librerías lo esperan)
+console.log("setupTests.jsx loaded from:", __dirname);  // Muestra la ruta real
+
 if (typeof window !== "undefined" && !window.requestAnimationFrame) {
-  window.requestAnimationFrame = function (cb) {
-    return setTimeout(cb, 0);
-  };
-  window.cancelAnimationFrame = function (id) {
-    clearTimeout(id);
-  };
+  window.requestAnimationFrame = function (cb) { return setTimeout(cb, 0); };
+  window.cancelAnimationFrame = function (id) { clearTimeout(id); };
 }
 
-// Stub global para fetch (evita errores si no mockeás fetch en cada test)
-if (typeof globalThis.fetch === "undefined") {
-  globalThis.fetch = async () => ({
-    ok: true,
-    json: async () => ({}),
-    text: async () => "",
-  });
-}
-
-// In your test setup file (e.g., setupTests.ts or a global setup file)
+// Mock localStorage
 const localStorageMock = (() => {
   let store = {};
   return {
-    getItem: (key) => store[key] || null,
-    setItem: (key, value) => {
-      store[key] = value;
-    },
-    removeItem: (key) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
+    getItem: (key) => (store[key] ?? null),
+    setItem: (key, value) => { store[key] = value; },
+    removeItem: (key) => { delete store[key]; },
+    clear: () => { store = {}; },
   };
 })();
-
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-  writable: true, // Make it writable for mocking
-});
-
+Object.defineProperty(window, "localStorage", { value: localStorageMock, writable: true });

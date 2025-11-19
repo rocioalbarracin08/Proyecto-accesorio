@@ -73,7 +73,7 @@ export function AuthProvider({ children }) {
       setIsOwner(false);
       setUserRole(null);
       setLoginTrigger(0);
-      useNavigate("/login")
+      navigate("/login")
     });
   };
 
@@ -87,4 +87,3 @@ export function AuthProvider({ children }) {
 export function useAuthContext() {
   return useContext(AuthContext);
 }
-export { AuthContext };

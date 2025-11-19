@@ -127,9 +127,9 @@
   }
 }
 
-/* Contenedor principal - CORREGIDO A .categorias-container */
-.categorias-container2 {
-  max-width: 600px; /* Reducido de 800px para no estirar */
+/* Contenedor principal - usa la misma apariencia que editarDestacados */
+.categorias-container {
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -140,12 +140,12 @@
   flex-direction: column;
   align-items: center;
   font-family: Arial, sans-serif;
-  width: 90%; /* Limita ancho para no ocupar toda la pantalla */
+  width: 90%;
 }
 
 /* Título */
 .categorias-title {
-  color: rosybrown; /* Rosybrown oscuro */
+  color: #6a4f4f; /* Color más neutro y coherente con editarDestacados */
   margin-bottom: 20px;
   font-size: 2em;
   text-align: center;
@@ -153,19 +153,22 @@
 
 /* Botón de crear categoría */
 .categorias-create-btn {
-  background-color: rosybrown;
-  color: white;
-  border: none;
   padding: 12px 24px;
-  border-radius: 5px;
+  border: 2px solid #cd7f7f;
+  background-color: #f4e1e1;
+  color: #6a4f4f;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
-  transition: 0.3s;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
   margin-bottom: 20px;
 }
 
 .categorias-create-btn:hover {
-  background-color: #bc8f8f;
+  background-color: #e6ccc8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(205, 127, 127, 0.3);
 }
 
 /* Lista de categorías */
@@ -295,6 +298,44 @@
 
 .categoria-btn-delete:disabled {
   background-color: #f0f0f0;
+}
+
+/* ESTILOS ESPECÍFICOS PARA LA VISTA INICIO (DUEÑO) */
+.categorias-container.inicio .categoria-item {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.categorias-container.inicio .categoria-inactiva {
+  /* Color rojo suave y sombra para destacar inactivo */
+  background-color: #ffecec; /* fondo rojizo claro */
+  border-left: 6px solid #e06a6a;
+  opacity: 1; /* quitar la opacidad para que el color quede visible */
+  box-shadow: 0 6px 18px rgba(224, 106, 106, 0.25);
+}
+
+.categorias-container.inicio .categoria-inactiva .categoria-info p {
+  color: #a33; /* texto rojizo */
+}
+
+/* Botón toggle cuando la categoría está inactiva (mostrar como 'Activar' verde) */
+.categorias-container.inicio .categoria-inactiva .categoria-btn-toggle {
+  background: linear-gradient(45deg, #4caf50, #2e7d32);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(46, 125, 50, 0.28);
+}
+
+/* Mejor apariencia general de botones en vista inicio */
+.categorias-container.inicio .categoria-btn {
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 13px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Si el item está activo, el botón toggle se verá de color rosado/rosybrown (desactivar) */
+.categorias-container.inicio .categoria-item:not(.categoria-inactiva) .categoria-btn-toggle {
+  background: linear-gradient(45deg, #A0522D, #8B4513);
+  color: white;
 }
 
 /* Botones al final */

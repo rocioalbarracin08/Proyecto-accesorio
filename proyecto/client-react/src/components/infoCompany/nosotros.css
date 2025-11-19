@@ -135,7 +135,7 @@
   position: relative;
 }
 
-.carrusel-btn {
+.carrusel-btnN {
   background-color: rosybrown;
   color: white;
   border: none;
@@ -148,7 +148,7 @@
   margin: 0 20px;
 }
 
-.carrusel-btn:hover {
+.carrusel-btnN:hover {
   background-color: #bc8f8f;
   transform: scale(1.1);
 }
@@ -230,7 +230,7 @@
     flex-direction: column;
   }
 
-  .carrusel-btn {
+  .carrusel-btnN {
     margin: 10px 0;
   }
 

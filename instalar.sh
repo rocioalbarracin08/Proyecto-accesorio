@@ -5,12 +5,11 @@ pip install flask
 pip install mysql-connector-python
 pip install python-dotenv
 pip install flask-cors
+pip install pymysql pandas matplotlib
 
 #Ojo con estas especificaciones de instalacion
 pip install dotenv
-pip install flask-cors
 pip install werkzeug
 pip install PyJWT
 npm install react-leaflet leaflet
-pip install flask-mail
 pip install Flask-Mail

@@ -1,0 +1,228 @@
+/* ============================================================
+   INDICADOR DE STOCK - GRILLA Y CARRUSEL
+   ============================================================ */
+
+.stock-indicator {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  animation: slideUp 0.3s ease;
+  z-index: 10;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== ÚLTIMAS UNIDADES (Color Dorado) ===== */
+
+.stock-indicator.last-units {
+  background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+  color: #333;
+  border: 2px solid #DAA520;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  font-weight: 700;
+}
+
+.stock-indicator.last-units .stock-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.stock-indicator.last-units .stock-text::before {
+  content: "⚠️";
+  font-size: 1rem;
+}
+
+.stock-indicator.last-units:hover {
+  background: linear-gradient(135deg, #FFC700 0%, #FFB700 100%);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== SIN STOCK (Color Rojo) ===== */
+
+.stock-indicator.out-of-stock {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
+  color: white;
+  border: 2px solid #DC3545;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.stock-indicator.out-of-stock .stock-text::before {
+  content: "✕ ";
+}
+
+.stock-indicator.out-of-stock:hover {
+  background: linear-gradient(135deg, #FF5252 0%, #FF4040 100%);
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.5);
+}
+
+/* ============================================================
+   INFO DE STOCK - DETALLE DE PRODUCTO
+   ============================================================ */
+
+.stock-detail-info {
+  background-color: #f9f9f9;
+  border-left: 4px solid #cd7f7f;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.stock-detail-info h4 {
+  margin: 0 0 0.75rem 0;
+  color: #6a4f4f;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.stock-detail-info p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+/* Dot indicator */
+.dot-green,
+.dot-gold,
+.dot-red {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-green {
+  background-color: #4caf50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.dot-gold {
+  background-color: #FFD700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+}
+
+.dot-red {
+  background-color: #FF6B6B;
+  box-shadow: 0 0 6px rgba(255, 107, 107, 0.5);
+}
+
+/* ===== Stock Available (Verde) ===== */
+
+.stock-available {
+  color: #2e7d32;
+}
+
+.stock-available .dot-green {
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.7);
+}
+
+/* ===== Stock Last Units (Dorado) ===== */
+
+.stock-last-units {
+  color: #B8860B;
+  background-color: rgba(255, 215, 0, 0.08);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  border-left: 3px solid #FFD700;
+  margin: 0.25rem 0;
+}
+
+.stock-last-units .dot-gold {
+  animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  }
+}
+
+/* ===== Stock Empty (Rojo) ===== */
+
+.stock-empty {
+  color: #c62828;
+  background-color: rgba(255, 107, 107, 0.08);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  border-left: 3px solid #FF6B6B;
+
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .stock-indicator {
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .stock-indicator.last-units .stock-text::before {
+    font-size: 0.9rem;
+  }
+
+  .stock-detail-info {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .stock-detail-info h4 {
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stock-indicator {
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .stock-detail-info {
+    border-left-width: 3px;
+    padding: 0.6rem;
+  }
+
+  .dot-green,
+  .dot-gold,
+  .dot-red {
+    width: 8px;
+    height: 8px;
+  }
+}

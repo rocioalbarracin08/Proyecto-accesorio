@@ -144,7 +144,7 @@ return (
             <input
               className="buscador"
               type="text"
-              placeholder="Buscar producto o categoría"
+              placeholder="Buscar productos"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               autoFocus={isSearchOpen}
@@ -165,7 +165,7 @@ return (
           </div>
           {isSearchOpen && (
             loading && resultados.length === 0 ? (
-              <p className="buscador-loading">Buscando...</p>
+              <p className="buscador-empty">Buscando resultados...</p>
             ) : resultados.length > 0 ? (
               <ul className="buscador-dropdown">
                 {resultados.map((prod) => (
@@ -196,8 +196,8 @@ return (
               </ul>
             ) : (
               // No hay resultados y no está buscando
-              busqueda.length >= 2 && (
-                <p className="buscador-empty">No hay resultados por el momento</p>
+              busqueda.length >= 1 && (
+                <p className="buscador-empty">Buscando resultados...</p>
               )
             )
           )}

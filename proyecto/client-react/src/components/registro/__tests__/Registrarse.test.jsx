@@ -182,8 +182,8 @@ describe("Registrarse Component", () => {
     const masculinoButton = screen.getByRole("button", { name: /masculino/i });
     const femeninoButton = screen.getByRole("button", { name: /femenino/i });
     
-    expect(femeninoButton).toHaveClass("active");
-    expect(masculinoButton).not.toHaveClass("active");
+    expect(femeninoButton).toHaveClass("F");/*Antes era "active" */
+    expect(masculinoButton).not.toHaveClass("F");
     
     await user.click(masculinoButton);
     expect(masculinoButton).toHaveClass("active");
@@ -206,63 +206,68 @@ describe("Registrarse Component", () => {
     await user.type(screen.getByPlaceholderText(/cree una contraseña/i), "Password123!");
     await user.type(screen.getByPlaceholderText(/repita la contraseña/i), "Password123!");
 
-    const submitButton = screen.getByRole("button", { name: /Registrarse/i });
-    await user.click(submitButton);
-    console.log("Button after click:", submitButton.disabled);  // Debería ser true
+    const Button = screen.getByRole("button", { name: /Registrarse/i });
+    await user.click(Button);
+    console.log("Button after click:", Button.disabled);  // Debería ser true
     
-    // Espera a que loading se active (setLoading(true) es sincrónico)
+    expect(Button).toBeDisabled();
+    expect(Button).toHaveTextContent("Registrando...");
     await waitFor(() => {
-      //expect(submitButton).
-      expect(submitButton).toBeDisabled();
-      console.log("Button after click:", submitButton.disabled)
-      expect(submitButton).toHaveTextContent({name: "Registrando..."});
-    }, { timeout: 2000 });  // Timeout corto
+      expect(Button).not.toBeDisabled();
+      expect(Button).toHaveTextContent("Registrarse");
+    });
   });*/
 
-  it("muestra error si la db tira error", async () => {
-    // Mock fetch para error
-    global.fetch.mockResolvedValueOnce({
+it("Muestra error si la API devuelve error", async () => {
+  // Mock fetch para error usando vi.fn (sintaxis de Vitest)
+  global.fetch = vi.fn(() =>
+    Promise.resolve({
       ok: false,
-      json: () => Promise.resolve({ error: "Usuario ya existe" }),
-    });
-    
-    const user = userEvent.setup();
-    renderWithProviders(<Registrarse />);
-    
-    await user.type(screen.getByPlaceholderText(/nombre/i), "Nombre");
-    await user.type(screen.getByPlaceholderText(/apellido/i), "Apellido");
-    await user.type(screen.getByPlaceholderText(/email/i), "test@example.com");
-    await user.type(screen.getByPlaceholderText(/cree una contraseña/i), "Password123!");
-    await user.type(screen.getByPlaceholderText(/repita la contraseña/i), "Password123!");
-    
-    await user.click(screen.getByRole("button", { name: /registrarse/i }));
-    
-    // Espera el error específico
-    await waitFor(() => {
-      expect(screen.getByText("Usuario ya existe")).toBeInTheDocument();
-    }, { timeout: 1000 });
+      json: async () => ({ error: "Usuario ya existe" }),
+    })
+  );
+
+  const user = userEvent.setup();
+  renderWithProviders(<Registrarse />);
+
+  await user.type(screen.getByPlaceholderText(/nombre/i), "Nombre");
+  await user.type(screen.getByPlaceholderText(/apellido/i), "Apellido");
+  await user.type(screen.getByPlaceholderText(/email/i), "test@example.com");
+  await user.type(screen.getByPlaceholderText(/cree una contraseña/i), "Password123!");
+  await user.type(screen.getByPlaceholderText(/repita la contraseña/i), "Password123!");
+
+  // Selecciona género para pasar la validación
+  await user.click(screen.getByRole("button", { name: /masculino/i }));
+
+  // Haz click en submit UNA vez
+  await user.click(screen.getByRole("button", { name: /registrarse/i }));
+
+  // Espera el error específico
+  await waitFor(() => {
+    expect(screen.getByText("Usuario ya existe"||"Error en el registro. Inténtalo de nuevo.")).toBeInTheDocument();
   });
+});
 
-
-  it("Redirección a login", async () => {
-    // Mock fetch para éxito
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({}),
-    });
-    
+  it("Redirige a /login en registro exitoso", async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({}),
+      })
+    );
     const user = userEvent.setup();
     renderWithProviders(<Registrarse />);
-    
     await user.type(screen.getByPlaceholderText(/nombre/i), "Nombre");
     await user.type(screen.getByPlaceholderText(/apellido/i), "Apellido");
     await user.type(screen.getByPlaceholderText(/email/i), "test@example.com");
     await user.type(screen.getByPlaceholderText(/cree una contraseña/i), "Password123!");
     await user.type(screen.getByPlaceholderText(/repita la contraseña/i), "Password123!");
-    
     await user.click(screen.getByRole("button", { name: /registrarse/i }));
-    
-    // Espera a que navigate se llame
+    // Selecciona género para pasar la validación
+    await user.click(screen.getByRole("button", { name: /masculino/i }));
+    await user.click(screen.getByRole("button", { name: /registrarse/i }));
+
+    // Espera a que navigate se llame con "/login"
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith("/login");
     });

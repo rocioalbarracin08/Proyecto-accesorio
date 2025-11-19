@@ -113,6 +113,18 @@ const carritoReducer = (state, action) => {
     //Vacía el carrito completamente.
     case 'CLEAR_CART':
       return { ...initialState, showCarrito: state.showCarrito };  // Limpia items, mantiene modal
+
+    case 'UPDATE_ITEM':
+      // payload: { productoId, updates }
+      const { productoId: upId, updates } = action.payload || {};
+      if (!upId || !state.items[upId]) return state;
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [upId]: { ...state.items[upId], ...updates }
+        }
+      };
     
     //abre el modal de carrito
     case 'OPEN_CART':
@@ -153,6 +165,17 @@ export const CarritoProvider = ({ children }) => {
             //para activar toda la lógica del reducer
           }
         });
+        // Restaurar metadatos de items (ej. selectedColor) que no se aplican al añadir repetido
+        Object.keys(parsed.items || {}).forEach(id => {
+          const item = parsed.items[id];
+          const updates = {};
+          Object.keys(item || {}).forEach(k => {
+            if (k !== 'producto' && k !== 'cantidad') updates[k] = item[k];
+          });
+          if (Object.keys(updates).length > 0) {
+            dispatch({ type: 'UPDATE_ITEM', payload: { productoId: id, updates } });
+          }
+        });
       } catch (e) {
         //Captura cualquier error si JSON.parse falla o si los datos están mal.
         console.error('Error cargando carrito:', e);
@@ -185,6 +208,11 @@ export const CarritoProvider = ({ children }) => {
     }
   };
 
+  // Actualiza campos arbitrarios de un item (por ejemplo: selectedColor)
+  const updateItem = (productoId, updates) => {
+    dispatch({ type: 'UPDATE_ITEM', payload: { productoId, updates } });
+  };
+
   //abre el carrito cuando se presiona el boton "agregar al carrito"
   const openCarrito = () => dispatch({ type: 'OPEN_CART' });
   //Elimina el producto
@@ -199,7 +227,7 @@ export const CarritoProvider = ({ children }) => {
 
   return (
     //Esto provee el contexto (los datos y funciones del carrito) a todos los componentes hijos
-    <CarritoContext.Provider value={{ state, addItem, updateQuantity, removeItem, openCarrito, toggleCarrito, closeCarrito, clearCart }}>
+    <CarritoContext.Provider value={{ state, addItem, updateQuantity, updateItem, removeItem, openCarrito, toggleCarrito, closeCarrito, clearCart }}>
       {children}
     </CarritoContext.Provider>
   );
@@ -214,4 +242,4 @@ export const useCarrito = () => { //custom hook que facilita acceder al contexto
   }
   return context;
 };
-export { CarritoContext };
+//export { CarritoContext };

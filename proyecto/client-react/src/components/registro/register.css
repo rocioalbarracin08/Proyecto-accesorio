@@ -180,14 +180,16 @@
   @media (max-width: 600px) {
     .section-register {
       max-width: 90%;
+      height: 100%;
       padding: 2rem;
       min-height: 60vh;
       gap: 1rem;
     }
   
-    .formularioRegister {
+    .formularioRegister .input-password {
       width: 100%;
       gap: 1rem;
+      align-items: center;
     }
   
     .h1-register {

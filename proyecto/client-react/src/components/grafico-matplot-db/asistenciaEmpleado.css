@@ -1,0 +1,113 @@
+/* AsistenciaEmpleados.css */
+
+.asistencia-empleados {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fefefe; /* Fondo suave y limpio */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(188, 143, 143, 0.2); /* Sombra sutil en rosybrown */
+  font-family: 'Arial', sans-serif;
+  color: #5a4a4a; /* Texto en tono marrón suave */
+  transition: box-shadow 0.3s ease; /* Transición corta para hover en contenedor */
+}
+
+.asistencia-empleados:hover {
+  box-shadow: 0 6px 16px rgba(188, 143, 143, 0.3); /* Sombra más intensa al hover */
+}
+
+.asistencia-empleados h1 {
+  text-align: center;
+  color: #bc8f8f; /* Rosybrown principal */
+  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.selector-periodo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.selector-periodo label {
+  font-weight: 600;
+  color: #8b6b6b; /* Tono más oscuro de rosybrown */
+}
+
+.selector-periodo select {
+  padding: 8px 12px;
+  border: 2px solid #bc8f8f;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #5a4a4a;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transición corta */
+}
+
+.selector-periodo select:hover,
+.selector-periodo select:focus {
+  border-color: #f08080; /* Lightcoral para hover */
+  box-shadow: 0 0 8px rgba(240, 128, 128, 0.3);
+  outline: none;
+}
+
+.grafico-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.grafico-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(188, 143, 143, 0.2);
+  transition: transform 0.3s ease; /* Transición corta para zoom sutil */
+}
+
+.grafico-container img:hover {
+  transform: scale(1.02); /* Zoom leve al hover */
+}
+
+.btn-volver {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #bc8f8f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Transición corta */
+}
+
+.btn-volver:hover {
+  background-color: #f08080; /* Lightcoral para hover */
+  transform: translateY(-2px); /* Elevación sutil */
+}
+
+.btn-volver:active {
+  transform: translateY(0); /* Reset al click */
+}
+
+/* Responsividad básica */
+@media (max-width: 768px) {
+  .asistencia-empleados {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  .asistencia-empleados h1 {
+    font-size: 1.5rem;
+  }
+
+  .selector-periodo {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

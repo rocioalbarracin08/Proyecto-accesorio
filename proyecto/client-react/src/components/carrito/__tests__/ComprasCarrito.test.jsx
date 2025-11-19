@@ -2,7 +2,7 @@ import React from "react";
 import { renderWithProviders, screen } from "../../../test/test-utils"; // Usamos renderWithProviders para incluir CarritoProvider
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event"; // Para interacciones realistas
-import { ComprasCarrito } from "../ComprasCarrito"; // Importamos el componente
+import  ComprasCarrito  from "../ComprasCarrito"; // Importamos el componente
 
 // Mockeamos useNavigate para controlar navegación
 const mockNavigate = vi.fn();
