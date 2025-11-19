@@ -11,7 +11,7 @@ const PromocionesContext = React.createContext();
 // Mocks exportables para controlar el comportamiento desde tests
 export const mockUseAuthContext = vi.fn(() => ({
   isLogged: false,
-  userRole: null,
+  userRole: null, //Lo podemos modificar según nuestras necesidades
   authChecked: true,
   logout: vi.fn(),
 }));
