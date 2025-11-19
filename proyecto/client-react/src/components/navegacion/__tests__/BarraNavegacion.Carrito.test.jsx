@@ -1,11 +1,37 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderWithMockProviders, screen, userEvent } from "../../../test/test-utils";
+import { renderWithMockProviders, screen, userEvent, mockUseAuthContext, mockUseCarrito } from "../../../test/test-utils";
 import { BarraNavegacion } from "../Navegacion";
-import { mockUseCarrito } from "../../../test/test-utils"; // Importa el mock del carrito
+
+// Mocks para los contextos (necesarios para que el componente use los mocks en lugar de los hooks reales)
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext,
+}));
+
+vi.mock("../../../contexts/CarritoContext", () => ({
+  useCarrito: mockUseCarrito,
+}));
+
+// Si CarruselPromociones usa PromocionesContext, mockéalo también (aunque no se use directamente en BarraNavegacion)
+vi.mock("../../../contexts/PromocionesContext", () => ({
+  usePromociones: () => ({
+    promociones: [],
+    loading: false,
+    error: null,
+  }),
+}));
 
 describe("BarraNavegacion - Botón Carrito", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Configura mocks por defecto para AuthContext (ajusta según necesidades del test)
+    mockUseAuthContext.mockReturnValue({
+      isLogged: false,
+      userRole: null,
+      authChecked: true,
+      logout: vi.fn(),
+    });
+    
     // Mock fetch para evitar llamadas reales (perfil y categorías)
     global.fetch = vi.fn(() =>
       Promise.resolve({
@@ -41,18 +67,22 @@ describe("BarraNavegacion - Botón Carrito", () => {
       closeCarrito: vi.fn(),
     });
 
-    // Mock completamente válido
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        json: async () => ({ categorias: [] }),
-      })
-    );
-
+    // Mock fetch para cubrir perfil y categorías (devuelve datos vacíos o básicos para evitar errores)
+    global.fetch = vi.fn((url) => {
+      if (url.includes("/usuarios/perfil")) {
+        return Promise.resolve({ json: async () => ({ nombre: "Usuario" }) });
+      }
+      if (url.includes("/categoria/")) {
+        return Promise.resolve({ json: async () => [] });  // Categorías vacías
+      }
+      return Promise.resolve({ json: async () => ({}) });
+    });
     renderWithMockProviders(<BarraNavegacion />);
     
-    const carritoButton = screen.getByRole("button", { name: /Ver carrito/i, exact: false });
-    //El buscador de roles de Testing Library a veces necesita exact: false cuando hay dinámica en labels.
+    // Cambia el selector: usar getByAltText para la imagen dentro del botón (más confiable que el aria-label dinámico)
+    const carritoButton = screen.getByAltText("Ícono de carrito de compras");
     await user.click(carritoButton);
+    
     
     // Verifica que se llame a toggle
     expect(mockToggle).toHaveBeenCalled();
