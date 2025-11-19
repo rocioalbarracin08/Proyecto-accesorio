@@ -5,11 +5,9 @@ import './login.css';
 import { useState, useRef } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFormKeyboardNavigation } from '../../hooks/useFormKeyboardNavigation';
 
 export function Login() {
-  const { email, setEmail, contraseña, setContraseña, error, setError } =
-    useAuth();
+  const { email, setEmail, contraseña, setContraseña, error, setError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(""); // Aquí guardamos el error
   const navigate = useNavigate();
@@ -18,16 +16,15 @@ export function Login() {
   // Referencias para los inputs
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
-  const buttonRef = useRef(null);
-
-  // Hook de navegación con Enter
-  useFormKeyboardNavigation([emailRef, passwordRef], () => {
-    handleClick({ preventDefault: () => {} });
-  });
 
   const handleClick = async (event) => {
     event.preventDefault();
-    if (email === "" || contraseña === "") {
+    
+    // Debug: imprime los valores para verificar si llegan correctamente
+    console.log("Email:", email, "Contraseña:", contraseña);
+    
+    // Validación con trim() para ignorar espacios
+    if (email.trim() === "" || contraseña.trim() === "") {
       setError(true);
       setLoginError("");
       return;
@@ -40,15 +37,15 @@ export function Login() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
-          password: contraseña,
+          email: email.trim(), // Envía sin espacios
+          password: contraseña.trim(),
         }),
         credentials: "include",
       });
 
       if (response.ok) {
-        login(); // Llama a login() del contexto (ahora incrementa el trigger)
-        navigate("/"); // Navega a home (el useEffect se ejecutará por el trigger y redirigirá si es empleado)
+        login(); // Llama a login() del contexto
+        navigate("/"); // Navega a home
       } else {
         const data = await response.json();
         if (data && data.error === "La contraseña es incorrecta") {
@@ -65,18 +62,37 @@ export function Login() {
     }
   };
 
+  // Función para manejar Enter en email: enfoca password
+  const handleEmailKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (passwordRef.current) {
+        passwordRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en password: ejecuta submit
+  const handlePasswordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleClick(e); // Llama a handleClick directamente
+    }
+  };
+
   return (
     <>
       <section className='section-log'>
         <h1>Bienvenido</h1>
         {error ? <p>Por favor, complete todos los campos</p> : ""}
-        {loginError && <p style={{ color: 'red' }}>{loginError}</p>} {/* Muestra el error si existe */}
+        {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
         <form className='formulario'>
           <input 
             ref={emailRef}
-            type="text" 
+            type="email"  // Cambié a "email" para mejor validación
             placeholder='Email' 
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleEmailKeyDown}  // Maneja Enter aquí
             value={email}
             className='email-input'
           />
@@ -85,7 +101,8 @@ export function Login() {
               ref={passwordRef}
               type={showPassword ? 'text' : 'password'} 
               placeholder='Contraseña' 
-              onChange={event => setContraseña(event.target.value)}
+              onChange={(event) => setContraseña(event.target.value)}
+              onKeyDown={handlePasswordKeyDown}  // Maneja Enter aquí
               value={contraseña}
               className='password-input'
             />

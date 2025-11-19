@@ -1,87 +1,61 @@
-import React from "react";
-import { afterEach } from "vitest"; //Importa lo básico
-import { cleanup } from "@testing-library/react";//Limpia luego de cada test
+// src/test/setupTests.jsx
 import "@testing-library/jest-dom";
-import "@test/setupTests";
+import { afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import path from "path"
 
 
-// Limpia el DOM después de cada prueba
+console.log("setup loaded")
+// Guardar fetch original para restaurarlo
+const originalFetch = globalThis.fetch;
+
+// Limpia el DOM y restaura mocks después de cada prueba
 afterEach(() => {
   cleanup();
-  // Resetea fetch global
-  globalThis.fetch = vi.fn(() => Promise.resolve({ ok: true, json: async () => ({}) }));
+  // Restaurar mocks de vi
+  vi.restoreAllMocks();
+  // Restaurar fetch global al comportamiento por defecto (si no existe, dejar un mock básico)
+  globalThis.fetch = originalFetch ?? vi.fn(() => Promise.resolve({ ok: true, json: async () => ({}) }));
 });
 
-// Polyfill para window.matchMedia
+// Polyfills para jsdom si son necesarios (matchMedia, MutationObserver, rAF, localStorage)
 if (typeof window !== "undefined" && !window.matchMedia) {
-  window.matchMedia = function (query) {
+  window.matchMedia = function () {
     return {
       matches: false,
-      media: query,
-      onchange: null,
-      addListener: function () {},
-      removeListener: function () {},
-      addEventListener: function () {},
-      removeEventListener: function () {},
-      dispatchEvent: function () {
-        return false;
-      },
+      addListener() {},
+      removeListener() {},
+      addEventListener() {},
+      removeEventListener() {},
+      dispatchEvent() { return false; },
     };
   };
 }
 
-// Polyfill para MutationObserver
-if (
-  typeof window !== "undefined" &&
-  typeof window.MutationObserver === "undefined"
-) {
+if (typeof window !== "undefined" && typeof window.MutationObserver === "undefined") {
   window.MutationObserver = class {
     constructor() {}
     disconnect() {}
     observe() {}
-    takeRecords() {
-      return [];
-    }
+    takeRecords() { return []; }
   };
 }
 
-// Polyfill para requestAnimationFrame
+console.log("setupTests.jsx loaded from:", __dirname);  // Muestra la ruta real
+
 if (typeof window !== "undefined" && !window.requestAnimationFrame) {
-  window.requestAnimationFrame = function (cb) {
-    return setTimeout(cb, 0);
-  };
-  window.cancelAnimationFrame = function (id) {
-    clearTimeout(id);
-  };
+  window.requestAnimationFrame = function (cb) { return setTimeout(cb, 0); };
+  window.cancelAnimationFrame = function (id) { clearTimeout(id); };
 }
 
-//Global para fetch
-if (typeof globalThis.fetch === "undefined") {
-  globalThis.fetch = async () => ({
-    ok: true,
-    json: async () => ({}),
-    text: async () => "",
-  });
-}
-
-//Mock para localStorage
+// Mock localStorage
 const localStorageMock = (() => {
   let store = {};
   return {
-    getItem: (key) => store[key] || null,
-    setItem: (key, value) => {
-      store[key] = value;
-    },
-    removeItem: (key) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
+    getItem: (key) => (store[key] ?? null),
+    setItem: (key, value) => { store[key] = value; },
+    removeItem: (key) => { delete store[key]; },
+    clear: () => { store = {}; },
   };
 })();
-
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-  writable: true,
-});
+Object.defineProperty(window, "localStorage", { value: localStorageMock, writable: true });

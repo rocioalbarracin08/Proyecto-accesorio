@@ -3,7 +3,6 @@ import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 import "./cambiarContrasena.css";
 
 export default function CambiarContrasena() {
@@ -26,10 +25,33 @@ export default function CambiarContrasena() {
   const nuevaRef = useRef(null);
   const confirmRef = useRef(null);
 
-  // Hook de navegación con Enter
-  useFormKeyboardNavigation([actualRef, nuevaRef, confirmRef], () => {
-    handleSubmit({ preventDefault: () => {} });
-  });
+  // Función para manejar Enter en actual: enfoca nueva
+  const handleActualKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (nuevaRef.current) {
+        nuevaRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en nueva: enfoca confirm
+  const handleNuevaKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (confirmRef.current) {
+        confirmRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en confirm: ejecuta submit
+  const handleConfirmKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e); // Llama a handleSubmit directamente
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,7 +113,7 @@ export default function CambiarContrasena() {
       <h1>Cambiar Contraseña</h1>
       {mensaje && <p className="mensaje">{mensaje}</p>}
       {error && <p className="error">{error}</p>}
-      <form className="cambiar-form" onSubmit={handleSubmit}noValidate> {/*Para deshabilitar la validación automáticamente del navegador*/}
+      <form className="cambiar-form" onSubmit={handleSubmit} noValidate> {/*Para deshabilitar la validación automáticamente del navegador*/}
         <div className="password-container">
           <input
             ref={actualRef}
@@ -99,6 +121,7 @@ export default function CambiarContrasena() {
             placeholder="Contraseña Actual"
             value={contrasenaActual}
             onChange={(e) => setContrasenaActual(e.target.value)}
+            onKeyDown={handleActualKeyDown}  // Maneja Enter aquí
             required
           />
           <span className="password-toggle-icon" onClick={() => setShowActual(!showActual)}>
@@ -113,6 +136,7 @@ export default function CambiarContrasena() {
             placeholder="Nueva Contraseña"
             value={nuevaContrasena}
             onChange={(e) => setNuevaContrasena(e.target.value)}
+            onKeyDown={handleNuevaKeyDown}  // Maneja Enter aquí
             required
           />
           <span className="password-toggle-icon" onClick={() => setShowNueva(!showNueva)}>
@@ -127,6 +151,7 @@ export default function CambiarContrasena() {
             placeholder="Confirmar Nueva Contraseña"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            onKeyDown={handleConfirmKeyDown}  // Maneja Enter aquí
             required
           />
           <span className="password-toggle-icon" onClick={() => setShowConfirm(!showConfirm)}>

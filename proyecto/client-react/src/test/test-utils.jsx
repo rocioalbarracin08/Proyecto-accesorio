@@ -3,41 +3,12 @@ import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 
-// --------- CONTEXTOS MOCKEADOS DIRECTAMENTE (sin importar nada real) ---------
+// Contexts falsos para los providers de prueba
 const AuthContext = React.createContext();
 const CarritoContext = React.createContext();
 const PromocionesContext = React.createContext();
 
-// --------- HOOKS QUE MOCKEÁS (solo para renderWithProviders) ---------
-vi.mock("../../hooks/useAuth", () => ({
-  default: () => ({
-    usuarioName: "",
-    setUsuarioName: vi.fn(),
-    usuarioApellido: "",
-    setUsuarioApellido: vi.fn(),
-    email: "",
-    setEmail: vi.fn(),
-    contraseña: "",
-    setContraseña: vi.fn(),
-    repetirContraseña: "",
-    setRepetirContraseña: vi.fn(),
-    error: "",
-    setError: vi.fn(),
-  }),
-}));
-
-// --------- RENDER CON PROVIDERS REALES (usa hooks mockeados) ---------
-export function renderWithProviders(ui, { route = "/", ...options } = {}) {
-  const Wrapper = ({ children }) => (
-    <MemoryRouter initialEntries={[route]}>
-      <div>{children}</div> 
-    </MemoryRouter>
-  );
-
-  return render(ui, { wrapper: Wrapper, ...options });
-}
-
-// --------- MOCKS DE CONTEXTOS (para renderWithMockProviders) ----------
+// Mocks exportables para controlar el comportamiento desde tests
 export const mockUseAuthContext = vi.fn(() => ({
   isLogged: false,
   userRole: null,
@@ -57,7 +28,21 @@ export const mockUsePromociones = vi.fn(() => ({
   error: null,
 }));
 
-// --------- RENDER CON PROVIDERS MOCKEADOS (todo mockeado) ---------
+// Re-exports comunes
+export * from "@testing-library/react";
+export { default as userEvent } from "@testing-library/user-event";
+
+// Render con providers reales (si los usas)
+export function renderWithProviders(ui, { route = "/", ...options } = {}) {
+  const Wrapper = ({ children }) => (
+    <MemoryRouter initialEntries={[route]}>
+      <div>{children}</div>
+    </MemoryRouter>
+  );
+  return render(ui, { wrapper: Wrapper, ...options });
+}
+
+// Render con providers mockeados (usa los mocks exportados arriba)
 export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
   const MockAuthProvider = ({ children }) => (
     <AuthContext.Provider value={mockUseAuthContext()}>
@@ -89,7 +74,3 @@ export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
 
   return render(ui, { wrapper: Wrapper, ...options });
 }
-// --------- REEXPORTS ---------
-// eslint-disable-next-line react-refresh/only-export-components
-export * from "@testing-library/react";  // Mantén si quieres, pero considera cambiar a exports explícitos si causa errores
-export { default as userEvent } from "@testing-library/user-event";

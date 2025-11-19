@@ -17,7 +17,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@test": path.resolve(__dirname, "./test"),
+      "@test": path.resolve(__dirname, "./src/test"),
     },
   },
   //para que el fronted pueda comunicarse

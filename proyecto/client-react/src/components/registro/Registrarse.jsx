@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { FaEye, FaEyeSlash, FaExclamationTriangle } from "react-icons/fa";  // Ícono para errores
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 
 export function Registrarse() {
   const navigate = useNavigate();
@@ -36,13 +35,53 @@ export function Registrarse() {
   const passwordRef = useRef(null);
   const repeatPasswordRef = useRef(null);
 
-  // Hook de navegación con Enter
-  useFormKeyboardNavigation(
-    [nombreRef, apellidoRef, emailRef, passwordRef, repeatPasswordRef],
-    () => {
-      handleClick({ preventDefault: () => {} });
+  // Función para manejar Enter en nombre: enfoca apellido
+  const handleNombreKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (apellidoRef.current) {
+        apellidoRef.current.focus();
+      }
     }
-  );
+  };
+
+  // Función para manejar Enter en apellido: enfoca email
+  const handleApellidoKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (emailRef.current) {
+        emailRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en email: enfoca password
+  const handleEmailKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (passwordRef.current) {
+        passwordRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en password: enfoca repeatPassword
+  const handlePasswordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (repeatPasswordRef.current) {
+        repeatPasswordRef.current.focus();
+      }
+    }
+  };
+
+  // Función para manejar Enter en repeatPassword: ejecuta submit
+  const handleRepeatPasswordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleClick(e); // Llama a handleClick directamente
+    }
+  };
 
   // Función para validar email
   const validarEmail = (email) => {
@@ -163,6 +202,7 @@ export function Registrarse() {
             type="text"
             placeholder="Nombre"
             onChange={handleInputUsuario}
+            onKeyDown={handleNombreKeyDown}  // Maneja Enter aquí
             value={usuarioName}
           />
           <input
@@ -170,6 +210,7 @@ export function Registrarse() {
             type="text"
             placeholder="Apellido"
             onChange={(e) => setUsuarioApellido(e.target.value)}
+            onKeyDown={handleApellidoKeyDown}  // Maneja Enter aquí
             value={usuarioApellido}
           />
           <input
@@ -177,6 +218,7 @@ export function Registrarse() {
             type="email"
             placeholder="Email"
             onChange={(event) => setEmail(event.target.value)}
+            onKeyDown={handleEmailKeyDown}  // Maneja Enter aquí
             value={email}
           />
           <div className="input-password">
@@ -185,6 +227,7 @@ export function Registrarse() {
               type={showPassword ? "text" : "password"}
               placeholder="Cree una contraseña"
               onChange={(event) => setContraseña(event.target.value)}
+              onKeyDown={handlePasswordKeyDown}  // Maneja Enter aquí
               value={contraseña}
             />
             <span onClick={() => setShowPassword((prev) => !prev)} className="span-eye">
@@ -203,6 +246,7 @@ export function Registrarse() {
               type={showRepeatPassword ? "text" : "password"}
               placeholder="Repita la contraseña"
               onChange={(event) => setRepetirContraseña(event.target.value)}
+              onKeyDown={handleRepeatPasswordKeyDown}  // Maneja Enter aquí
               value={repetirContraseña}
             />
             <span onClick={() => setShowRepeatPassword((prev) => !prev)} className="span-eye">

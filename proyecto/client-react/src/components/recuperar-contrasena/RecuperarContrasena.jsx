@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useFormKeyboardNavigation } from "../../hooks/useFormKeyboardNavigation";
 import "./recuperarContrasena.css";
 
 export default function RecuperarContrasena() {
@@ -13,10 +12,13 @@ export default function RecuperarContrasena() {
   // Referencia para el input
   const emailRef = useRef(null);
 
-  // Hook de navegación con Enter
-  useFormKeyboardNavigation([emailRef], () => {
-    handleSubmit({ preventDefault: () => {} });
-  });
+  // Función para manejar Enter en email: ejecuta submit
+  const handleEmailKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e); // Llama a handleSubmit directamente
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +66,7 @@ export default function RecuperarContrasena() {
           placeholder="Tu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleEmailKeyDown}  // Maneja Enter
           required
           className="recuperar-input"
         />
