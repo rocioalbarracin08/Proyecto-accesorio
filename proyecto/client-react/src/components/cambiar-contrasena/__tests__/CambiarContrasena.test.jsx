@@ -2,7 +2,7 @@ import React from "react";
 import { renderWithMockProviders, screen, mockUseAuthContext, waitFor } from "../../../test/test-utils";  // Agrega waitFor aquí
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
-import CambiarContrasena  from "../CambiarContrasena";
+import CambiarContrasena from "../CambiarContrasena";
 
 // Mock de useNavigate
 const mockNavigate = vi.fn();
@@ -15,9 +15,11 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-// Mock de useFormKeyboardNavigation
-vi.mock("../../hooks/useFormKeyboardNavigation", () => ({
-  useFormKeyboardNavigation: vi.fn(),
+//OJO CON ESTOOOOOOOOOO IMPORTANTEEEEEEEE
+// Mockea el hook useAuthContext REAL para que siempre devuelva el valor de tu mock
+vi.mock("../../../contexts/AuthContext", () => ({
+  // Asegúrate de que esta ruta sea la ruta correcta a tu archivo useAuthContext.js
+  useAuthContext: mockUseAuthContext, 
 }));
 
 describe("CambiarContrasena Component", () => {
@@ -48,7 +50,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("renderiza el formulario de cambio de contraseña", () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    //mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     renderWithMockProviders(<CambiarContrasena />);
     expect(screen.getByPlaceholderText(/contraseña actual/i)).toBeInTheDocument();
@@ -58,7 +60,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("el botón de envío está habilitado inicialmente", () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     renderWithMockProviders(<CambiarContrasena />);
     const submitButton = screen.getByRole("button", { name: /confirmar cambio/i });
@@ -66,7 +68,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("muestra error si la contraseña actual está vacía", async () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     const user = userEvent.setup();
     renderWithMockProviders(<CambiarContrasena />);
@@ -80,7 +82,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("muestra error si la nueva contraseña está vacía", async () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     const user = userEvent.setup();
     renderWithMockProviders(<CambiarContrasena />);
@@ -94,7 +96,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("muestra error si la nueva contraseña tiene menos de 6 caracteres", async () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     const user = userEvent.setup();
     renderWithMockProviders(<CambiarContrasena />);
@@ -109,7 +111,7 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("muestra error si las contraseñas nuevas no coinciden", async () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     const user = userEvent.setup();
     renderWithMockProviders(<CambiarContrasena />);
@@ -124,8 +126,8 @@ describe("CambiarContrasena Component", () => {
   });
 
   it("cambia contraseña exitosamente y redirige a login", async () => {
-    const mockLogout = vi.fn();
-    mockUseAuthContext.mockReturnValue({ logout: mockLogout });
+    const mockLogout = vi.fn(() => mockNavigate("/login"));  // Simula que logout navega a /login (comportamiento real)
+    mockUseAuthContext.mockReturnValue({ logout: mockLogout });  // Asegura que logout esté definido y simulado
     
     const user = userEvent.setup();
     renderWithMockProviders(<CambiarContrasena />);
@@ -139,12 +141,12 @@ describe("CambiarContrasena Component", () => {
     await waitFor(() => {
       expect(screen.getByText("Contraseña cambiada exitosamente.")).toBeInTheDocument();
       expect(mockLogout).toHaveBeenCalled();  // Verifica que logout se llame
-      expect(mockNavigate).toHaveBeenCalledWith("/login");  // Verifica navegación
+      expect(mockNavigate).toHaveBeenCalledWith("/login");  // Verifica navegación (simulada por mockLogout)
     });
   });
 
   it("muestra error si la API falla", async () => {
-    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });
+    mockUseAuthContext.mockReturnValue({ logout: vi.fn() });  // Asegura que logout esté definido
     
     // Sobrescribe fetch para este test específico
     globalThis.fetch = vi.fn(() =>

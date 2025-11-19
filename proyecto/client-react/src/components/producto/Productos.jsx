@@ -7,7 +7,6 @@ import GestionProductos from "./GestionProducto";  // Para empleados
 import axios from "axios";
 import { Link } from "react-router-dom";  // Agrega esta importación para el enlace al detalle
 import { ProductSort } from "./ProductSort";
-import { ProductStockDetailInfo, ProductStockIndicator } from "./ProductStockIndicator";
 import { CarruselPromociones } from "./CarruselPromociones";
 import "./productos.css";
 
@@ -221,7 +220,6 @@ export function Productos({ includeInactiveForEmployee = false }) {
                     `$${precioFinal.toFixed(2)}`
                   )}
                 </p>
-                <ProductStockDetailInfo stock={producto.stock} className="cartelStock"/>
                 </Link>
                 <button
                   className="agregar-carrito"

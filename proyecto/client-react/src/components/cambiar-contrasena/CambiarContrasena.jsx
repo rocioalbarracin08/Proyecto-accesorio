@@ -93,7 +93,7 @@ export default function CambiarContrasena() {
         setConfirmPassword("");
         // Llamamos a logout para actualizar el estado de autenticación
         logout();
-        navigate("/login");
+        //navigate("/login"); Doble navigate, ya que logout ya lo hace (navegación redundante)
       } else {
         setError(data.error || "Error al cambiar la contraseña.");
         // Corregido: Loguear el error del servidor en lugar de 'err' indefinido
