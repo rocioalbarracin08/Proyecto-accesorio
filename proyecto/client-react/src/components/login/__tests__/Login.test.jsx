@@ -1,5 +1,5 @@
 import React from "react";
-import { renderWithMockProviders, screen, userEvent, waitFor, mockUseAuthContext } from "../../test/test-utils";  // Ruta corregida: sube 2 niveles a src/, luego test/
+import { renderWithMockProviders, screen, userEvent, waitFor, mockUseAuthContext } from "../../../test/test-utils"; 
 import { vi, describe, it, beforeEach } from "vitest";
 import { Login } from "../Login";
 
@@ -15,20 +15,11 @@ vi.mock("react-router-dom", async () => {
     useNavigate: () => mockNavigate,
     Link: ({ to, children }) => <a href={to}>{children}</a>,
   };
-});
+}); //LO USO PARA EL TEST LLAMA LOGIN Y NAVEGA
 
-// Reemplazamos el hook local useAuth para que setEmail/setContraseña actualicen estado real
-vi.mock("../../hooks/useAuth", () => {
-  const React = require("react");
-  return {
-    default: () => {
-      const [email, setEmail] = React.useState("");
-      const [contraseña, setContraseña] = React.useState("");
-      const [error, setError] = React.useState(false);
-      return { email, setEmail, contraseña, setContraseña, error, setError };
-    },
-  };
-});
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext, // O la forma en que el hook esté expuesto
+}));
 
 describe("Login Component", () => {
   beforeEach(() => {
@@ -111,7 +102,16 @@ describe("Login Component", () => {
   });
 
   it("llama a login() y navega a / cuando el login es exitoso", async () => {
-    // Sobrescribimos fetch para simular éxito
+    // **1. Asegurar el mock del Contexto Observable para este test**
+    mockUseAuthContext.mockReturnValue({ 
+      login: mockLogin, // <-- Aseguramos que mockLogin se use
+      logout: vi.fn(), 
+      isLogged: false,
+      userRole: null,  
+      authChecked: true 
+    });
+    
+    // 2. Sobrescribimos fetch para simular éxito
     global.fetch = vi.fn((url) => {
       if (String(url).includes("/usuarios/login")) {
         return Promise.resolve({ ok: true });
@@ -125,8 +125,8 @@ describe("Login Component", () => {
     await userEvent.click(screen.getByRole("button", { name: /iniciar sesión/i }));
 
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalled();  // Verifica que login() del contexto se llamó
-      expect(mockNavigate).toHaveBeenCalledWith("/");  // Verifica navegación
+      expect(mockLogin).toHaveBeenCalled(); 
+      expect(mockNavigate).toHaveBeenCalledWith("/");  
     });
   });
 });
