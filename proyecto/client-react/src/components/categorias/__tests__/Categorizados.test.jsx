@@ -1,6 +1,6 @@
 import React from "react";
-import { renderWithMockProviders, screen, waitFor,mockUseAuthContext } from "../../../test/test-utils";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { renderWithMockProviders, screen, waitFor, mockUseAuthContext } from "../../../test/test-utils";
+import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { Categorizados } from "../Categorizados";
 
@@ -13,25 +13,29 @@ vi.mock("react-router-dom", async () => {
     useNavigate: () => mockNavigate,
   };
 });
+// Mock de useAuthContext (agregado para sobrescribir el hook)
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext,
+}));
 
 describe("Categorizados Component", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks();  // Limpia mocks antes de cada test
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.restoreAllMocks();  // Restaura mocks después de cada test
   });
 
   it("muestra el mensaje de carga inicialmente", () => {
     mockUseAuthContext.mockReturnValue({ userRole: 'cliente', authChecked: true });
     
+    // Mock fetch para simular carga inicial
     global.fetch = vi.fn(() =>
       Promise.resolve({
         json: async () => [],
       })
     );
-
     
     renderWithMockProviders(<Categorizados />);
     expect(screen.getByText(/cargando categorías/i)).toBeInTheDocument();
@@ -51,6 +55,7 @@ describe("Categorizados Component", () => {
     
     renderWithMockProviders(<Categorizados />);
     
+    // Espera a que termine la carga
     await waitFor(() =>
       expect(screen.queryByText(/cargando categorías/i)).not.toBeInTheDocument()
     );
@@ -58,6 +63,7 @@ describe("Categorizados Component", () => {
     expect(screen.getByText("lentes")).toBeInTheDocument();
     expect(screen.getByText("vinchas")).toBeInTheDocument();
     
+    // Verifica botones de navegación (usa aria-label del componente)
     const buttons = screen.getAllByRole("button", { name: /ver productos de/i });
     expect(buttons.length).toBe(2);
   });
@@ -115,6 +121,7 @@ describe("Categorizados Component", () => {
       expect(screen.queryByText(/cargando categorías/i)).not.toBeInTheDocument()
     );
     
+    // El componente muestra "No hay categorías disponibles." en caso de error
     expect(screen.getByText(/no hay categorías disponibles/i)).toBeInTheDocument();
   });
 
@@ -125,7 +132,7 @@ describe("Categorizados Component", () => {
       Promise.resolve({
         json: async () => [
           { id_category: 1, categoria: "lentes", img_url: "lentes.jpg", activo: 1 },
-          { id_category: 2, categoria: "vinchas", img_url: "vinchas.jpg", activo: 0 },
+          { id_category: 2, categoria: "vinchas", img_url: "vinchas.jpg", activo: 0 },  // Inactiva
         ],
       })
     );
@@ -136,7 +143,10 @@ describe("Categorizados Component", () => {
       expect(screen.queryByText(/cargando categorías/i)).not.toBeInTheDocument()
     );
     
+    // Para 'dueño', muestra todas (activas e inactivas)
     expect(screen.getByText("lentes")).toBeInTheDocument();
     expect(screen.getByText("vinchas")).toBeInTheDocument();
+    expect(screen.getByText("Activa")).toBeInTheDocument();  // Estado de la primera
+    expect(screen.getByText("Inactiva")).toBeInTheDocument();  // Estado de la segunda
   });
 });

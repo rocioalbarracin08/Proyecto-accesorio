@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Productos } from "../producto/Productos";// Componente unificado para productos
 import RegistrarVenta from "../ventas/RegistrarVenta";  // Para registrar ventas
 import HistorialVentas from '../ventas/HistorialVentas';
@@ -50,13 +50,12 @@ export default function DashboardEmpleado() {
       credentials: "include",
     });
     logout();
-    navigate("/login");
   };
 
   const renderSeccion = () => {
     switch (seccionActiva) {
       case 'productos':
-        return <Productos includeInactiveForEmployee={true} />;  // Grilla de productos con botones para empleados
+        return <Productos includeInactiveForEmployee={true}/>;  // Grilla de productos con botones para empleados
       case 'ventas':
         return <RegistrarVenta />;  // Formulario de venta
       case 'historial':
@@ -68,11 +67,11 @@ export default function DashboardEmpleado() {
 
   return (
     <div className="dashboard-empleado">
-      <h1 className="title-empleado">Panel de Empleado</h1>
+      <h1 className="title-empleado">Panel de empleado</h1>
       <div className="perfil-info">
         <span className="tienda">Tienda: {nombreTienda || 'Asignada'}</span>  
         <span className="usuario">Usuario: {perfil.nombre || 'Cargando...'}</span>
-        <button onClick={handleLogout} className="btn-cerrarS">Cerrar Sesión</button>
+        <button onClick={handleLogout} className="btn-cerrarS">Cerrar sesión</button>
       </div>
 
       <nav className="dashboard-nav">
@@ -80,19 +79,19 @@ export default function DashboardEmpleado() {
           className={seccionActiva === 'productos' ? 'active' : ''} 
           onClick={() => setSeccionActiva('productos')}
         >
-          Gestionar Productos
+          Gestionar productos
         </button>
         <button 
           className={seccionActiva === 'ventas' ? 'active' : ''} 
           onClick={() => setSeccionActiva('ventas')}
         >
-          Registrar Venta
+          Registrar venta
         </button>
         <button 
           className={seccionActiva === 'historial' ? 'active' : ''} 
           onClick={() => setSeccionActiva('historial')}
         >
-          Ver Mis Ventas
+          Ver mis ventas
         </button>
       </nav>
 

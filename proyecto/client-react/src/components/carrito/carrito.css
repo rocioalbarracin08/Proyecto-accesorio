@@ -106,6 +106,8 @@
   padding: 10px;
   background-color: #969595; 
   border: none;
+  color: white;
+  font-weight: bold;
   border-radius: 5px;
 }
 .btn-borrar-prodct{

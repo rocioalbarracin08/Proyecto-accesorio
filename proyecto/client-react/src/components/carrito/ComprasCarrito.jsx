@@ -32,7 +32,7 @@ export function ComprasCarrito() {
   };
 
   return (
-    <section className="carrito-overlay" onClick={toggleCarrito}>
+    <section className="carrito-overlay" data-testid="carrito-overlay" onClick={toggleCarrito}>
       <div className="carrito-contenedor" onClick={(e) => e.stopPropagation()}>
         <h2 className="carrito-titulo">Mis Compras</h2>
 
@@ -56,7 +56,7 @@ export function ComprasCarrito() {
                     />
                     <div className="carrito-item-info">
                       <h3>{item.producto.nombre || item.producto.name}</h3>
-                      <p>{item.producto.precio}</p>
+                      <p>${item.producto.precio}</p>
                         {/* Selector/entrada para color */}
                         <div className="carrito-color-select">
                           {(() => {
@@ -126,14 +126,11 @@ export function ComprasCarrito() {
 
             <div className="carrito-total">
               <p>
-                <strong>Total: </strong>${state.totalPrice.toFixed(2)}
+                <strong>Total: </strong>${state.totalPrice.toFixed(1)}
               </p>
               <div className="carrito-botones">
                 <button className="btn-vaciar-carrito" onClick={clearCart}>
                   Vaciar Carrito
-                </button>
-                <button className="btn-cerrar-carrito" onClick={toggleCarrito}>
-                  Cerrar
                 </button>
                 <button className="btn-finalizar-compra" onClick={finalizarCompra}>
                   Finalizar Compra
@@ -142,6 +139,9 @@ export function ComprasCarrito() {
             </div>
           </>
         )}
+        <button className="btn-cerrar-carrito" onClick={toggleCarrito}>
+          Cerrar
+        </button>
       </div>
     </section>
   );

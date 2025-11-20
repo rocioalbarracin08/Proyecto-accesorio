@@ -7,6 +7,7 @@ import { vi } from "vitest";
 const AuthContext = React.createContext();
 const CarritoContext = React.createContext();
 const PromocionesContext = React.createContext();
+const CategoriasContext = React.createContext();  // Agregado
 
 // Mocks exportables para controlar el comportamiento desde tests
 export const mockUseAuthContext = vi.fn(() => ({
@@ -26,6 +27,15 @@ export const mockUsePromociones = vi.fn(() => ({
   promociones: [],
   loading: false,
   error: null,
+}));
+
+export const mockUseCategorias = vi.fn(() => ({  // Agregado
+  categorias: [],
+  loading: false,
+  error: null,
+  cargarCategorias: vi.fn(),
+  eliminarCategoria: vi.fn(),
+  toggleActivo: vi.fn(),
 }));
 
 // Re-exports comunes
@@ -62,11 +72,19 @@ export function renderWithMockProviders(ui, { route = "/", ...options } = {}) {
     </PromocionesContext.Provider>
   );
 
+  const MockCategoriasProvider = ({ children }) => (  // Agregado
+    <CategoriasContext.Provider value={mockUseCategorias()}>
+      {children}
+    </CategoriasContext.Provider>
+  );
+
   const Wrapper = ({ children }) => (
     <MemoryRouter initialEntries={[route]}>
       <MockAuthProvider>
         <MockCarritoProvider>
-          <MockPromocionesProvider>{children}</MockPromocionesProvider>
+          <MockPromocionesProvider>
+            <MockCategoriasProvider>{children}</MockCategoriasProvider>
+          </MockPromocionesProvider>
         </MockCarritoProvider>
       </MockAuthProvider>
     </MemoryRouter>
