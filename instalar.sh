@@ -11,5 +11,4 @@ pip install pymysql pandas matplotlib
 pip install dotenv
 pip install werkzeug
 pip install PyJWT
-npm install react-leaflet leaflet
 pip install Flask-Mail
