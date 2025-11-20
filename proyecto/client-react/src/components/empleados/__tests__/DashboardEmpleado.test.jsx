@@ -40,14 +40,15 @@ vi.mock("../../ventas/HistorialVentas", () => ({
 }));
 
 // Mockeamos fetch globalmente
-vi.stubGlobal('fetch', vi.fn());
-
+//vi.stubGlobal('fetch', vi.fn());
+const mockFetch = vi.fn();
 describe("DashboardEmpleado Component", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
   beforeEach(() => {
+    global.fetch = mockFetch; // Asignamos el mock a fetch 
     mockUseAuthContext.mockReturnValue({
       isLogged: true,
       userRole: "empleado",
