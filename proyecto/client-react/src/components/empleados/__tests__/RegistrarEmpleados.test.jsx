@@ -1,16 +1,8 @@
 import React from "react";
-import { renderWithProviders, screen, waitFor } from "../../../test/test-utils"; // Usamos renderWithProviders para consistencia
+import { renderWithMockProviders, screen, mockUseAuthContext } from "../../../test/test-utils"; // Cambiado a renderWithMockProviders para usar los mocks de contexto
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event"; // Para interacciones realistas
 import RegistrarEmpleado from "../RegistrarEmpleado"; // Importamos el componente
-
-// Mockeamos useAuthContext para controlar el estado de autenticación
-vi.mock("../../contexts/AuthContext", () => ({
-  useAuthContext: vi.fn(),
-}));
-
-// Importamos el mock para configurarlo
-import { useAuthContext } from "../../contexts/AuthContext";
 
 // Mockeamos useNavigate para controlar navegación
 const mockNavigate = vi.fn();
@@ -31,6 +23,10 @@ vi.mock("react-icons/fa", () => ({
   FaToggleOff: () => <div data-testid="fa-toggle-off">ToggleOff</div>,
 }));
 
+vi.mock("../../../contexts/AuthContext", () => ({
+  useAuthContext: mockUseAuthContext, // O la forma en que el hook esté expuesto
+}));
+
 // Mockeamos fetch globalmente para controlar todas las llamadas a la API
 global.fetch = vi.fn();
 
@@ -42,7 +38,7 @@ describe("RegistrarEmpleado Component", () => {
 
   // Configuración por defecto antes de cada test
   beforeEach(() => {
-    useAuthContext.mockReturnValue({
+    mockUseAuthContext.mockReturnValue({
       isOwner: true, // Simula que el usuario es dueño
     });
     // Mock por defecto para fetches (tiendas y empleados vacíos)
@@ -65,7 +61,7 @@ describe("RegistrarEmpleado Component", () => {
         json: async () => ([{ id_empleado: 1, nombre: "Juan", apellido: "Pérez", email: "juan@example.com", puesto_trabajo: "Vendedor", tienda_nombre: "Tienda A", activo: 1 }]), // Empleados
       });
 
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByText(/gestión de empleados/i);
@@ -98,7 +94,7 @@ describe("RegistrarEmpleado Component", () => {
     // Mock fetch que no resuelve inmediatamente
     global.fetch.mockImplementationOnce(() => new Promise(() => {}));
     
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     expect(screen.getByText(/cargando tiendas/i)).toBeInTheDocument();
   });
@@ -116,7 +112,7 @@ describe("RegistrarEmpleado Component", () => {
     const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByPlaceholderText(/nombre/i);
@@ -156,7 +152,7 @@ describe("RegistrarEmpleado Component", () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ([]) });
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByPlaceholderText(/nombre/i);
@@ -176,7 +172,7 @@ describe("RegistrarEmpleado Component", () => {
       .mockResolvedValueOnce({ ok: false, json: async () => ({ error: "Email ya existe" }) });
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue y llena campos mínimos
     await screen.findByPlaceholderText(/nombre/i);
@@ -205,7 +201,7 @@ describe("RegistrarEmpleado Component", () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ([{ id_empleado: 1, nombre: "Juan", apellido: "Pérez", email: "juan@example.com", puesto_trabajo: "Vendedor", tienda_nombre: "Tienda A", activo: 0 }]) }); // Recarga
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByText("Juan Pérez");
@@ -227,7 +223,7 @@ describe("RegistrarEmpleado Component", () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ([{ id_empleado: 1, nombre: "Juan", apellido: "Pérez", email: "juan@example.com", puesto_trabajo: "Vendedor", tienda_nombre: "Tienda A", activo: 1 }]) });
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByText("Juan Pérez");
@@ -246,7 +242,7 @@ describe("RegistrarEmpleado Component", () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ([{ id_tienda: 1, nombre: "Tienda A", ubicacion: "Centro" }]) })
       .mockResolvedValueOnce({ ok: true, json: async () => ([{ id_empleado: 1, nombre: "Juan", apellido: "Pérez", email: "juan@example.com", puesto_trabajo: "Vendedor", tienda_nombre: "Tienda A", activo: 0 }]) });
     
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue
     await screen.findByText("Juan Pérez");
@@ -267,7 +263,7 @@ describe("RegistrarEmpleado Component", () => {
     const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
     
     const user = userEvent.setup();
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Espera que cargue y abre edición
     await screen.findByText("Juan Pérez");
@@ -296,11 +292,11 @@ describe("RegistrarEmpleado Component", () => {
 
   // Test: Redirige si no es owner
   it("redirige si el usuario no es owner", () => {
-    useAuthContext.mockReturnValue({
+    mockUseAuthContext.mockReturnValue({
       isOwner: false,
     });
     
-    renderWithProviders(<RegistrarEmpleado />);
+    renderWithMockProviders(<RegistrarEmpleado />);
     
     // Verifica redirección
     expect(mockNavigate).toHaveBeenCalledWith("/");
