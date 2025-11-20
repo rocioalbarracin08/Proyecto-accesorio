@@ -41,7 +41,7 @@ vi.mock("../../ventas/HistorialVentas", () => ({
 
 // Mockeamos fetch globalmente
 //vi.stubGlobal('fetch', vi.fn());
-const mockFetch = vi.fn();
+const mockFetch = vi.fn(); //SIRVEEEEEEEEEEEEEEEEEEEEEE
 describe("DashboardEmpleado Component", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -49,6 +49,8 @@ describe("DashboardEmpleado Component", () => {
 
   beforeEach(() => {
     global.fetch = mockFetch; // Asignamos el mock a fetch 
+    //Está sobrescribiendo de forma forzada la función fetch global con la referencia al mock ("mockFetch") antes de cada prueba.
+
     mockUseAuthContext.mockReturnValue({
       isLogged: true,
       userRole: "empleado",
