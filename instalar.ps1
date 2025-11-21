@@ -13,6 +13,6 @@ pip install werkzeug
 pip install PyJWT
 pip install flask-mail
 pip install Flask-Mail
+pip install numpy openpyxl
+pip install pandas
 
-# Instalar dependencias de React
-npm install react-leaflet leaflet

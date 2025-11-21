@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from flask_cors import CORS
 from flask_mail import Mail
 from server_flask.utils.config import SECRET_KEY
-from server_flask.extensions import mail
+from proyecto.server_flask.utils.extensions import mail
 
 load_dotenv()
 
