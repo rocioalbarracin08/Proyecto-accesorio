@@ -147,16 +147,17 @@
 .btn-empleado {
   margin: 5px;
   padding: 5px 10px;
-  background-color: #007bff;  /* Azul para empleados */
+  background-color: rosybrown;  /* Azul para empleados */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.8rem;
+  font-weight: bold;
 }
 
 .btn-empleado:hover {
-  background-color: #0056b3;
+  background-color: rgb(161, 118, 118);
 }
 
 .btn-agregar-global {

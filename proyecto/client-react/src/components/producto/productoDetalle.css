@@ -58,8 +58,6 @@
   flex: 1; /* Ocupa el resto del espacio */
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Espacio entre elementos */
-  align-items: center;
 }
 
 .producto-info h1 {
@@ -79,7 +77,6 @@
   margin: 20px 0;
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .precio-original {
@@ -173,16 +170,14 @@
 
 /* Carrusel de productos relacionados - Ocupa ancho completo */
 .carrusel-relacionados-fullD {
-  margin-top: 40px;
   text-align: center;
   width: 100%; /* Ocupa todo el ancho de la página */
-  padding: 20px 0; /* Padding vertical */
   background-color: #f9f9f9; /* Fondo sutil para diferenciar */
 }
 
 .carrusel-relacionados-fullD h2 {
   color: rosybrown;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .carrusel-container {

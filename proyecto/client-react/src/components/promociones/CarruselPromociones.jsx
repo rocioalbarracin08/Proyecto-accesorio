@@ -53,7 +53,6 @@ const CarruselPromociones = () => {
     <div className="carrusel-promociones">
       <div className="carrusel-imagen" style={{ backgroundImage: `url(${promocionActual.img_url || '/default-image.jpg'})` }}>
         <div className="carrusel-contenido">
-          <h2>{promocionActual.descripcion}</h2>
           <p>Descuento: {promocionActual.descuento} ({promocionActual.tipo_descuento})</p>
         </div>
       </div>

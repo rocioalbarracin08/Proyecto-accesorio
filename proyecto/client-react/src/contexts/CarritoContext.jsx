@@ -1,34 +1,37 @@
-import React from 'react';
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // Estado inicial del carrito
 const initialState = {
-  items: {},  // Almacena los productos en el carrito
-  totalItems: 0,  // Total de productos en el carrito
-  totalPrice: 0,  // Precio total del carrito
-  showCarrito: false  // Controla si el carrito está visible
+  items: {},          // Productos en el carrito
+  totalItems: 0,      // Total de productos
+  totalPrice: 0,      // Precio total
+  showCarrito: false  // Control del modal del carrito
 };
 
-
-// Reducer (agregué TOGGLE_CART y CLOSE_CART)
-//función que decide cómo cambia el estado del carrito según una acción
+// Reducer
 const carritoReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_ITEM':
+
+    case 'ADD_ITEM': {
       const { producto, id } = action.payload;
-      const productoId = id || producto.id_producto || producto.id || producto._id || producto.codigo;  // Soporte para id_producto
+      const productoId = id || producto.id_producto || producto.id || producto._id || producto.codigo;
       const existingItem = state.items[productoId];
       const precio = parseFloat(producto.precio || 0);
-      
-      if (existingItem) { //Verificar si ya esta el producto en el carrito
+
+      const productoConColores = {
+        ...producto,
+        colores: producto.colores || []
+      };
+
+      if (existingItem) {
         return {
           ...state,
           items: {
-            ...state.items, //Se le agrega lo anterior (estado anterior)
+            ...state.items,
             [productoId]: {
               ...existingItem,
-              cantidad: existingItem.cantidad + 1 //A la cantidad se le agrega 1
-            } //Al carrito se le agrega el nuevo producto
+              cantidad: existingItem.cantidad + 1
+            }
           },
           totalItems: state.totalItems + 1,
           totalPrice: state.totalPrice + precio
@@ -38,84 +41,73 @@ const carritoReducer = (state, action) => {
           ...state,
           items: {
             ...state.items,
-            [productoId]: { producto, cantidad: 1 } //Valor inicial de la cantidad
+            [productoId]: {
+              producto: productoConColores,
+              cantidad: 1,
+              selectedColor: null
+            }
           },
           totalItems: state.totalItems + 1,
           totalPrice: state.totalPrice + precio
         };
       }
+    }
 
-    case 'UPDATE_QUANTITY': 
-      const { productoId: pid, quantity } = action.payload; //datos que vienen con la acción
-      //ID del producto (pid) y la nueva cantidad (quantity)
+    case 'UPDATE_QUANTITY': {
+      const { productoId: pid, quantity } = action.payload;
+      const item = state.items[pid];
+      if (!item) return state;
 
-      const item = state.items[pid]; //Busca el producto en el carrito.
-      if (!item) return state; //Si no existe, no hace nada y devuelve el mismo estado.
-
-      const delta = quantity - item.cantidad; //Calcula cuánto cambió la cantidad.
-      const precioItem = parseFloat(item.producto.precio || 0); //Convierte el precio del producto a número. Si no hay precio, usa 0.
+      const delta = quantity - item.cantidad;
+      const precioItem = parseFloat(item.producto.precio || 0);
 
       if (quantity <= 0) {
-        // Esto elimina el producto del carrito: Si la cantidad es 0 o >
         const { [pid]: _, ...newItems } = state.items;
         return {
           ...state,
           items: newItems,
-          //Math.max(0, ...): evita que el total quede negativo.
-          totalItems: Math.max(0, state.totalItems - item.cantidad), 
+          totalItems: Math.max(0, state.totalItems - item.cantidad),
           totalPrice: Math.max(0, state.totalPrice - (item.cantidad * precioItem))
         };
       }
+
       return {
-        /*
-        Actualiza el carrito con la nueva cantidad:
-          Modifica solo ese producto (pid).
-          Ajusta el total de ítems según cuánto cambió (delta).
-          Ajusta el precio total según el cambio (delta * precioItem). 
-        */
         ...state,
         items: {
           ...state.items,
           [pid]: { ...item, cantidad: quantity }
         },
-        totalItems: Math.max(0, state.totalItems + delta), //Delta: diferencia
+        totalItems: Math.max(0, state.totalItems + delta),
         totalPrice: Math.max(0, state.totalPrice + (delta * precioItem))
-        //usa delta para actualizar los totales sin tener que recalcular todo el carrito desde cero
       };
+    }
 
-    case 'REMOVE_ITEM': //Elimina un producto del carrito.
+    case 'REMOVE_ITEM': {
       const { removeId } = action.payload;
       const removeItem = state.items[removeId];
-      if (!removeItem) return state; //Si no esta no hace nada
+      if (!removeItem) return state;
 
-      // Saca ese producto del objeto 'items'
       const { [removeId]: _, ...newItems } = state.items;
       const precioRemove = parseFloat(removeItem.producto.precio || 0);
 
-      // Devuelve el nuevo estado SIN ese producto
       return {
         ...state,
         items: newItems,
         totalItems: Math.max(0, state.totalItems - removeItem.cantidad),
         totalPrice: Math.max(0, state.totalPrice - (removeItem.cantidad * precioRemove))
       };
+    }
 
-    //Abre o cierra el modal del carrito.
     case 'TOGGLE_CART':
       return { ...state, showCarrito: !state.showCarrito };
-      //Si está cerrado (false) → lo abre (true),
-      //Si está abierto (true) → lo cierra (false).
 
-    //Cierra el modal sí o sí.
     case 'CLOSE_CART':
       return { ...state, showCarrito: false };
 
-    //Vacía el carrito completamente.
     case 'CLEAR_CART':
-      return { ...initialState, showCarrito: state.showCarrito };  // Limpia items, mantiene modal
+      return { ...initialState, showCarrito: state.showCarrito };
 
-    case 'UPDATE_ITEM':
-      // payload: { productoId, updates }
+    case 'UPDATE_ITEM': {
       const { productoId: upId, updates } = action.payload || {};
       if (!upId || !state.items[upId]) return state;
       return {
@@ -125,47 +117,44 @@ const carritoReducer = (state, action) => {
           [upId]: { ...state.items[upId], ...updates }
         }
       };
-    
-    //abre el modal de carrito
+    }
+
     case 'OPEN_CART':
       return { ...state, showCarrito: true };
 
-    default://Si llega otra accion no esperada
-      return state;//“No sé qué me pedís, así que no toco nada.”
+    default:
+      return state;
   }
 };
 
-//#########################################################################
+// Contexto y Provider
+const CarritoContext = createContext();
 
-// Parte que crea, guarda y comparte el ESTADO DEL CARRITO 
-const CarritoContext = createContext(); //crea un “contexto” global de React. | Util para no usar props
-
-//CarritoProvider: componente envoltorio (wrapper). Proveedor del contexto
 export const CarritoProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(carritoReducer, initialState);
 
-  //base del estado del carrito: En vez de usar useState, usa useReducer porque hay muchas acciones
-  const [state, dispatch] = useReducer(carritoReducer, initialState);//dispatch(type: '...'): es para mandar una orden
-
-  // Persistencia en localStorage (solo items, no modal)
+  // Restaurar carrito desde localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('carrito');//si recargás la página el carrito no se borra
-    //LocalStorage guarda un diccionario con una palabras clave "carrito"
+    const saved = localStorage.getItem('carrito');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
 
-    if (saved) { //Busca si exist un carrito 
-      try { //Si no existe
-        const parsed = JSON.parse(saved);//lo convierte en JSON que antes era texto, guardado en localStorage
-
-        //Object.keys(parsed.items) → obtiene todos los IDs de productos que había en el carrito, es un método de JavaScript que devuelve un array con todas las llaves (keys) de un objeto
-        Object.keys(parsed.items || {}).forEach(id => { //recorre cada producto.
-
+        Object.keys(parsed.items || {}).forEach(id => {
           const item = parsed.items[id];
+          const productoConColores = {
+            ...item.producto,
+            colores: item.producto?.colores || []
+          };
           for (let i = 0; i < item.cantidad; i++) {
-            //Esto recrea el carrito en memoria como si estuvieras agregando los productos uno por uno
-            dispatch({ type: 'ADD_ITEM', payload: { producto: item.producto, id } });
-            //para activar toda la lógica del reducer
+            dispatch({
+              type: 'ADD_ITEM',
+              payload: { producto: productoConColores, id }
+            });
           }
         });
-        // Restaurar metadatos de items (ej. selectedColor) que no se aplican al añadir repetido
+
+        // Restaurar selectedColor u otros metadatos
         Object.keys(parsed.items || {}).forEach(id => {
           const item = parsed.items[id];
           const updates = {};
@@ -177,69 +166,68 @@ export const CarritoProvider = ({ children }) => {
           }
         });
       } catch (e) {
-        //Captura cualquier error si JSON.parse falla o si los datos están mal.
         console.error('Error cargando carrito:', e);
       }
     }
-  }, []);//se ejecuta una sola vez
+  }, []);
 
-  console.log("error")
-  //Cada vez que cambia algo (items, cantidad o total), lo actualiza en el localStorage para tener el carrito reciente, con actualizaciones.
+  // Guardar en localStorage
   useEffect(() => {
+    localStorage.setItem(
+      'carrito',
+      JSON.stringify({
+        items: state.items,
+        totalItems: state.totalItems,
+        totalPrice: state.totalPrice
+      })
+    );
+  }, [state.items, state.totalItems, state.totalPrice]);
 
-    //guarda ese texto bajo la clave 'carrito' en el navegador
-    localStorage.setItem('carrito', JSON.stringify({ //convierte ese objeto a texto, porque localStorage solo guarda cadenas de texto.
-
-      items: state.items, //los productos actuales del carrito
-      totalItems: state.totalItems, //la cantidad total de productos
-      totalPrice: state.totalPrice //el precio total
-    }));
-  }, [state.items, state.totalItems, state.totalPrice]);//este efecto se ejecuta cada vez que cambia alguno de estos valores.
-
-  //funciones que despachan acciones
-  //Para no recibir dispatch({ type: 'ADD_ITEM', ... }) todo el tiempo.
-  const addItem = (producto) => dispatch({ type: 'ADD_ITEM', payload: { producto } }); //Agrega un producto
-  
-  const updateQuantity = (productoId, quantity) => { //Cambia la cantidad 
-    if (quantity <= 0) {//(si llega a 0, lo elimina)
-      dispatch({ type: 'REMOVE_ITEM', payload: { removeId: productoId } });
-    } else {
-      dispatch({ type: 'UPDATE_QUANTITY', payload: { productoId, quantity } });
-    }
+  // Funciones para el contexto
+  const addItem = (producto) => {
+    dispatch({
+      type: 'ADD_ITEM',
+      payload: {
+        producto: {
+          ...producto,
+          colores: producto.colores || [],
+          selectedColor: null
+        }
+      }
+    });
   };
-
-  // Actualiza campos arbitrarios de un item (por ejemplo: selectedColor)
-  const updateItem = (productoId, updates) => {
+  const updateQuantity = (productoId, quantity) =>
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { productoId, quantity } });
+  const updateItem = (productoId, updates) =>
     dispatch({ type: 'UPDATE_ITEM', payload: { productoId, updates } });
-  };
-
-  //abre el carrito cuando se presiona el boton "agregar al carrito"
+  const removeItem = (productoId) =>
+    dispatch({ type: 'REMOVE_ITEM', payload: { removeId: productoId } });
   const openCarrito = () => dispatch({ type: 'OPEN_CART' });
-  //Elimina el producto
-  const removeItem = (productoId) => dispatch({ type: 'REMOVE_ITEM', payload: { removeId: productoId } });
-
-  //Abre/cierra el carrito
   const toggleCarrito = () => dispatch({ type: 'TOGGLE_CART' });
   const closeCarrito = () => dispatch({ type: 'CLOSE_CART' });
-  
-  //Vacía todo el carrito
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
 
   return (
-    //Esto provee el contexto (los datos y funciones del carrito) a todos los componentes hijos
-    <CarritoContext.Provider value={{ state, addItem, updateQuantity, updateItem, removeItem, openCarrito, toggleCarrito, closeCarrito, clearCart }}>
+    <CarritoContext.Provider
+      value={{
+        state,
+        addItem,
+        updateQuantity,
+        updateItem,
+        removeItem,
+        openCarrito,
+        toggleCarrito,
+        closeCarrito,
+        clearCart
+      }}
+    >
       {children}
     </CarritoContext.Provider>
   );
 };
 
-//####################################################################
-export const useCarrito = () => { //custom hook que facilita acceder al contexto.
+export const useCarrito = () => {
   const context = useContext(CarritoContext);
-  console.log("error",context)
-  if (!context) {
-    throw new Error('useCarrito debe usarse dentro de CarritoProvider');
-  }
+  if (!context) throw new Error('useCarrito debe usarse dentro de CarritoProvider');
   return context;
 };
-//export { CarritoContext };

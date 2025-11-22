@@ -87,7 +87,7 @@
 }
 
 .btn-volver:hover {
-  background-color: #f08080; /* Lightcoral para hover */
+  background-color: rgb(158, 114, 114); /* Lightcoral para hover */
   transform: translateY(-2px); /* Elevación sutil */
 }
 

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from flask_cors import CORS
 from flask_mail import Mail
 from server_flask.utils.config import SECRET_KEY
-from proyecto.server_flask.utils.extensions import mail
+from server_flask.utils.extensions import mail
 
 load_dotenv()
 
@@ -17,7 +17,8 @@ db_config = {
     "port": os.getenv("DB_PORT"),    
     "user": os.getenv("DB_USER"),  
     "password": os.getenv("DB_PASSWORD"),  
-    "database": os.getenv("DB_NAME")
+    "database": os.getenv("DB_NAME"),
+    "charset":'utf8mb4', 
 }
 
 def create_app(config=None):
@@ -69,6 +70,7 @@ def create_app(config=None):
     from server_flask.endpoints.ventas import bp as ventas_bp
     from server_flask.endpoints.metodos_pagos import bp as metodos_pagos_bp
     from server_flask.endpoints.asistencia import bp as asistencia_bp 
+    from server_flask.endpoints.colores import bp as colores_bp
 
     # Registrar blueprints
     app.register_blueprint(categoria_bp)
@@ -83,6 +85,7 @@ def create_app(config=None):
     app.register_blueprint(ventas_bp)
     app.register_blueprint(metodos_pagos_bp)
     app.register_blueprint(asistencia_bp)
+    app.register_blueprint(colores_bp)
 
     mail.init_app(app)
 

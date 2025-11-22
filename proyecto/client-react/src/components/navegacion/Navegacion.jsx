@@ -36,7 +36,10 @@ export function BarraNavegacion() {
   useEffect(() => {
     fetch("http://localhost:5000/categoria/")
       .then(res => res.json())
-      .then(data => setCategorias(data))
+      .then(data => {
+        console.log("Categorias API:", data);
+        setCategorias(data || [])
+      })
       .catch(err => console.error("Error obteniendo categorías:", err));
   }, []);
 

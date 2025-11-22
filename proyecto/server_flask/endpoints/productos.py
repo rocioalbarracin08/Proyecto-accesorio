@@ -4,9 +4,8 @@ from server_flask.utils.auth import solo_empleado  # Si lo tienes, sino quítalo
 # Importar la función de ventas.py para verificar usuario y obtener tienda
 from server_flask.endpoints.ventas import verificar_usuario  # Asegúrate de que la ruta sea correcta
 from server_flask.utils.auth import solo_dueno  # Asegúrate de importar esto
-from server_flask.utils.auth import solo_empleado
 from datetime import datetime, timedelta
-
+from decimal import Decimal
 
 bp = Blueprint('productos', __name__, url_prefix='/productos')
 
@@ -24,20 +23,32 @@ def get_producto(id_producto):
         id_tienda_usuario = user.get('id_tienda') or 1  # Tienda del empleado o 1 para online
     
     try:
-        # Obtener el producto con stock de la tienda del usuario
-        # Asegurarse que si el producto tiene categoría, la categoría esté activa
+        # Obtener producto
         g.db_cursor.execute("""
-            SELECT p.id_producto, p.name, p.descripcion, p.id_categoria, p.precio, p.imagen_url, i.stock_actual AS stock, c.categoria, c.activo AS categoria_activa
+            SELECT 
+                p.id_producto, p.name, p.descripcion, p.id_categoria, p.precio, 
+                p.imagen_url, i.stock_actual AS stock,
+                c.categoria, c.activo AS categoria_activa
             FROM productos p
-            LEFT JOIN inventario i ON p.id_producto = i.id_producto AND i.id_tienda = %s
-            LEFT JOIN categoria c ON p.id_categoria = c.id_category
-            WHERE p.id_producto = %s AND p.activo = 1 AND (p.id_categoria IS NULL OR c.activo = 1)
+            LEFT JOIN inventario i 
+                ON p.id_producto = i.id_producto 
+                AND i.id_tienda = %s
+            LEFT JOIN categoria c 
+                ON p.id_categoria = c.id_category
+            WHERE p.id_producto = %s 
+              AND p.activo = 1 
+              AND (p.id_categoria IS NULL OR c.activo = 1)
         """, (id_tienda_usuario, id_producto))
-        
+
         producto = g.db_cursor.fetchone()
+        print("DEBUG fetchone:", producto)
         if not producto:
             return jsonify({"error": "Producto no encontrado"}), 404
         
+        # Convertir Decimal a float
+        for k, v in producto.items():
+            if isinstance(v, Decimal):
+                producto[k] = float(v)
         return jsonify(producto), 200
     except Exception as err:
         return jsonify({"error": f"Error al obtener producto: {err}"}), 500
@@ -292,22 +303,37 @@ def agregarProductos():
         imagen_url = datos.get("imagen_url", "")
         stock = datos.get("stock", 0)
         id_tienda = datos.get("id_tienda", 1)
-        if not all([name, id_categoria, precio]):
+
+        # Comprobamos que los campos obligatorios básicos existan
+        if not all([name, precio]):
             return jsonify({"error": "Faltan campos obligatorios"}), 400
-        
+
+        if id_categoria:
+            g.db_cursor.execute(
+                "SELECT 1 FROM categoria WHERE id_category = %s",
+                (id_categoria,)
+            )
+            if not g.db_cursor.fetchone():
+                print("Categoría enviada no existe o es inválida, se usará NULL")
+                id_categoria = None  # forzar NULL si no existe
+        else:
+            id_categoria = None  # Si viene vacío desde el front
+        # Insertar el producto
         g.db_cursor.execute("""
             INSERT INTO productos (name, id_categoria, precio, imagen_url, activo) 
             VALUES (%s, %s, %s, %s, 1)
         """, (name, id_categoria, precio, imagen_url))
         id_producto = g.db_cursor.lastrowid
-        
+
+        # Insertar stock inicial
         g.db_cursor.execute("""
             INSERT INTO inventario (id_producto, id_tienda, stock_actual, stock_minimo) 
             VALUES (%s, %s, %s, 3)
         """, (id_producto, id_tienda, stock))
-        
+
         g.db.commit()
         return jsonify({"mensaje": "Producto agregado exitosamente"}), 201
+
     except Exception as e:
         g.db.rollback()
         return jsonify({"error": f"Error al agregar producto: {e}"}), 500
@@ -318,28 +344,58 @@ def agregarProductos():
 def cambiar_producto(id_producto):
     if g.db_cursor is None:
         return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
     try:
         datos = request.get_json()
-        name = datos.get("name")
-        id_categoria = datos.get("id_categoria")
-        precio = datos.get("precio")
-        imagen_url = datos.get("imagen_url")
-        stock = datos.get("stock")
-        id_tienda = datos.get("id_tienda", 1)
-        if not all([name, id_categoria, precio, stock]):
-            return jsonify({"error": "Faltan campos obligatorios"}), 400
-        
-        g.db_cursor.execute("""
-            UPDATE productos SET name = %s, id_categoria = %s, precio = %s, imagen_url = %s 
-            WHERE id_producto = %s
-        """, (name, id_categoria, precio, imagen_url, id_producto))
-        
-        g.db_cursor.execute("""
-            UPDATE inventario SET stock_actual = %s WHERE id_producto = %s AND id_tienda = %s
-        """, (stock, id_producto, id_tienda))
-        
+        # Lista de campos a actualizar y valores correspondientes
+        campos = []
+        valores = []
+
+        # Nombre del producto
+        if "name" in datos and datos["name"]:
+            campos.append("name = %s")
+            valores.append(datos["name"])
+
+        # Categoría: solo si existe en DB
+        if "id_categoria" in datos:
+            g.db_cursor.execute(
+                "SELECT 1 FROM categoria WHERE id_category = %s", 
+                (datos["id_categoria"],)
+            )
+            if g.db_cursor.fetchone():
+                campos.append("id_categoria = %s")
+                valores.append(datos["id_categoria"])
+            else:
+                # Si la categoría no existe, la ignoramos
+                print("Categoría enviada no existe, se ignorará la actualización de categoría")
+
+        # Precio
+        if "precio" in datos and datos["precio"] is not None:
+            campos.append("precio = %s")
+            valores.append(datos["precio"])
+
+        # Imagen
+        if "imagen_url" in datos:
+            campos.append("imagen_url = %s")
+            valores.append(datos["imagen_url"])
+
+        # Si hay campos para actualizar, armamos la consulta
+        if campos:
+            sql = f"UPDATE productos SET {', '.join(campos)} WHERE id_producto = %s"
+            valores.append(id_producto)
+            g.db_cursor.execute(sql, tuple(valores))
+
+        # Stock: actualizar inventario si se envía
+        if "stock" in datos:
+            id_tienda = datos.get("id_tienda", 1)
+            g.db_cursor.execute(
+                "UPDATE inventario SET stock_actual = %s WHERE id_producto = %s AND id_tienda = %s",
+                (datos["stock"], id_producto, id_tienda)
+            )
+
         g.db.commit()
         return jsonify({"mensaje": "Producto modificado"}), 200
+
     except Exception as e:
         g.db.rollback()
         return jsonify({"error": str(e)}), 500

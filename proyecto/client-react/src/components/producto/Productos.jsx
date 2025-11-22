@@ -167,9 +167,9 @@ export function Productos({ includeInactiveForEmployee = false }) {
 
   return (
     <div className="productos-page">
-      {/* Carrusel de Promociones */}
+    {userRole !== "empleado" && (
       <CarruselPromociones productos={productos} />
-      
+    )}
       {/* Componente de ordenamiento */}
       <ProductSort 
         onSortChange={setSortType} 
@@ -202,35 +202,55 @@ export function Productos({ includeInactiveForEmployee = false }) {
                       : `$${promocionProducto.descuento} OFF`}
                   </span>
                 )}
-                {/* Enlace al detalle: envuelve la imagen */}
-                <Link to={`/producto/${getId(producto)}`}>
-                  <img
-                    src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
-                    alt={producto.name}
-                  />
-                <h3>{producto.name}</h3>
-                <p className="producto-precio">
-                  {promocionProducto ? (
-                    <>
-                      <span style={{ textDecoration: 'line-through', color: '#888' }}>${precioOriginal.toFixed(2)}</span>
-                      <br />
-                      <span style={{ color: 'red', fontWeight: 'bold' }}>${precioFinal.toFixed(2)}</span>
-                    </>
-                  ) : (
-                    `$${precioFinal.toFixed(2)}`
-                  )}
-                </p>
-                </Link>
-                <button
-                  className="agregar-carrito"
-                  onClick={() => {
-                    addItem({ ...producto, precio: precioFinal });
-                    openCarrito();
-                  }}
-                >
-                  Agregar al Carrito
-                </button>
-                
+                {userRole === 'empleado' ? (
+                  <div className="producto-sin-link">
+                    <img
+                      src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
+                      alt={producto.name}
+                    />
+                    <h3>{producto.name}</h3>
+                    <p className="producto-precio">
+                      {promocionProducto ? (
+                        <>
+                          <span style={{ textDecoration: 'line-through', color: '#888' }}>${precioOriginal.toFixed(2)}</span>
+                          <br />
+                          <span style={{ color: 'red', fontWeight: 'bold' }}>${precioFinal.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        `$${precioFinal.toFixed(2)}`
+                      )}
+                    </p>
+                  </div>
+                ) : (
+                  <Link to={`/producto/${getId(producto)}`}>
+                    <img
+                      src={producto.imagen || producto.imagen_url || "/default-product.jpg"}
+                      alt={producto.name}
+                    />
+                    <h3>{producto.name}</h3>
+                    <p className="producto-precio">
+                      {promocionProducto ? (
+                        <>
+                          <span style={{ textDecoration: 'line-through', color: '#888' }}>${precioOriginal.toFixed(2)}</span>
+                          <br />
+                          <span style={{ color: 'red', fontWeight: 'bold' }}>${precioFinal.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        `$${precioFinal.toFixed(2)}`
+                      )}
+                    </p>
+                  </Link>)}
+                {userRole !== "empleado" && (
+                  <button
+                    className="agregar-carrito"
+                    onClick={() => {
+                      addItem({ ...producto, precio: precioFinal });
+                      openCarrito();
+                    }}
+                  >
+                    Agregar al Carrito
+                  </button>
+                )}
                 {userRole === 'empleado' && (
                   <>
                     <p>Stock: {producto.stock || 0}</p>

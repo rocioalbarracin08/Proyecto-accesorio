@@ -100,6 +100,29 @@
   border: none;
   border-radius: 5px;
 }
+.carrito-color-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.carrito-color-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.carrito-color-label {
+  font-size: 14px;
+  color: #444;
+}
+
+.carrito-color-nombre {
+  font-size: 14px;
+}
+
 .btn-cerrar-carrito{
   margin-top: 5px ;
   width: 100%;

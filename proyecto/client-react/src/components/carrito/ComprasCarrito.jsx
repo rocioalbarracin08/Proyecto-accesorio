@@ -1,10 +1,10 @@
 import { useCarrito } from "../../contexts/CarritoContext";
-import { useNavigate } from "react-router-dom"; // Para redireccionar
+import { useNavigate } from "react-router-dom";
 import "./carrito.css";
 
 export function ComprasCarrito() {
   const { state, updateQuantity, updateItem, removeItem, clearCart, toggleCarrito } = useCarrito();
-  const navigate = useNavigate(); // hook de react-router
+  const navigate = useNavigate();
 
   if (!state.showCarrito) return null;
 
@@ -22,17 +22,17 @@ export function ComprasCarrito() {
   const calcularSubtotal = (item) =>
     (item.cantidad * parseFloat(item.producto.precio || 0)).toFixed(2);
 
-  const handleColorChange = (id, value) => {
-    updateItem(id, { selectedColor: value });
+  const handleColorChange = (id, colorObj) => {
+    updateItem(id, { selectedColor: colorObj });
   };
 
   const finalizarCompra = () => {
-    toggleCarrito(); // Cierra el modal
-    navigate("/factura"); // Redirige a la página de factura
+    toggleCarrito();
+    navigate("/factura");
   };
 
   return (
-    <section className="carrito-overlay" data-testid="carrito-overlay" onClick={toggleCarrito}>
+    <section className="carrito-overlay" onClick={toggleCarrito}>
       <div className="carrito-contenedor" onClick={(e) => e.stopPropagation()}>
         <h2 className="carrito-titulo">Mis Compras</h2>
 
@@ -42,67 +42,50 @@ export function ComprasCarrito() {
           <>
             <div className="carrito-lista">
               {Object.values(state.items).map((item) => {
-                const id = item.producto.id_producto || item.producto.id; // Usamos id_producto como ID único
+                const id = item.producto.id_producto || item.producto.id;
+
                 return (
                   <div className="carrito-item" key={id}>
                     <img
-                      src={
-                        item.producto.imagen ||
-                        item.producto.imagen_url ||
-                        "/default-product.jpg"
-                      }
+                      src={item.producto.imagen || item.producto.imagen_url || "/default-product.jpg"}
                       alt={item.producto.nombre || item.producto.name}
                       className="carrito-item-img"
                     />
+
                     <div className="carrito-item-info">
                       <h3>{item.producto.nombre || item.producto.name}</h3>
                       <p>${item.producto.precio}</p>
-                        {/* Selector/entrada para color */}
-                        <div className="carrito-color-select">
-                          {(() => {
-                            const raw = item.producto.colores 
-                            let options = [];
-                            if (Array.isArray(raw)) options = raw;
-                            else if (typeof raw === 'string' && raw.includes(',')) options = raw.split(',').map(s => s.trim()).filter(Boolean);
-                            else if (typeof raw === 'string' && raw.trim()) options = [raw.trim()];
 
-                            if (options.length > 0) {
-                              return (
-                                <div>
-                                  <label>Color: </label>
-                                  <select value={item.selectedColor || ''} onChange={(e) => handleColorChange(id, e.target.value)}>
-                                    <option value="">Seleccionar</option>
-                                    {options.map((c) => (
-                                      <option key={c} value={c}>{c}</option>
-                                    ))}
-                                    <option value="otro">Otro...</option>
-                                  </select>
-                                  {item.selectedColor === 'otro' && (
-                                    <input
-                                      type="text"
-                                      placeholder="Ingrese color"
-                                      value={item.selectedColor !== 'otro' ? (item.selectedColor || '') : ''}
-                                      onChange={(e) => handleColorChange(id, e.target.value)}
-                                    />
-                                  )}
-                                </div>
-                              );
-                            }
-
-                            // Si no hay opciones conocidas mostrar un input libre
-                            return (
-                              <div>
-                                <label>Color: </label>
-                                <input
-                                  type="text"
-                                  placeholder="Color (opcional)"
-                                  value={item.selectedColor || ''}
-                                  onChange={(e) => handleColorChange(id, e.target.value)}
-                                />
-                              </div>
-                            );
-                          })()}
+                      {/* Si el producto tiene colores, mostrar selector */}
+                      {Array.isArray(item.producto.colores) && item.producto.colores.length > 0 && (
+                        <div className="carrito-colores-container">
+                          <p>Elegir color:</p>
+                          <div className="carrito-colores-list">
+                            {item.producto.colores.map((c) => (
+                              <div
+                                key={c.id_color}
+                                className={`color-circle ${item.selectedColor?.id_color === c.id_color ? "active" : ""}`}
+                                style={{ backgroundColor: c.codigo_hex }}
+                                onClick={() => handleColorChange(id, c)}
+                                title={c.nombre_color}
+                              ></div>
+                            ))}
+                          </div>
                         </div>
+                      )}
+
+                      {/* Mostrar color seleccionado */}
+                      {item.selectedColor && (
+                        <div className="carrito-color-preview">
+                          <span>Color elegido:</span>
+                          <div
+                            className="carrito-color-circle"
+                            style={{ backgroundColor: item.selectedColor.codigo_hex }}
+                          ></div>
+                          <span>{item.selectedColor.nombre_color}</span>
+                        </div>
+                      )}
+
                       <div className="carrito-controles">
                         <button onClick={() => handleDecrement(id)}>-</button>
                         <span>{item.cantidad}</span>
@@ -115,9 +98,8 @@ export function ComprasCarrito() {
                           Eliminar
                         </button>
                       </div>
-                      <p className="subtotal">
-                        Subtotal: ${calcularSubtotal(item)}
-                      </p>
+
+                      <p className="subtotal">Subtotal: ${calcularSubtotal(item)}</p>
                     </div>
                   </div>
                 );
@@ -139,6 +121,7 @@ export function ComprasCarrito() {
             </div>
           </>
         )}
+
         <button className="btn-cerrar-carrito" onClick={toggleCarrito}>
           Cerrar
         </button>

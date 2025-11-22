@@ -1,80 +1,61 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom"; // <-- importá esto
+import { useNavigate } from "react-router-dom";
 import './editarDestacados.css';
 
 function EditarDestacados() {
   const { isLogged, isOwner } = useAuthContext();
-  const navigate = useNavigate(); // <-- inicializalo
-  const [productos, setProductos] = useState([]);
-  const [productosFiltrados, setProductosFiltrados] = useState([]);
-  const [productosTopVentas, setProductosTopVentas] = useState([]);
-  const [busquedaProducto, setBusquedaProducto] = useState("");
+  const navigate = useNavigate();
+
+  const [productos, setProductos] = useState([]); // Todos los productos
+  const [productosTopVentas, setProductosTopVentas] = useState([]); // Top Ventas
+  const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
-  const [showTopVentas, setShowTopVentas] = useState(false);
+  const [filtroActivo, setFiltroActivo] = useState("todos"); // "todos" | "top" | "destacados"
 
   // Cargar productos normales
   useEffect(() => {
-    if (!isLogged || !isOwner) {
-      console.log(isLogged);
-    } else {
+    if (isLogged && isOwner) {
       fetch("http://localhost:5000/productos/destacados/editar", { credentials: "include" })
         .then(res => res.json())
-        .then(data => {
-          setProductos(data.productos || []);
-          setProductosFiltrados(data.productos || []);
-        })
+        .then(data => setProductos(data.productos || []))
         .catch(() => setMensaje({ text: "Error cargando productos", type: 'error' }));
     }
   }, [isLogged, isOwner]);
 
-  // Cargar productos con más ventas en la semana
+  // Cargar Top Ventas
   useEffect(() => {
     if (isLogged && isOwner) {
       fetch("http://localhost:5000/productos/top-ventas-semana", { credentials: "include" })
         .then(res => res.json())
         .then(data => {
-          setProductosTopVentas(data.productos || []);
+          const topVentas = (data.productos || []).filter(p => p.total_ventas > 0);
+          setProductosTopVentas(topVentas);
         })
         .catch(err => console.error("Error cargando top ventas:", err));
     }
   }, [isLogged, isOwner]);
 
-  useEffect(() => {
-    if (busquedaProducto.trim().length > 2) {
-      const filtrados = showTopVentas 
-        ? productosTopVentas.filter(p =>
-            p.name.toLowerCase().includes(busquedaProducto.toLowerCase())
-          )
-        : productos.filter(p =>
-            p.name.toLowerCase().includes(busquedaProducto.toLowerCase())
-          );
-      setProductosFiltrados(filtrados);
-    } else {
-      setProductosFiltrados(showTopVentas ? productosTopVentas : productos);
-    }
-  }, [busquedaProducto, productos, productosTopVentas, showTopVentas]);
-
+  // Toggle destacado
   const toggleDestacado = (id_producto) => {
     setProductos(prev => prev.map(p =>
       p.id_producto === id_producto ? { ...p, destacado: !p.destacado } : p
     ));
-    setProductosFiltrados(prev => prev.map(p =>
+    setProductosTopVentas(prev => prev.map(p =>
       p.id_producto === id_producto ? { ...p, destacado: !p.destacado } : p
     ));
   };
 
+  // Guardar cambios
   const handleGuardar = () => {
-    const productosActualizados = productos.map(p => ({
-      id_producto: p.id_producto,
-      destacado: p.destacado ? 1 : 0
-    }));
+    const productosParaGuardar = [...productos, ...productosTopVentas]
+      .map(p => ({ id_producto: p.id_producto, destacado: p.destacado ? 1 : 0 }));
 
     fetch("http://localhost:5000/productos/destacados/actualizar", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ productos: productosActualizados })
+      body: JSON.stringify({ productos: productosParaGuardar })
     })
       .then(res => res.json())
       .then(data => {
@@ -83,74 +64,93 @@ function EditarDestacados() {
       .catch(() => setMensaje({ text: "Error guardando cambios", type: 'error' }));
   };
 
+  // Función de búsqueda usando tu endpoint
+  const handleBuscar = (q) => {
+    if (!q || q.length < 2) return;
+
+    fetch(`http://localhost:5000/productos/buscar?q=${encodeURIComponent(q)}`)
+      .then(res => res.json())
+      .then(data => setProductos(data.resultados || []))
+      .catch(() => setMensaje({ text: "Error buscando productos", type: 'error' }));
+  };
+
+  // Filtrar productos según botón activo
+  const productosFiltrados = () => {
+    if (filtroActivo === "top") {
+      return productosTopVentas.filter(p => p.name.toLowerCase().includes(busqueda.toLowerCase()));
+    } else if (filtroActivo === "destacados") {
+      return productos.filter(p => p.destacado === 1 && p.name.toLowerCase().includes(busqueda.toLowerCase()));
+    }
+    return productos.filter(p => p.name.toLowerCase().includes(busqueda.toLowerCase()));
+  };
+
   return (
     <div className="editar-destacados-container">
-      <h2>Editar Productos Destacados</h2>
+      <h2>Editar productos destacados</h2>
       {mensaje && <div className={`mensaje ${mensaje.type}`}>{mensaje.text}</div>}
 
-      {/* Botones para filtrar vista */}
+      {/* Botones de filtro */}
       <div className="filter-buttons">
-        <button 
-          className={`filter-btn ${!showTopVentas ? 'active' : ''}`}
-          onClick={() => setShowTopVentas(false)}
+        <button
+          className={`filter-btn ${filtroActivo === "todos" ? "active" : ""}`}
+          onClick={() => setFiltroActivo("todos")}
         >
-          Todos los Productos
+          Todos los productos
         </button>
-        <button 
-          className={`filter-btn top-ventas ${showTopVentas ? 'active' : ''}`}
-          onClick={() => setShowTopVentas(true)}
+        <button
+          className={`filter-btn ${filtroActivo === "top" ? "active" : ""}`}
+          onClick={() => setFiltroActivo("top")}
         >
-          ⭐ Top Ventas Semana
+          ⭐ Top ventas
+        </button>
+        <button
+          className={`filter-btn ${filtroActivo === "destacados" ? "active" : ""}`}
+          onClick={() => setFiltroActivo("destacados")}
+        >
+          🌟 Destacados
         </button>
       </div>
 
-      {showTopVentas && productosTopVentas.length > 0 && (
-        <div className="info-top-ventas">
-          <p>✨ <strong>Guía recomendada:</strong> Estos son los productos con más ventas en los últimos 7 días. Considera destacarlos para aprovechar la demanda.</p>
-        </div>
-      )}
-
+      {/* Buscador */}
       <div className="busqueda-seccion">
         <input
           type="text"
-          value={busquedaProducto}
-          onChange={e => setBusquedaProducto(e.target.value)}
-          placeholder={showTopVentas ? "Buscar en top ventas..." : "Buscar productos..."}
+          value={busqueda}
+          onChange={e => {
+            setBusqueda(e.target.value);
+            handleBuscar(e.target.value);
+          }}
+          placeholder="Buscar producto..."
           className="input-busqueda"
         />
         <span className="lupa">🔍</span>
       </div>
 
+      {/* Lista de productos según filtro */}
       <div className="productos-lista">
-        {productosFiltrados.length > 0 ? (
-          productosFiltrados.map(p => (
-            <div key={p.id_producto} className={`producto-item ${showTopVentas ? 'top-ventas-item' : ''}`}>
+        {productosFiltrados().length > 0 ? (
+          productosFiltrados().map(p => (
+            <div key={p.id_producto} className={`producto-item ${filtroActivo === "top" ? "top-ventas-item" : ""}`}>
               <img src={p.imagen_url} alt={p.name} className="producto-img" />
-              <div className="producto-info">
+              <div className="producto-infoDes">
                 <span className="producto-nombre">{p.name}</span>
                 <span className="producto-precio">${p.precio.toFixed(2)}</span>
                 <span className="producto-stock">Stock: {p.stock || 0}</span>
-                {showTopVentas && (
-                  <span className="producto-ventas">📊 Ventas: {p.total_ventas || 0}</span>
-                )}
+                {p.total_ventas !== undefined && <span className="producto-ventas">📊 Ventas: {p.total_ventas}</span>}
               </div>
               <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={p.destacado || false}
-                  onChange={() => toggleDestacado(p.id_producto)}
-                />
+                <input type="checkbox" checked={p.destacado || false} onChange={() => toggleDestacado(p.id_producto)} />
                 Destacado
               </label>
             </div>
           ))
         ) : (
-          <p className="no-productos">No hay productos para mostrar</p>
+          <p>No hay productos para mostrar</p>
         )}
       </div>
 
-      <button onClick={handleGuardar} className="btn-guardar">Guardar cambios</button>
-      <button onClick={() => navigate(-1)} className="btn-volver">Volver atrás</button> {/* <-- botón para volver */}
+      <button onClick={handleGuardar} className="btn-guardarD">Guardar cambios</button>
+      <button onClick={() => navigate(-1)} className="btn-volver">Volver atrás</button>
     </div>
   );
 }

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify,g
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from proyecto.server_flask.utils.extensions import mail  
+from server_flask.utils.extensions import mail  
 from flask_mail import Mail, Message  # Para enviar emails
 
 import jwt

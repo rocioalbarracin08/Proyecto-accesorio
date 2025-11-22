@@ -15,4 +15,5 @@ pip install flask-mail
 pip install Flask-Mail
 pip install numpy openpyxl
 pip install pandas
+pip install matplotlib
 

@@ -276,7 +276,7 @@ export default function RegistrarEmpleado() {
         </div>
       )}
 
-      <Link to="/" className="volver-link">Volver a inicio</Link>
+      <Link to="/perfil" className="volver-link">Volver</Link>
     </section>
   );
 }

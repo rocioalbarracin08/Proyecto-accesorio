@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext";
+import  ScrollTopButton  from "../boto-subir/ScrollTopButton";
 import './registrarVenta.css';
 
 function RegistrarVenta() {
@@ -239,6 +240,7 @@ function RegistrarVenta() {
           </div>
           <div className="venta-buttons">
             <button type="submit" className="btn-submit">Registrar Venta</button>
+            <ScrollTopButton />
           </div>
         </form>
       </div>

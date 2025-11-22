@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g
 import jwt
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from server_flask.utils.config import SECRET_KEY
 
 bp = Blueprint('ventas', __name__, url_prefix='/ventas')
@@ -215,6 +215,18 @@ def listar_ventas():
             LIMIT %s OFFSET %s
         """, (id_empleado, per_page, offset))
         ventas = g.db_cursor.fetchall()
+        # MODIFICAR FECHA Y HORA (para ser aceptados por JSON)
+        for v in ventas:
+            if isinstance(v.get("fecha"), (datetime, date)):
+                v["fecha"] = v["fecha"].strftime("%Y-%m-%d")
+
+            if isinstance(v.get("hora"), timedelta):
+                total_seconds = int(v["hora"].total_seconds())
+                horas = total_seconds // 3600
+                minutos = (total_seconds % 3600) // 60
+                segundos = total_seconds % 60
+                v["hora"] = f"{horas:02d}:{minutos:02d}:{segundos:02d}"
+
         print(f"Ventas obtenidas: {len(ventas)}")  # Log agregado
         
         total_pages = (total_ventas + per_page - 1) // per_page

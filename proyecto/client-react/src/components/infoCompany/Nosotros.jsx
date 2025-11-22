@@ -281,7 +281,6 @@ export default function Nosotros() {
 
               <section className="preguntas-section">
                 <div className="preguntas-nosotros">
-                  <h3>Preguntas de Nosotros</h3>
                   <div className="preguntas">
                   {preguntasNosotros.map((item, idx) => (
                     <article
@@ -333,11 +332,9 @@ export default function Nosotros() {
                       <button className="pregunta-btn" onClick={() => setOpen(open === `clientes-${idx}` ? null : `clientes-${idx}`)}>
                         {item.pregunta}
                       </button>
-                      {open === `clientes-${idx}` && (
-                        <div className="respuesta">
-                          <p>{item.respuesta}</p>
-                        </div>
-                      )}
+                      <div className={`respuesta ${open === `clientes-${idx}` ? "open" : ""}`}>
+                        <p>{item.respuesta}</p>
+                      </div>
                     </article>
                   ))}
                 </div>

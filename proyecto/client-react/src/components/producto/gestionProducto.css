@@ -11,6 +11,32 @@
     align-items: center;
     z-index: 1000;  /* Asegura que esté encima de todo */
 }
+.colores-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.color-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-preview {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.crear-color {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
 
     /* Contenido del modal */
 .modal-content {
