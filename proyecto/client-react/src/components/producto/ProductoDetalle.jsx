@@ -24,6 +24,7 @@ export default function ProductoDetalle() {
 
   // Cargar producto
   useEffect(() => {
+    setColorSeleccionado(null);
     fetch(`http://localhost:5000/productos/${id_producto}`, {
       credentials: "include",
     })
@@ -117,7 +118,7 @@ export default function ProductoDetalle() {
           className="producto-imagen"
         />
         <div className="producto-info">
-          <h1>{producto.name}</h1>
+          <h1 className="titulo-prod">{producto.name}</h1>
           <p className="descripcion">
             {producto.descripcion || "Descripción no disponible."}
           </p>
@@ -129,10 +130,10 @@ export default function ProductoDetalle() {
                 <span className="precio-original">
                   ${precioOriginal.toFixed(2)}
                 </span>
-                <span className="precio-final">${precioFinal.toFixed(2)}</span>
+                <span className="precio-final">${precioFinal.toFixed(1)}</span>
               </>
             ) : (
-              <span className="precio">${precioFinal.toFixed(2)}</span>
+              <span className="precio">${precioFinal.toFixed(1)}</span>
             )}
           </div>
 
@@ -153,7 +154,7 @@ export default function ProductoDetalle() {
                       backgroundColor: color.codigo_hex,
                       border:
                         colorSeleccionado?.id_color === color.id_color
-                          ? "3px solid black"
+                          ? "3px solid rosybrown"
                           : "1px solid #aaa",
                       cursor: "pointer",
                       marginRight: 10,
@@ -163,13 +164,6 @@ export default function ProductoDetalle() {
                   ></div>
                 ))}
               </div>
-
-              {colorSeleccionado && (
-                <p className="color-elegido">
-                  Elegiste: {colorSeleccionado.nombre_color} (
-                  {colorSeleccionado.codigo_hex})
-                </p>
-              )}
             </div>
           )}
           <ProductStockDetailInfo stock={producto.stock} />
@@ -180,17 +174,31 @@ export default function ProductoDetalle() {
           <button
             className="agregar-carrito"
             onClick={() => {
+              if (coloresDisponibles.length > 0 && !colorSeleccionado) {
+                return;
+              }
+
               addItem({
                 ...producto,
                 precio: precioFinal,
-                selectedColor: colorSeleccionado || null,
+                selectedColor: colorSeleccionado,
+                colores: coloresDisponibles
               });
+
               openCarrito();
             }}
-            disabled={producto.stock === 0}
+            disabled={
+              producto.stock === 0 ||
+              (coloresDisponibles.length > 0 && !colorSeleccionado)
+            }
           >
             Agregar al Carrito
           </button>
+          {coloresDisponibles.length > 0 && !colorSeleccionado && (
+            <p style={{ color: "red", fontSize: "14px", marginTop: "8px" }}>
+              Seleccioná un color antes de agregar al carrito.
+            </p>
+          )}
         </div>
       </div>
 

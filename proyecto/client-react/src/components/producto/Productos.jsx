@@ -37,7 +37,7 @@ export function Productos({ includeInactiveForEmployee = false }) {
     try {
       let url = `http://localhost:5000/productos/mostrar?page=${page}&per_page=12`;
       if (idCategoria) {
-        url = `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=10`;
+        url = `http://localhost:5000/productos/por_categoria/${idCategoria}?page=${page}&per_page=12`;
         if (includeInactiveForEmployee && userRole === 'empleado') url += '&include_inactive=1';
       }
       // Para la vista general, si estamos en dashboard empleado y pedimos ver inactivos

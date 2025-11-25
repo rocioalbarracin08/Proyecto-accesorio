@@ -38,7 +38,7 @@ function RegistrarVenta() {
       window.location.href = '/login';
     } else {
       // Cargar productos con stock (inicialmente todos)
-      fetch("http://localhost:5000/productos/mostrar?page=1&per_page=100", { credentials: "include" })
+      fetch("http://localhost:5000/productos/mostrar?page=1&per_page=10", { credentials: "include" })
         .then(res => res.json())
         .then(data => {
           setProductos(data.productos || []);
@@ -140,13 +140,14 @@ function RegistrarVenta() {
           </div>
         )}
         <form className="venta-form" onSubmit={handleSubmit}>
-          <div>
+          <div className="Buscar-cliente">
             <label>Buscar Cliente (opcional):</label>
             <input
               type="text"
               value={busquedaCliente}
               onChange={e => setBusquedaCliente(e.target.value)}
               placeholder="Nombre o email del cliente"
+              className="input-buscar-cliente"
             />
             {clientes.length > 0 && (
               <ul className="clientes-lista">

@@ -132,7 +132,7 @@ def productos():
     
     try:
         page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('per_page', 10))
+        per_page = int(request.args.get('per_page', 12))
         offset = (page - 1) * per_page
 
         # Filtra productos. Por defecto solo productos activos y cuya categoría (si exista) esté activa.

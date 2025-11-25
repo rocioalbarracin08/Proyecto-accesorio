@@ -34,7 +34,7 @@
   z-index: 2;
 }
 
-input {
+.inputCC {
   border-radius: 5px;
   border: 1px solid #cd5c5c;
   text-align: center;

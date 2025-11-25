@@ -197,7 +197,7 @@ export default function GestionProductos({ onClose, productoEditar = null, onSav
           <label>
             Imagen URL:
             <input
-              type="url"
+              type="text"
               value={form.imagen_url}
               onChange={(e) => setForm({ ...form, imagen_url: e.target.value })}
             />

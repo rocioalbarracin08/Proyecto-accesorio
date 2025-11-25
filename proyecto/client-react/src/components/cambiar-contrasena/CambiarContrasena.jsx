@@ -115,7 +115,7 @@ export default function CambiarContrasena() {
       {error && <p className="error">{error}</p>}
       <form className="cambiar-form" onSubmit={handleSubmit} noValidate> {/*Para deshabilitar la validación automáticamente del navegador*/}
         <div className="password-container">
-          <input
+          <input className='inputCC'
             ref={actualRef}
             type={showActual ? "text" : "password"}
             placeholder="Contraseña Actual"
@@ -130,7 +130,7 @@ export default function CambiarContrasena() {
         </div>
 
         <div className="password-container">
-          <input
+          <input className='inputCC'
             ref={nuevaRef}
             type={showNueva ? "text" : "password"}
             placeholder="Nueva Contraseña"
@@ -145,7 +145,7 @@ export default function CambiarContrasena() {
         </div>
 
         <div className="password-container">
-          <input
+          <input className='inputCC'
             ref={confirmRef}
             type={showConfirm ? "text" : "password"}
             placeholder="Confirmar Nueva Contraseña"

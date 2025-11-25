@@ -8,22 +8,24 @@
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2); /* Sombra para resaltar */
   animation: slideIn 0.3s ease; /* Animación de entrada */
 }
-
+.infoP{
+  margin: 0;
+}
 .btn-eliminar-producto {
-  background: transparent; 
+  background-color: rgb(121, 72, 72);
   border: 1px solid rgb(255, 255, 255);
   color: #ffffff;
-  padding: 0;
-  font-size: 0.9rem;
-  border-radius: 0; 
-  width: 80px;      /* Ancho fijo para que sea cuadrado */
-  height: 30px;
+  margin-top: 10px;
+  border-radius: 10px; 
+  width: 100px;      /* Ancho fijo para que sea cuadrado */
+  height: 20px;
 }
 
 .btn-eliminar-producto:hover {
-  color: rgb(255, 255, 255);
+  color: white;
+  background-color: rosybrown;
+  transition: 1s;
 }
-
 
 .carrito-lateral {
   width: 320px;
@@ -77,6 +79,64 @@
   color: #c77d7d;
   font-weight: bold;
   cursor: pointer;
+}
+/* Colores disponibles */
+.carrito-colores-list {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.color-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.color-circle.selected {
+  border: 4px solid #000; /* Llamativo para seleccionados */
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.color-circle.dimmed {
+  opacity: 0.5; /* Apagados para no seleccionados */
+}
+
+/* Lista de cantidades */
+.carrito-quantities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.quantity-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.color-plus, .color-minus {
+  background-color: #f0b6c1;  /* Mismo estilo que los botones globales */
+  border: none;  /* Sin borde */
+  padding: 5px 10px;  /* Espaciado interno */
+  border-radius: 8px;  /* Bordes redondeados */
+  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
+  font-size: 1rem;  /* Tamaño de fuente */
+}
+
+.color-plus:hover, .color-minus:hover {
+  background-color: #d98b99;  /* Color más oscuro al pasar el mouse */
+}
+
+.small-color-circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
 }
 .carrito-lateral .cantidad-controles span {
   min-width: 24px;
@@ -263,33 +323,12 @@
   font-size: 1rem;  /* Tamaño de fuente */
 }
 
-/* Controles de cantidad */
-.carrito-controles {
-  display: flex;  /* Flexbox para alinear controles */
-  align-items: center;  /* Centra verticalmente */
-  gap: 10px;  /* Espacio entre controles */
-  margin-top: 5px;  /* Espacio arriba de los controles */
-}
-
-/* Botones de cantidad */
-.carrito-controles button {
-  background-color: #f0b6c1;  /* Color rosado claro */
-  border: none;  /* Sin borde */
-  padding: 5px 10px;  /* Espaciado interno */
-  border-radius: 8px;  /* Bordes redondeados */
-  cursor: pointer;  /* Cambia el cursor al pasar sobre el botón */
-  font-size: 1rem;  /* Tamaño de fuente */
-}
-
-/* Hover para botones de cantidad */
-.carrito-controles button:hover {
-  background-color: #d98b99;  /* Color más oscuro al pasar el mouse */
-}
-
 /* Subtotal de cada item */
 .subtotal {
   font-size: 0.9rem;  /* Tamaño de fuente más pequeño */
   color: #555;  /* Color gris */
+  margin-top: 5%;
+  margin-bottom: 0%;
 }
 
 /* Total del carrito */

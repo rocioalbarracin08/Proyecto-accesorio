@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // Estado inicial del carrito
 const initialState = {
-  items: {},          // Productos en el carrito
+  items: {},          // Productos agrupados por id_producto base
   totalItems: 0,      // Total de productos
   totalPrice: 0,      // Precio total
   showCarrito: false  // Control del modal del carrito
@@ -11,11 +11,12 @@ const initialState = {
 // Reducer
 const carritoReducer = (state, action) => {
   switch (action.type) {
-
     case 'ADD_ITEM': {
       const { producto, id } = action.payload;
-      const productoId = id || producto.id_producto || producto.id || producto._id || producto.codigo;
-      const existingItem = state.items[productoId];
+      const baseId = id || producto.id_producto || producto.id || producto._id || producto.codigo;
+      const colorId = producto.selectedColor?.id_color;
+
+      const existingItem = state.items[baseId];
       const precio = parseFloat(producto.precio || 0);
 
       const productoConColores = {
@@ -24,27 +25,36 @@ const carritoReducer = (state, action) => {
       };
 
       if (existingItem) {
+        // Incrementa cantidad del color seleccionado
+        const newColorQuantities = { ...existingItem.colorQuantities };
+        newColorQuantities[colorId] = (newColorQuantities[colorId] || 0) + 1;
+
+        const newTotalCantidad = Object.values(newColorQuantities).reduce((sum, qty) => sum + qty, 0);
+
         return {
           ...state,
           items: {
             ...state.items,
-            [productoId]: {
+            [baseId]: {
               ...existingItem,
-              cantidad: existingItem.cantidad + 1
+              colorQuantities: newColorQuantities,
+              totalCantidad: newTotalCantidad
             }
           },
           totalItems: state.totalItems + 1,
           totalPrice: state.totalPrice + precio
         };
       } else {
+        // Nuevo producto
+        const colorQuantities = colorId ? { [colorId]: 1 } : {};
         return {
           ...state,
           items: {
             ...state.items,
-            [productoId]: {
+            [baseId]: {
               producto: productoConColores,
-              cantidad: 1,
-              selectedColor: null
+              colorQuantities,
+              totalCantidad: 1
             }
           },
           totalItems: state.totalItems + 1,
@@ -54,11 +64,12 @@ const carritoReducer = (state, action) => {
     }
 
     case 'UPDATE_QUANTITY': {
+      // Actualiza cantidad total del producto (simplificado)
       const { productoId: pid, quantity } = action.payload;
       const item = state.items[pid];
       if (!item) return state;
 
-      const delta = quantity - item.cantidad;
+      const delta = quantity - item.totalCantidad;
       const precioItem = parseFloat(item.producto.precio || 0);
 
       if (quantity <= 0) {
@@ -66,8 +77,8 @@ const carritoReducer = (state, action) => {
         return {
           ...state,
           items: newItems,
-          totalItems: Math.max(0, state.totalItems - item.cantidad),
-          totalPrice: Math.max(0, state.totalPrice - (item.cantidad * precioItem))
+          totalItems: Math.max(0, state.totalItems - item.totalCantidad),
+          totalPrice: Math.max(0, state.totalPrice - (item.totalCantidad * precioItem))
         };
       }
 
@@ -75,7 +86,7 @@ const carritoReducer = (state, action) => {
         ...state,
         items: {
           ...state.items,
-          [pid]: { ...item, cantidad: quantity }
+          [pid]: { ...item, totalCantidad: quantity }
         },
         totalItems: Math.max(0, state.totalItems + delta),
         totalPrice: Math.max(0, state.totalPrice + (delta * precioItem))
@@ -93,8 +104,70 @@ const carritoReducer = (state, action) => {
       return {
         ...state,
         items: newItems,
-        totalItems: Math.max(0, state.totalItems - removeItem.cantidad),
-        totalPrice: Math.max(0, state.totalPrice - (removeItem.cantidad * precioRemove))
+        totalItems: Math.max(0, state.totalItems - removeItem.totalCantidad),
+        totalPrice: Math.max(0, state.totalPrice - (removeItem.totalCantidad * precioRemove))
+      };
+    }
+
+    case 'ADD_COLOR_QUANTITY': {
+      const { productoId: pid, colorId } = action.payload;
+      const item = state.items[pid];
+      if (!item) return state;
+
+      const newColorQuantities = { ...item.colorQuantities };
+      newColorQuantities[colorId] = (newColorQuantities[colorId] || 0) + 1;
+      const newTotalCantidad = Object.values(newColorQuantities).reduce((sum, qty) => sum + qty, 0);
+      const precioItem = parseFloat(item.producto.precio || 0);
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [pid]: {
+            ...item,
+            colorQuantities: newColorQuantities,
+            totalCantidad: newTotalCantidad
+          }
+        },
+        totalItems: state.totalItems + 1,
+        totalPrice: state.totalPrice + precioItem
+      };
+    }
+
+    case 'REMOVE_COLOR_QUANTITY': {
+      const { productoId: pid, colorId } = action.payload;
+      const item = state.items[pid];
+      if (!item || !item.colorQuantities[colorId]) return state;
+
+      const newColorQuantities = { ...item.colorQuantities };
+      newColorQuantities[colorId] -= 1;
+      if (newColorQuantities[colorId] <= 0) delete newColorQuantities[colorId];
+      const newTotalCantidad = Object.values(newColorQuantities).reduce((sum, qty) => sum + qty, 0);
+      const precioItem = parseFloat(item.producto.precio || 0);
+
+      if (newTotalCantidad <= 0) {
+        // Eliminar el ítem si no quedan cantidades
+        const { [pid]: _, ...newItems } = state.items;
+        return {
+          ...state,
+          items: newItems,
+          totalItems: Math.max(0, state.totalItems - item.totalCantidad),
+          totalPrice: Math.max(0, state.totalPrice - (item.totalCantidad * precioItem))
+        };
+      }
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [pid]: {
+            ...item,
+            colorQuantities: newColorQuantities,
+            totalCantidad: newTotalCantidad
+          }
+        },
+        totalItems: state.totalItems - 1,
+        totalPrice: state.totalPrice - precioItem
       };
     }
 
@@ -133,37 +206,31 @@ const CarritoContext = createContext();
 export const CarritoProvider = ({ children }) => {
   const [state, dispatch] = useReducer(carritoReducer, initialState);
 
-  // Restaurar carrito desde localStorage
+  // Restaurar carrito desde localStorage (ajusta para nueva estructura)
   useEffect(() => {
     const saved = localStorage.getItem('carrito');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-
         Object.keys(parsed.items || {}).forEach(id => {
           const item = parsed.items[id];
           const productoConColores = {
             ...item.producto,
             colores: item.producto?.colores || []
           };
-          for (let i = 0; i < item.cantidad; i++) {
-            dispatch({
-              type: 'ADD_ITEM',
-              payload: { producto: productoConColores, id }
-            });
-          }
-        });
-
-        // Restaurar selectedColor u otros metadatos
-        Object.keys(parsed.items || {}).forEach(id => {
-          const item = parsed.items[id];
-          const updates = {};
-          Object.keys(item || {}).forEach(k => {
-            if (k !== 'producto' && k !== 'cantidad') updates[k] = item[k];
+          // Reconstruye agregando por color
+          Object.keys(item.colorQuantities || {}).forEach(colorId => {
+            const qty = item.colorQuantities[colorId];
+            for (let i = 0; i < qty; i++) {
+              dispatch({
+                type: 'ADD_ITEM',
+                payload: { 
+                  producto: productoConColores, 
+                  id 
+                }
+              });
+            }
           });
-          if (Object.keys(updates).length > 0) {
-            dispatch({ type: 'UPDATE_ITEM', payload: { productoId: id, updates } });
-          }
         });
       } catch (e) {
         console.error('Error cargando carrito:', e);
@@ -185,26 +252,40 @@ export const CarritoProvider = ({ children }) => {
 
   // Funciones para el contexto
   const addItem = (producto) => {
+    console.log("Producto recibido en addItem:", producto);
+    console.log("selectedColor en producto:", producto.selectedColor);
     dispatch({
       type: 'ADD_ITEM',
       payload: {
         producto: {
           ...producto,
-          colores: producto.colores || [],
-          selectedColor: null
+          colores: producto.colores || []
         }
       }
     });
   };
+
   const updateQuantity = (productoId, quantity) =>
     dispatch({ type: 'UPDATE_QUANTITY', payload: { productoId, quantity } });
+
   const updateItem = (productoId, updates) =>
     dispatch({ type: 'UPDATE_ITEM', payload: { productoId, updates } });
+
   const removeItem = (productoId) =>
     dispatch({ type: 'REMOVE_ITEM', payload: { removeId: productoId } });
+
+  const addColorQuantity = (productoId, colorId) =>
+    dispatch({ type: 'ADD_COLOR_QUANTITY', payload: { productoId, colorId } });
+
+  const removeColorQuantity = (productoId, colorId) =>
+    dispatch({ type: 'REMOVE_COLOR_QUANTITY', payload: { productoId, colorId } });
+
   const openCarrito = () => dispatch({ type: 'OPEN_CART' });
+
   const toggleCarrito = () => dispatch({ type: 'TOGGLE_CART' });
+
   const closeCarrito = () => dispatch({ type: 'CLOSE_CART' });
+
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
 
   return (
@@ -218,7 +299,9 @@ export const CarritoProvider = ({ children }) => {
         openCarrito,
         toggleCarrito,
         closeCarrito,
-        clearCart
+        clearCart,
+        addColorQuantity,
+        removeColorQuantity
       }}
     >
       {children}

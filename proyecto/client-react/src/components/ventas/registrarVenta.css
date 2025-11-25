@@ -8,6 +8,27 @@
   padding: 20px;
   animation: 0.5s ease;
 }
+.Buscar-cliente{
+  display: flex;
+  flex-direction: column;
+}
+.input-buscar-cliente {
+  padding: 10px 20px;
+  transition: 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 10px;
+}
+.input-busqueda{
+  padding: 10px;
+  border: 2px solid #ecf0f1;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 10px;
+}
 
 /* Animación de entrada */
 @keyframes fadeInPage {
@@ -149,6 +170,7 @@
   cursor: pointer;
   transition: 0.3s ease;
   margin-top: 10px;
+  width: fit-content;
 }
 
 .btn-sin-cliente:hover {
@@ -163,7 +185,7 @@
 
 .productos-seccion h3 {
   color: rosybrown;
-  margin-bottom: 15px;
+  margin-top: 0%;
   font-size: 20px;
 }
 
